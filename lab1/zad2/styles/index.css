@@ -3,26 +3,24 @@
 }
 
 #logo {
-
+	height: 200px;
 }
 
 #menu-wrapper {
-
 }
 
-#left {
-
+#about {
+	height: 600px;
 }
 
-#content-wrapper {
-
+#portfolio {
+	height: 600px;
 }
 
-#right {
-
+#services {
+	height: 600px;
 }
 
 #footer {
-
+	height: 200px;
 }
-

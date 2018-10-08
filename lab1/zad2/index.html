@@ -9,7 +9,9 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
         <!-- custom styles -->
+        
         <link rel="stylesheet" href="styles/index.css">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
         <title>Hello, world!</title>
     </head>
@@ -18,25 +20,52 @@
         <div class="container">
             <div class="row">
                 <div id="logo" class="col-12 item">
-                    LOGO
+                    <span>LOGO</span>
+                    <span class="fa fa-cloud"></span>
                 </div>
             </div>
 
             <div class="row">
                 <div id="menu-wrapper" class="col-12 item">
-                    menu
+                    
+                    <nav class="navbar navbar-light navbar-expand-md bg-light">
+                        <a href="#logo" class="navbar-brand">ZPW</a>
+                        <button type="button" class="navbar-toggler navbar-toggler-right" data-toggle="collapse" data-targe="#navbarNav">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav" id="navScrollspy">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#logo">Do góry</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#about">O nas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#portfolio">Portfolio</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#services">Usługi</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Ceny</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+
                 </div>
             </div>
 
             <div class="row">
-                <div id="left" class="col-12 col-sm-6 col-md-4 item">
-                    left
+                <div id="about" class="col-12 col-sm-6 col-md-4 item">
+                    about
                 </div>
-                <div id="content-wrapper" class="col-12 col-sm-6 col-md-4 item">
-                    center
+                <div id="portfolio" class="col-12 col-sm-6 col-md-4 item">
+                    portfolio
                 </div>
-                <div id="right" class="col-12 col-sm-12 col-md-4 item">
-                    right
+                <div id="services" class="col-12 col-sm-12 col-md-4 item">
+                    services
                 </div>
             </div>
 
