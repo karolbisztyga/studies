@@ -24,3 +24,15 @@
 #footer {
 	height: 200px;
 }
+
+.jumbotron { 
+	background-image: url('images/background.jpeg');
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	min-height: 100vh;
+	color: #F00;
+}
+section {
+	padding-top: 4rem;
+}
