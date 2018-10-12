@@ -12,6 +12,7 @@
         
         <link rel="stylesheet" href="styles/index.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/fontawesome.min.css">
+        <script src="scripts/smooth-scroll.polyfills.min.js"></script>
 
         <title>Hello, world!</title>
     </head>
@@ -28,19 +29,22 @@
                         <div class="collapse navbar-collapse" id="navbarNav">
                             <ul class="navbar-nav" id="navScrollspy">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#logo">Do góry</a>
+                                    <a class="nav-link" href="#top">Do góry</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#about">O nas</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#portfolio">Portfolio</a>
+                                    <a class="nav-link" href="#works">Portfolio</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#services">Usługi</a>
+                                    <a class="nav-link" href="#prices">Ceny</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Ceny</a>
+                                    <a class="nav-link" href="#staff">Pracownicy</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#contact">Kontakt</a>
                                 </li>
                             </ul>
                         </div>
@@ -71,7 +75,7 @@
                 </section>
             </header>
 
-            <div class="container"> 
+            <div id="about" class="container"> 
                 <section id="section-description"> 
                 <h2 class="display-4">Kim jestesmy?</h2> 
                 <p>Lorem Ipsum jest tekstem stosowanym jako
@@ -93,7 +97,7 @@
 
             
         </div>
-        <div class="container-full"> 
+        <div id="works" class="container-full"> 
             <section id="section-showcase">
                 <div id="carousel" class="carousel slide" data-ride="carousel">
                     <ol class="carousel-indicators">
@@ -151,7 +155,7 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-md-4">
+                <div id="prices" class="col-12 col-md-4">
                     <div class="card">
                         <div class="card-header">
                             <h2>Semi-pro</h2>
@@ -177,7 +181,7 @@
                         <div class="card-header">
                             <h2>Pro</h2>
                             <h4>$4.99 / month</h4>
-                            <i class="fa fa-instagram mb-4 text-info" ></i> 
+                            <i class="fa fa-instagram mb-4 text-info" ></i>
                         </div>
                         <div class="card-body">
                             <p class="card-text">Perfect if you're a pro photographer.</p>
@@ -196,7 +200,80 @@
             </div>
         </section>
 
-<footer>
+
+
+        <section id="staff">
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <img class="staffimg" src="styles/images/staff1.png" />
+                        </div>
+                        <div class="col-12">
+                            <span class="staff-title">web developer</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <img class="staffimg" src="styles/images/staff2.png" />
+                        </div>
+                        <div class="col-12">
+                            <span class="staff-title">designer</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <img class="staffimg" src="styles/images/staff3.png" />
+                        </div>
+                        <div class="col-12">
+                            <span class="staff-title">manager</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <img class="staffimg" src="styles/images/staff4.png" />
+                        </div>
+                        <div class="col-12">
+                            <span class="staff-title">hr specialist</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="contact">
+            <h1>Kontakt</h1>
+            <div class="row">
+                <div class="col-3" style="text-align: right;">
+                    email
+                </div>
+                <div class="col-9">
+                    <input id="email-input" />
+                </div>
+                <div class="col-3" style="text-align: right;">
+                    tytuł
+                </div>
+                <div class="col-9">
+                    <input id="title-input" />
+                </div>
+                <div class="col-3" style="text-align: right;">
+                    wiadomość
+                </div>
+                <div class="col-9">
+                    <textarea id="msg-input" cols="100" rows="8"></textarea>
+                </div>
+            </div>
+        </section>
+
+
+<footer id="policy">
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal">
       Polityka prywatności
     </button>
@@ -206,23 +283,25 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Tytuł</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Polityka prywatności</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-            <h1>BLE BLA BLAH</h1>
-            ble ble ble ble bla bla blah blah <br />
-            ble ble ble ble bla bla blah blah <br />
-            ble ble ble ble bla bla blah blah <br />
-            ble ble ble ble bla bla blah blah <br />
-            ble ble ble ble bla bla blah blah <br />
-            ble ble ble ble bla bla blah blah <br />
-            ble ble ble ble bla bla blah blah <br />
+            <h1>Polityka prywatności</h1>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In lacinia enim molestie, elementum nisi in, scelerisque massa. Sed rhoncus velit vel neque dapibus ultricies. Donec eu suscipit turpis, sit amet hendrerit massa. Aenean tristique nisl a quam imperdiet porta. Etiam a dui nec neque varius placerat. Mauris fringilla sit amet odio at vehicula. Nunc ornare lectus ac lectus consequat fermentum. Proin risus neque, iaculis eget dui in, fermentum efficitur velit. Morbi facilisis rutrum erat sit amet varius. Donec porta nibh et ante accumsan, id placerat purus ultrices. Proin varius neque eu lectus fermentum tempor. Sed viverra neque ac gravida fringilla.
+
+            Praesent gravida varius sapien, sed mollis sapien molestie at. Donec vitae imperdiet felis, a gravida risus. Integer iaculis vehicula tellus. Vivamus enim magna, ultrices ut bibendum vel, commodo et risus. Cras posuere dictum tortor sed sodales. Proin porttitor ut urna vel convallis. Sed condimentum cursus dictum. Nullam non lacus eros. Pellentesque consequat volutpat est, vitae euismod diam vulputate et. Cras nec porttitor risus, at iaculis nisi.
+
+            Mauris at quam eu nisi dignissim pellentesque sed id ligula. Praesent porta laoreet sapien vitae pulvinar. Morbi sagittis placerat malesuada. Phasellus at rhoncus velit, eu maximus enim. Nunc in felis et odio ultrices semper. Phasellus quis rhoncus neque, vitae aliquam nisi. Integer non suscipit libero. Ut gravida leo at luctus tristique. Mauris ultrices nisi sed velit suscipit venenatis. Sed felis lacus, tincidunt vitae dolor quis, condimentum bibendum augue. Praesent tempor nulla id augue malesuada, vitae rutrum nunc elementum. Vivamus sollicitudin nibh quam, fringilla consectetur magna imperdiet vel. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed venenatis iaculis massa sit amet rutrum. Cras est dui, consectetur suscipit sodales efficitur, condimentum ac ex.
+
+            Cras in gravida est. Suspendisse eget laoreet purus. Pellentesque facilisis urna at dui sagittis, sed varius lectus mollis. Pellentesque laoreet facilisis neque ut hendrerit. Maecenas et mollis nibh. Nulla sollicitudin non elit eget feugiat. Integer iaculis ligula vitae facilisis scelerisque.
+
+            Nunc vestibulum lacus libero, sit amet maximus nisl sodales vel. Vivamus ullamcorper lobortis elit ut fermentum. Pellentesque mattis risus eros, ut pharetra massa lacinia vel. Quisque sit amet placerat felis. Nulla sollicitudin auctor dignissim. Aliquam et pellentesque eros, vel faucibus augue. Curabitur a tincidunt lectus. Aliquam aliquet ante viverra tellus consequat dictum. Sed sed ex in metus vestibulum ornare. Morbi sed lacus dui. Proin dictum nec ligula in feugiat. Etiam lacinia massa at tincidunt aliquam. Cras vehicula lacus et nibh finibus mattis. Nullam sed commodo dui. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae
       </div>
       <div class="modal-footer">
-            <button type="button" class="btn btn-default" datadismiss="modal">Close</button>
+            <button type="button" class="btn btn-default close" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -233,5 +312,8 @@
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script>
+            var scroll = new SmoothScroll('a[href*="#"]');
+        </script>
     </body>
 </html>
