@@ -1,7 +1,0 @@
-zaisd
-	-lab 1
-		-najkrotsza sciezka w grafie
-			-odleglosc od wierzcholka poczatkowego
-			-nr poprzedniego wierzcholka
-			-na poczatku wszystkie wartosci = nieskonczonosc, w wierzcholku poczatkowym=0,poprzednik=0
-			-algorytm ma przyjmowac macierz sasiedztwa lub liste krawedzi
