@@ -1,16 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
-// find shortest path using matrix of neighbours
-int shortestPathMatrix(vector<vector<int>>& neighbours)
-{
-	return 0;
-}
+const int INFINITY = static_cast<unsigned int>(-1)/2;
 
-// find shortest path using list of edges
 struct Edge
 {
 	size_t from;
@@ -18,9 +14,46 @@ struct Edge
 	int weight;
 };
 
-int shortestPathList(vector<Edge>& edges)
+void printNodes(unordered_map<size_t, int>& nodes)
 {
-	return 0;
+	cout << "Nodes: " << endl;
+	for(auto it = nodes.begin(); it != nodes.end(); ++it)
+	{
+		cout << "[id: " << it->first << ", total weight: " << it->second << "]" << endl;
+	}
+	cout << endl;
+}
+
+// find shortest path using matrix of neighbours
+bool shortestPathMatrix(vector<vector<int>>& neighbours, unordered_map<size_t, int>& nodes)
+{
+	printNodes(nodes);
+	return false;
+}
+
+bool shortestPathList(vector<Edge>& edges, unordered_map<size_t, int>& nodes)
+{
+	bool changed = false;
+	do
+	{
+		changed = false;
+		for (auto it = nodes.begin(); it != nodes.end(); ++it)
+		{
+			for (Edge e : edges)
+			{
+				if (e.from != it->first || nodes[e.from] == INFINITY)
+				{
+					continue;
+				}
+				if (nodes[e.to] > nodes[e.from] + e.weight)
+				{
+					nodes[e.to] = nodes[e.from] + e.weight;
+					changed = true;
+				}
+			}
+		}
+	} while (changed);
+	return true;
 }
 
 int main(int argc, char **argv)
@@ -45,7 +78,8 @@ int main(int argc, char **argv)
 		cout << "error, wrong algorithm(must be 'm' for matrix or 'l' for list)\n";
 		return 1;
 	}
-	int *result = nullptr;
+	bool result = false;
+	unordered_map<size_t, int> nodes;
 	if (algorithm == 'm')
 	{
 		vector<vector<int>> weights;
@@ -75,22 +109,42 @@ int main(int argc, char **argv)
 			cout << endl;
 		}
 		// perform algorithm
-		result = new int(shortestPathMatrix(weights));
+		for (size_t i = 0; i < size ; ++i)
+		{
+			nodes[i] = INFINITY;
+		}
+		nodes[0] = 0;
+		result = shortestPathMatrix(weights, nodes);
 	}
 	else
 	{
 		vector<Edge> edges;
 		// parsing file
-		while(1)
+		do
 		{
+			Edge edge;
+			edges.push_back(edge);
+		} while(infile >> edges.back().from && infile >> edges.back().to && infile >> edges.back().weight);
+		edges.pop_back();
+		cout << "edges:" << endl;
+		for (size_t i = 0; i < edges.size(); ++i)
+		{
+			cout << edges.at(i).from << " " << edges.at(i).to << " " << edges.at(i).weight << endl;
 		}
-		result = new int(shortestPathList(edges));
+		for(size_t i = 0; i < edges.size(); ++i)
+		{
+			nodes[edges[i].from] = INFINITY;
+			nodes[edges[i].to] = INFINITY;
+		}
+		nodes[0] = 0;
+		result = shortestPathList(edges, nodes);
 	}
-	if (result == nullptr)
+	if (!result)
 	{
 		cout << "error, algorithm failed\n";
+        return 1;
 	}
-	cout << "shortest path: " << *result << endl;
-	free(result);
+	cout << "shortest paths: " << endl;
+	printNodes(nodes);
 	return 0;
 }
