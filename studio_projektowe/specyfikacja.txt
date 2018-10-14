@@ -1,0 +1,36 @@
+kompilator asemblera w pythonie generujący kod binarny do uruchomienia na maszynie wirtualnej
+
+instrukcje assemblera(to może ulec zmianie)
+	mov - przenoszenie wartości
+	add - dodawanie
+	sub - odejmowanie
+	mul - mnozenie
+	div - dzielenie calkowite
+	and - bramka and na bitach
+	lor - bramka or na bitach
+	not - bramka not na bitach
+	xor - bramka xor na bitach
+	psh - push na stos
+	pop - pop ze stosu
+	cmp - porownanie
+	jmp - skok w określone miejsce
+	jeq - jump equal skok warunkowy
+	jne - jump not equal skok warunkowy
+	drd - data read wczytywanie danych
+	dwr - data write zapis danych
+	cal - wołanie instrukcji z danego adresu
+	ret - ret powrót
+	sys - wykonanie komendy systemowej
+
+syntax:
+	kazda instrukcja ma labelke o dlugosci 3 znaki ASCII
+	po labelce instrukcji są wczytywane argumenty w nawiasach oddzielone przecinkami
+	instrukcje sa oddzielone srednikami
+	cos jest traktowane jako instrukcja jesli ma 3-literowa labelke i potem otwierajacy nawias, argumenty, nawias, srednik. Jesli labelka jest zla albo argumenty albo cokolwiek, wtedy powinien byc blad kompilacji. Jesli cos nie jest traktowane jako instrukcja to jest po prostu pomijane, mozna zalozyc, ze jest to komentarz
+	syntax nie bierze pod uwage spacji, EOL, tabow itp
+	przyklad:
+		add(r0,r1,r2);sub(r4,r1,r0);here is the comment where I say how this works;cmp(r0,r1,r2)
+
+-parsowanie kodu asm
+-generowanie bytecodu
+-testy
