@@ -1,7 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <unordered_map>
+#include <set>
+#include <map>
+// used for std::sort on vector
+#include <algorithm>
 
 using namespace std;
 
@@ -14,7 +17,7 @@ struct Edge
 	int weight;
 };
 
-void printNodes(unordered_map<size_t, int>& nodes)
+void printNodes(map<size_t, int>& nodes)
 {
 	cout << "Nodes: " << endl;
 	for(auto it = nodes.begin(); it != nodes.end(); ++it)
@@ -25,26 +28,55 @@ void printNodes(unordered_map<size_t, int>& nodes)
 }
 
 // find shortest path using matrix of neighbours
-bool shortestPathMatrix(vector<vector<int>>& neighbours, unordered_map<size_t, int>& nodes)
-{
-	printNodes(nodes);
-	return false;
-}
-
-bool shortestPathList(vector<Edge>& edges, unordered_map<size_t, int>& nodes)
+bool shortestPathMatrix(vector<vector<int>>& neighbours, map<size_t, int>& nodes)
 {
 	bool changed = false;
 	do
 	{
 		changed = false;
+		for (size_t i = 0; i < neighbours.size() ; ++i)
+		{
+			for (size_t j = 0; j < neighbours[i].size() ; ++j)
+			{
+				const size_t from = i;
+				const size_t to = j;
+				const int weight = neighbours[i][j];
+				if (weight == 0 || nodes[from] == INFINITY)
+				{
+					continue;
+				}
+				if (nodes[to] > nodes[from] + weight)
+				{
+					nodes[to] = nodes[from] + weight;
+					changed = true;
+				}
+			}
+		}
+	} while (changed);
+	return true;
+}
+
+bool shortestPathList(vector<Edge>& edges, map<size_t, int>& nodes)
+{
+	bool changed = false;
+	bool found = false;
+	do
+	{
+		changed = false;
 		for (auto it = nodes.begin(); it != nodes.end(); ++it)
 		{
+			found = false;
 			for (Edge e : edges)
 			{
 				if (e.from != it->first || nodes[e.from] == INFINITY)
 				{
+					if (found)
+					{
+						break;
+					}
 					continue;
 				}
+				found = true;
 				if (nodes[e.to] > nodes[e.from] + e.weight)
 				{
 					nodes[e.to] = nodes[e.from] + e.weight;
@@ -79,17 +111,17 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	bool result = false;
-	unordered_map<size_t, int> nodes;
+	map<size_t, int> nodes;
 	if (algorithm == 'm')
 	{
 		vector<vector<int>> weights;
 		size_t size = 0;
 		infile >> size;
 		cout << "read matrix of size " << size << endl;
-		weights.reserve(size);
+		weights.resize(size);
 		for (size_t i = 0; i < size; ++i)
 		{
-			weights[i].reserve(size);
+			weights[i].resize(size);
 		}
 		// parsing file
 		for (size_t i = 0; i < size; ++i)
@@ -126,6 +158,9 @@ int main(int argc, char **argv)
 			edges.push_back(edge);
 		} while(infile >> edges.back().from && infile >> edges.back().to && infile >> edges.back().weight);
 		edges.pop_back();
+		sort(edges.begin(), edges.end(), [](const Edge &e1, const Edge &e2) {
+			return e1.from < e2.from;
+		});
 		cout << "edges:" << endl;
 		for (size_t i = 0; i < edges.size(); ++i)
 		{
