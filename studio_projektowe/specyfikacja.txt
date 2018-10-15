@@ -1,7 +1,21 @@
 kompilator asemblera w pythonie generujący kod binarny do uruchomienia na maszynie wirtualnej
 
-instrukcje assemblera(to może ulec zmianie)
-	mov - przenoszenie wartości
+dane
+	rodzaje dostępu do danych
+		istnieją 4 rodzaje dostępu do danych ze względu na rozmiar, najmniejszy z nich to WORD(16bit), kolejno są jego wielokrotności: 2, 3, 4.
+	wszystkie dane są signed
+
+pamięć
+	pamięć jest adresowana od 0, jej rozmiar musi być wielokrotnością WORD(16bit), little endian WORDwise
+
+rejestry
+	istnieje 8 rejestrów ogólnego przeznaczenia: a, b, c, d, e, f, g, h. Każdy z nich ma rozmiar QWORD
+
+stos
+	przechowuje wartości o rozmiarze QWORD
+
+opis instrukcji
+	cpy - kopiowanie wartości
 	add - dodawanie
 	sub - odejmowanie
 	mul - mnozenie
@@ -16,15 +30,44 @@ instrukcje assemblera(to może ulec zmianie)
 	jmp - skok w określone miejsce
 	jeq - jump equal skok warunkowy
 	jne - jump not equal skok warunkowy
-	drd - data read wczytywanie danych
-	dwr - data write zapis danych
+	out - wypisywanie danych na output
 	cal - wołanie instrukcji z danego adresu
 	ret - ret powrót
 	sys - wykonanie komendy systemowej
 
+argumenty instrukcji - isstnieją 3 typy argumentów
+	-[R] wartość rejestru - musi być podana labelka rejestru(a-h)
+	-[C] stała - muszą być podane rodzaj dostępu oraz wartość
+	-[M] dane z pamięci - muszą być podane rodzaj dostępu oraz adres
+
+zapis argumentów - argumenty są zapisywane jako "TYP:wartość1,wartość2", gdzie typ to R(rejestr), C(stała) lub M(dane z pamięci). Są oddzielone średnikami. Przykład:
+	cpy([M] 3, 234; [R]: a)
+	add(...)
+
+specyfikacja instrukcji
+	cpy([R/C/M] from; [R] to) - kopiuje wartość z from do to
+	add([R/C/M] x; [R/C/M] y; [R] res) - res = x + y
+	sub([R/C/M] x; [R/C/M] y; [R] res) - res = x - y
+	mul([R/C/M] x; [R/C/M] y; [R] res) - res = x * y
+	div([R/C/M] x; [R/C/M] y; [R] res) - res = x / y
+	and([R/C/M] x; [R/C/M] y; [R] res) - res = x & y
+	lor([R/C/M] x; [R/C/M] y; [R] res) - res = x | y
+	not([R/C/M] x; [R] res) - res = !x
+	xor([R/C/M] x; [R/C/M] y; [R] res) - res = x ^ y
+	psh([R/C/M] x) - push x to the stack
+	pop([R] x) - pop from stack and insert into x
+	cmp([R/C/M] x; [R/C/M] y; [R] res) - res = (x > y) => 1, (x < y) => -1, (x == y) => 0
+	jmp([R/C/M] addr) - jump to address from addr
+	jeq([R/C/M] x; [R/C/M] y; [R/C/M] addr) - jump to addr if x == y
+	jne([R/C/M] x; [R/C/M] y; [R/C/M] addr) - jump to addr if x != y
+	out() - 
+	cal() - 
+	ret() - 
+	sys() - 
+
 syntax:
 	kazda instrukcja ma labelke o dlugosci 3 znaki ASCII
-	po labelce instrukcji są wczytywane argumenty w nawiasach oddzielone przecinkami
+	po labelce instrukcji są wczytywane argumenty w nawiasach oddzielone średnikami
 	instrukcje sa oddzielone srednikami
 	cos jest traktowane jako instrukcja jesli ma 3-literowa labelke i potem otwierajacy nawias, argumenty, nawias, srednik. Jesli labelka jest zla albo argumenty albo cokolwiek, wtedy powinien byc blad kompilacji. Jesli cos nie jest traktowane jako instrukcja to jest po prostu pomijane, mozna zalozyc, ze jest to komentarz
 	syntax nie bierze pod uwage spacji, EOL, tabow itp
