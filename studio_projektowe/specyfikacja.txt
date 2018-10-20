@@ -2,17 +2,21 @@ kompilator asemblera w pythonie generujący kod binarny do uruchomienia na maszy
 
 dane
 	rodzaje dostępu do danych
-		istnieją 4 rodzaje dostępu do danych ze względu na rozmiar, najmniejszy z nich to WORD(16bit), kolejno są jego wielokrotności: 2, 3, 4.
+		istnieją 4 rodzaje dostępu do danych:
+			B - BYTE(8bit)
+			W - WORD(16bit)
+			D - DWORD(32bit)
+			Q - QWORD(64bit)
 	wszystkie dane są signed
 
 pamięć
-	pamięć jest adresowana od 0, jej rozmiar musi być wielokrotnością WORD(16bit), little endian WORDwise
+	pamięć jest adresowana od 0, jej rozmiar musi być wielokrotnością BYTE(8bit), little endian bitwise
 
 rejestry
 	istnieje 8 rejestrów ogólnego przeznaczenia: a, b, c, d, e, f, g, h. Każdy z nich ma rozmiar QWORD
 
 stos
-	przechowuje wartości o rozmiarze QWORD
+	przechowuje wartości o rozmiarze DWORD
 
 opis instrukcji
 	cpy - kopiowanie wartości
@@ -33,16 +37,16 @@ opis instrukcji
 	out - wypisywanie danych na output
 	cal - wołanie instrukcji z danego adresu
 	ret - ret powrót
-	sys - wykonanie komendy systemowej
+	reg - zarejestrowanie danych do późniejszego wykonania
+	exe - wykonanie zarejestrowanych wcześniej danych
 
 argumenty instrukcji - isstnieją 3 typy argumentów
 	-[R] wartość rejestru - musi być podana labelka rejestru(a-h)
-	-[C] stała - muszą być podane rodzaj dostępu oraz wartość
+	-[C] stała - wymagana wartość, zawsze 64bit
 	-[M] dane z pamięci - muszą być podane rodzaj dostępu oraz adres
 
 zapis argumentów - argumenty są zapisywane jako "TYP:wartość1,wartość2", gdzie typ to R(rejestr), C(stała) lub M(dane z pamięci). Są oddzielone średnikami. Przykład:
-	cpy([M] 3, 234; [R]: a)
-	add(...)
+	cpy([M] D, 234; [R]: a)
 
 specyfikacja instrukcji
 	cpy([R/C/M] from; [R] to) - kopiuje wartość z from do to
@@ -60,20 +64,26 @@ specyfikacja instrukcji
 	jmp([R/C/M] addr) - jump to address from addr
 	jeq([R/C/M] x; [R/C/M] y; [R/C/M] addr) - jump to addr if x == y
 	jne([R/C/M] x; [R/C/M] y; [R/C/M] addr) - jump to addr if x != y
-	out() - 
-	cal() - 
-	ret() - 
-	sys() - 
+	out([R/C/M] data) - writes data to standard output
+	cal([R/C/M] addr) - push next function address to the stack and jump to addr
+	ret() - pop return address from the stack and jump there
+	reg([R/C/M] data) - stores data in memory buffer for further execute
+	exe([R/C] result) - executes data from buffer as system command, stores result code in result
 
 syntax:
-	kazda instrukcja ma labelke o dlugosci 3 znaki ASCII
-	po labelce instrukcji są wczytywane argumenty w nawiasach oddzielone średnikami
-	instrukcje sa oddzielone srednikami
-	cos jest traktowane jako instrukcja jesli ma 3-literowa labelke i potem otwierajacy nawias, argumenty, nawias, srednik. Jesli labelka jest zla albo argumenty albo cokolwiek, wtedy powinien byc blad kompilacji. Jesli cos nie jest traktowane jako instrukcja to jest po prostu pomijane, mozna zalozyc, ze jest to komentarz
-	syntax nie bierze pod uwage spacji, EOL, tabow itp
+	- kazda instrukcja ma labelke o dlugosci 3 znaki ASCII
+	- po labelce instrukcji są wczytywane argumenty w nawiasach oddzielone średnikami: typ nawiasu w [] oraz wartość
+	- instrukcje sa oddzielone srednikami ;
+	- komentarze zaczynają się od specjalnego znaku: # oraz kończą się, tak jak instrukcje, średnikiem ;
+	- syntax nie bierze pod uwage spacji, endl, tabow itp
 	przyklad:
-		add(r0,r1,r2);sub(r4,r1,r0);here is the comment where I say how this works;cmp(r0,r1,r2)
+		add([R]r0,[C]1,[R]r2); sub([C]400,[R]r2,[R]r0);#here is the comment where I say how this works ; cmp([R] r0, [C] 123, [R] r2)
 
 -parsowanie kodu asm
 -generowanie bytecodu
 -testy
+
+1. kompilacja
+	- skaner - analiza leksykalna - wyodrębnia tokeny i usuwa niepotrzebne znaki(spacje, komentarze itp)
+	- parser - analiza składniowa - buduje drzewo składniowe
+	- generator - przekład kodu asm na kod binarny według podanych wytycznych
