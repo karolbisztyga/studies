@@ -3,10 +3,10 @@ kompilator asemblera w pythonie generujący kod binarny do uruchomienia na maszy
 dane
 	rodzaje dostępu do danych
 		istnieją 4 rodzaje dostępu do danych:
-			B - BYTE(8bit)
-			W - WORD(16bit)
-			D - DWORD(32bit)
-			Q - QWORD(64bit)
+			byt - BYTE(8bit)
+			wrd - WORD(16bit)
+			dwd - DWORD(32bit)
+			qwd - QWORD(64bit)
 	wszystkie dane są signed
 
 pamięć
@@ -41,34 +41,34 @@ opis instrukcji
 	exe - wykonanie zarejestrowanych wcześniej danych
 
 argumenty instrukcji - isstnieją 3 typy argumentów
-	-[R] wartość rejestru - musi być podana labelka rejestru(a-h)
-	-[C] stała - wymagana wartość, zawsze 64bit
-	-[M] dane z pamięci - muszą być podane rodzaj dostępu oraz adres
+	-[reg] wartość rejestru - musi być podana labelka rejestru(a-h)
+	-[con] stała - wymagana wartość, zawsze 64bit
+	-[mem] dane z pamięci - muszą być podane rodzaj dostępu oraz adres
 
-zapis argumentów - argumenty są zapisywane jako "TYP:wartość1,wartość2", gdzie typ to R(rejestr), C(stała) lub M(dane z pamięci). Są oddzielone średnikami. Przykład:
-	cpy([M] D, 234; [R]: a)
+zapis argumentów - argumenty są zapisywane jako "TYP:wartość1;wartość2", gdzie typ to reg(rejestr), con(stała) lub mem(dane z pamięci). Są oddzielone średnikami. Przykład:
+	cpy([mem] dwd, 234; [reg]: a)
 
 specyfikacja instrukcji
-	cpy([R/C/M] from; [R] to) - kopiuje wartość z from do to
-	add([R/C/M] x; [R/C/M] y; [R] res) - res = x + y
-	sub([R/C/M] x; [R/C/M] y; [R] res) - res = x - y
-	mul([R/C/M] x; [R/C/M] y; [R] res) - res = x * y
-	div([R/C/M] x; [R/C/M] y; [R] res) - res = x / y
-	and([R/C/M] x; [R/C/M] y; [R] res) - res = x & y
-	lor([R/C/M] x; [R/C/M] y; [R] res) - res = x | y
-	not([R/C/M] x; [R] res) - res = !x
-	xor([R/C/M] x; [R/C/M] y; [R] res) - res = x ^ y
-	psh([R/C/M] x) - push x to the stack
-	pop([R] x) - pop from stack and insert into x
-	cmp([R/C/M] x; [R/C/M] y; [R] res) - res = (x > y) => 1, (x < y) => -1, (x == y) => 0
-	jmp([R/C/M] addr) - jump to address from addr
-	jeq([R/C/M] x; [R/C/M] y; [R/C/M] addr) - jump to addr if x == y
-	jne([R/C/M] x; [R/C/M] y; [R/C/M] addr) - jump to addr if x != y
-	out([R/C/M] data) - writes data to standard output
-	cal([R/C/M] addr) - push next function address to the stack and jump to addr
+	cpy([reg/con/mem] from; [reg] to) - kopiuje wartość z from do to
+	add([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x + y
+	sub([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x - y
+	mul([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x * y
+	div([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x / y
+	and([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x & y
+	lor([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x | y
+	not([reg/con/mem] x; [reg] res) - res = !x
+	xor([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x ^ y
+	psh([reg/con/mem] x) - push x to the stack
+	pop([reg] x) - pop from stack and insert into x
+	cmp([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = (x > y) => 1, (x < y) => -1, (x == y) => 0
+	jmp([reg/con/mem] addr) - jump to address from addr
+	jeq([reg/con/mem] x; [reg/con/mem] y; [reg/con/mem] addr) - jump to addr if x == y
+	jne([reg/con/mem] x; [reg/con/mem] y; [reg/con/mem] addr) - jump to addr if x != y
+	out([reg/con/mem] data) - writes data to standard output
+	cal([reg/con/mem] addr) - push next function address to the stack and jump to addr
 	ret() - pop return address from the stack and jump there
-	reg([R/C/M] data) - stores data in memory buffer for further execute
-	exe([R/C] result) - executes data from buffer as system command, stores result code in result
+	reg([reg/con/mem] data) - stores data in memory buffer for further execute
+	exe([reg/con] result) - executes data from buffer as system command, stores result code in result
 
 syntax:
 	- kazda instrukcja ma labelke o dlugosci 3 znaki ASCII
@@ -77,7 +77,7 @@ syntax:
 	- komentarze zaczynają się od specjalnego znaku: # oraz kończą się, tak jak instrukcje, średnikiem ;
 	- syntax nie bierze pod uwage spacji, endl, tabow itp
 	przyklad:
-		add([R]r0,[C]1,[R]r2); sub([C]400,[R]r2,[R]r0);#here is the comment where I say how this works ; cmp([R] r0, [C] 123, [R] r2)
+		add([reg]a;[C]1;[reg]b); sub([C]400;[reg]b;[reg]a);#here is the comment where I say how this works ; cmp([reg] a; [C] 123; [reg] b)
 
 -parsowanie kodu asm
 -generowanie bytecodu
@@ -87,3 +87,47 @@ syntax:
 	- skaner - analiza leksykalna - wyodrębnia tokeny i usuwa niepotrzebne znaki(spacje, komentarze itp)
 	- parser - analiza składniowa - buduje drzewo składniowe
 	- generator - przekład kodu asm na kod binarny według podanych wytycznych
+
+1.1 gramatyka
+
+terminals = 'cpy','add','sub','mul','div','and','lor','not','xor','psh','pop','cmp','jmp','jeq','jne','out','cal','ret','reg','exe','#',';',',','(',')','[',']','0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','byt','wrd','dwd','qwd','reg','con','mem'
+nonterminals = 
+	'S',	start symbol
+	'I',	instruction
+	'K',	comment
+	'A',	argument
+	'R',	register label
+	'N',	number
+	'M',	memory access type
+	'X',	any sign
+start_symbol = 'S'
+productions
+
+S -> IS | KS | I | K
+K -> #X;
+X -> any sign | XX
+I ->
+	cpy(A;A); |
+	add(A;A;A); |
+	sub(A;A;A); |
+	mul(A;A;A); |
+	div(A;A;A); |
+	and(A;A;A); |
+	lor(A;A;A); |
+	not(A;A); |
+	xor(A;A;A); |
+	psh(A); |
+	pop(A); |
+	cmp(A;A;A); |
+	jmp(A); |
+	jeq(A;A;A); |
+	jne(A;A;A); |
+	out(A); |
+	cal(A); |
+	ret(); |
+	reg(A); |
+	exe(A);
+A -> [reg] R | [con] N | [mem] M, N
+R -> a | b | c | d | e | f | g | h
+N -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | NN
+M -> byt | wrd | dwd | qwd
