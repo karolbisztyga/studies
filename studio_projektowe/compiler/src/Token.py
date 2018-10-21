@@ -13,3 +13,14 @@ class Token:
         self.__type = type
         self.__value = value
         self.__position = position
+
+
+class TokenType:
+    INSTRUCTION_LABEL = 'INSTRUCTION_LABEL'
+    DELIMITER = 'DELIMITER'
+    NUMBER = 'NUMBER'
+    REGISTER_LABEL = 'REGISTER_LABEL'
+    ACCESS_TYPE = 'ACCESS_TYPE'
+    ARGUMENT_TYPE = 'ARGUMENT_TYPE'
+
+    TYPES = [INSTRUCTION_LABEL, DELIMITER, NUMBER, REGISTER_LABEL, ACCESS_TYPE, ARGUMENT_TYPE]

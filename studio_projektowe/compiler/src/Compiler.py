@@ -19,7 +19,6 @@ from studio_projektowe.compiler.src.Parser import Parser
 from studio_projektowe.compiler.src.Generator import Generator
 
 class Compiler:
-    IO_METHODS = ['file', 'string']
 
     def __init__(self):
         self.__scanner = Scanner()
@@ -28,13 +27,18 @@ class Compiler:
 
     # input is just an asm code or path to file
     def compile(self, input_method, input_data):
-        if input_method not in Compiler.IO_METHODS:
+        if input_method not in IOMethod.IO_METHODS:
             raise Exception('invalid IO method')
         code = ''
-        if input_method == 'string':
+        if input_method == IOMethod.STRING:
             code = input_data
-        elif input_method == 'file':
+        elif input_method == IOMethod.FILE:
             with open(input_data, 'r') as input_file:
                 for line in input_file.readlines():
                     code += str(line)
         # todo call scanner parser and generator
+
+class IOMethod:
+    STRING = 'string'
+    FILE = 'file'
+    IO_METHODS = [STRING, FILE]

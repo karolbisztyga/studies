@@ -10,7 +10,21 @@
         removing redundant elements of the code(spaces, comments etc)
         generating a list of tokens from given code
 '''
-
+from studio_projektowe.compiler.src.Grammar import Grammar
 
 class Scanner:
-    pass
+    def __init__(self, code):
+        self.grammar = Grammar()
+        self.__code = code
+
+    def scan(self):
+        self.__clear_code()
+        self.__generate_tokens()
+
+    def clear_code(self):
+        # remove spaces, tabs, newlines etc.
+        # remove comments
+        pass
+
+    def generate_tokens(self):
+        pass

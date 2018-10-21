@@ -7,7 +7,7 @@
     @input - list of Token class objects
     @output - result of the syntax validation
     @brief
-        checks the syntax validation of given list of Tokens
+        performs the syntax validation of given list of Tokens
 '''
 
 class Parser:
