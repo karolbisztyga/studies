@@ -7,62 +7,70 @@
     @brief
         stores information about grammar needed to check syntax validity
 '''
+from studio_projektowe.compiler.src.Token import Token, TokenType
+from studio_projektowe.compiler.src.Exceptions import *
 
 class Grammar:
     def __init__(self):
-        self.TERMINALS = [
-            'cpy',      # instructions labels
-            'add',
-            'sub',
-            'mul',
-            'div',
-            'and',
-            'lor',
-            'not',
-            'xor',
-            'psh',
-            'pop',
-            'cmp',
-            'jmp',
-            'jeq',
-            'jne',
-            'out',
-            'cal',
-            'ret',
-            'reg',
-            'exe',
-            ';',        # delimiters
-            ',',
-            '(',
-            ')',
-            '[',
-            ']',
-            '0',        # digits
-            '1',
-            '2',
-            '3',
-            '4',
-            '5',
-            '6',
-            '7',
-            '8',
-            '9',
-            'a',        # registers labels
-            'b',
-            'c',
-            'd',
-            'e',
-            'f',
-            'g',
-            'h',
-            'byt',      # access types
-            'wrd',
-            'dwd',
-            'qwd',
-            'reg',      # argument types
-            'con',
-            'mem',
-        ]
+        self.TERMINALS = {
+            3: [
+                ('cpy', TokenType.INSTRUCTION_LABEL),
+                ('add', TokenType.INSTRUCTION_LABEL),
+                ('sub', TokenType.INSTRUCTION_LABEL),
+                ('mul', TokenType.INSTRUCTION_LABEL),
+                ('div', TokenType.INSTRUCTION_LABEL),
+                ('and', TokenType.INSTRUCTION_LABEL),
+                ('lor', TokenType.INSTRUCTION_LABEL),
+                ('not', TokenType.INSTRUCTION_LABEL),
+                ('xor', TokenType.INSTRUCTION_LABEL),
+                ('psh', TokenType.INSTRUCTION_LABEL),
+                ('pop', TokenType.INSTRUCTION_LABEL),
+                ('cmp', TokenType.INSTRUCTION_LABEL),
+                ('jmp', TokenType.INSTRUCTION_LABEL),
+                ('jeq', TokenType.INSTRUCTION_LABEL),
+                ('jne', TokenType.INSTRUCTION_LABEL),
+                ('out', TokenType.INSTRUCTION_LABEL),
+                ('cal', TokenType.INSTRUCTION_LABEL),
+                ('ret', TokenType.INSTRUCTION_LABEL),
+                ('reg', TokenType.INSTRUCTION_LABEL),
+                ('exe', TokenType.INSTRUCTION_LABEL),
+                ('byt', TokenType.ACCESS_TYPE),
+                ('wrd', TokenType.ACCESS_TYPE),
+                ('dwd', TokenType.ACCESS_TYPE),
+                ('qwd', TokenType.ACCESS_TYPE),
+                ('reg', TokenType.ARGUMENT_TYPE),
+                ('con', TokenType.ARGUMENT_TYPE),
+                ('mem', TokenType.ARGUMENT_TYPE),
+            ],
+            2: [
+                ('r0', TokenType.REGISTER_LABEL),
+                ('r1', TokenType.REGISTER_LABEL),
+                ('r2', TokenType.REGISTER_LABEL),
+                ('r3', TokenType.REGISTER_LABEL),
+                ('r4', TokenType.REGISTER_LABEL),
+                ('r5', TokenType.REGISTER_LABEL),
+                ('r6', TokenType.REGISTER_LABEL),
+                ('r7', TokenType.REGISTER_LABEL),
+            ],
+            1: [
+                (';', TokenType.DELIMITER),
+                (',', TokenType.DELIMITER),
+                ('(', TokenType.DELIMITER),
+                (')', TokenType.DELIMITER),
+                ('[', TokenType.DELIMITER),
+                (']', TokenType.DELIMITER),
+                ('0', TokenType.NUMBER),
+                ('1', TokenType.NUMBER),
+                ('2', TokenType.NUMBER),
+                ('3', TokenType.NUMBER),
+                ('4', TokenType.NUMBER),
+                ('5', TokenType.NUMBER),
+                ('6', TokenType.NUMBER),
+                ('7', TokenType.NUMBER),
+                ('8', TokenType.NUMBER),
+                ('9', TokenType.NUMBER),
+            ],
+        }
         self.NONTERMINALS = [
             'S', # start symbol
             'I', # instruction
@@ -105,14 +113,14 @@ class Grammar:
                 ('[','mem',']','M','N'),
             ],
             'R': [
-                ('a',),
-                ('b',),
-                ('c',),
-                ('d',),
-                ('e',),
-                ('f',),
-                ('g',),
-                ('h',),
+                ('r0',),
+                ('r1',),
+                ('r2',),
+                ('r3',),
+                ('r4',),
+                ('r5',),
+                ('r6',),
+                ('r7',),
             ],
             'N': [
                 ('0',),
@@ -136,3 +144,19 @@ class Grammar:
         }
         self.COMMENT_START = '#'
         self.COMMENT_END = ';'
+        self.MAX_TERMINAL_LENGTH = 3
+
+    # passed value must be as long as MAX_TERMINAL_LENGTH
+    def find_token(self, value, position):
+        try:
+            if len(value) > self.MAX_TERMINAL_LENGTH:
+                raise GrammarException('find token: value of length 3 expected, got ' + str(value) + ' of length ' + str(len(value)))
+            for terminal_length in range(self.MAX_TERMINAL_LENGTH):
+                terminal_length += 1
+                value_edited = value[0:terminal_length]
+                for terminal, type in self.TERMINALS[terminal_length]:
+                    if terminal[0:terminal_length] == value_edited:
+                        return Token(terminal, type, terminal_length, position)
+        except:
+            return None
+        return None

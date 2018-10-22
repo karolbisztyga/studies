@@ -11,32 +11,49 @@
         generating a list of tokens from given code
 '''
 from studio_projektowe.compiler.src.Grammar import Grammar
+from studio_projektowe.compiler.src.Token import Token, TokenType
+from studio_projektowe.compiler.src.Exceptions import *
 
 class Scanner:
-    def __init__(self):
+    def __init__(self, code):
         self.grammar = Grammar()
+        self.code = code
+        self.code_clean = False
 
-    def scan(self, code):
-        self.__clear_code()
-        self.__generate_tokens()
+    def scan(self):
+        self.clear_code()
+        self.generate_tokens()
 
-    def clear_code(self, code):
+    def clear_code(self):
         # remove spaces, tabs, newlines etc.
         content_to_remove = ['\t', '\r', '\n', ' ']
         for i in content_to_remove:
-            code = code.replace(i, '')
+            self.code = self.code.replace(i, '')
         # remove comments
         while True:
-            comment_start_index = code.find(self.grammar.COMMENT_START)
+            comment_start_index = self.code.find(self.grammar.COMMENT_START)
             if comment_start_index == -1:
                 break
-            comment_end_index = code.find(self.grammar.COMMENT_END, comment_start_index)
+            comment_end_index = self.code.find(self.grammar.COMMENT_END, comment_start_index)
             if comment_end_index == -1:
-                comment_end_index = len(code)
+                comment_end_index = len(self.code)
             else:
                 comment_end_index += 1
-            code = code[0:comment_start_index] + code[comment_end_index:len(code)]
-        return code
+            self.code = self.code[0:comment_start_index] + self.code[comment_end_index:len(self.code)]
+        self.code_clean = True
+        return self.code
 
-    def generate_tokens(self, code):
-        pass
+    def generate_tokens(self):
+        if not self.code_clean:
+            raise ScannerException('cannot generate tokens without clean code')
+        pos = 0
+        tokens = []
+        while pos < len(self.code):
+            current_terminal = None
+            token_start_pos = pos
+            token_end_pos = min(pos+self.grammar.MAX_TERMINAL_LENGTH, len(self.code))
+            token_candidate = self.code[token_start_pos:token_end_pos]
+            token_found = self.grammar.find_token(token_candidate, pos)
+            if token_found is None:
+                raise ScannerException('failed to fetch token: ' + str(token_candidate))
+            tokens.append(token_found)

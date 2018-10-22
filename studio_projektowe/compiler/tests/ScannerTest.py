@@ -13,11 +13,7 @@ import unittest
 
 
 class ScannerTest(unittest.TestCase):
-    def test_scan(self):
-        pass
-
     def test_clear_code(self):
-        scanner = Scanner()
         # data to be tested
         test_data = [
             '''
@@ -49,10 +45,26 @@ class ScannerTest(unittest.TestCase):
         # perform tests
         results = []
         for test in test_data:
-            result = scanner.clear_code(test)
+            scanner = Scanner(test)
+            result = scanner.clear_code()
             results.append(result)
         # compare results
         self.assertEqual(len(results), len(test_data))
         self.assertEqual(len(expected_data), len(test_data))
         for i in range(0, len(results)):
             self.assertEqual(results[i], expected_data[i])
+
+    def test_generate_tokens(self):
+        # data to be tested
+        test_data = [
+            'add([reg]a;[C]1;[reg]b);sub([C]400;[reg]b;[reg]a);cmp([reg]a;[C]123;[reg]b)'
+        ]
+        # expected data
+        # perform tests
+        results = []
+        for test in test_data:
+            scanner = Scanner(test)
+            test = scanner.clear_code()
+            result = scanner.generate_tokens()
+        # compare results
+            print(a+b)

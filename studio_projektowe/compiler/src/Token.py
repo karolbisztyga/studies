@@ -9,10 +9,11 @@
 '''
 
 class Token:
-    def __init__(self, type, value, position):
-        self.__type = type
-        self.__value = value
-        self.__position = position
+    def __init__(self, value, type, length, position):
+        self.value = value
+        self.type = type
+        self.position = position
+        self.length = length
 
 
 class TokenType:
