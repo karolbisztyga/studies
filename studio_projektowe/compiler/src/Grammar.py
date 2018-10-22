@@ -10,7 +10,7 @@
 
 class Grammar:
     def __init__(self):
-        self.terminals = [
+        self.TERMINALS = [
             'cpy',      # instructions labels
             'add',
             'sub',
@@ -63,7 +63,7 @@ class Grammar:
             'con',
             'mem',
         ]
-        self.nonterminals = [
+        self.NONTERMINALS = [
             'S', # start symbol
             'I', # instruction
             'A', # argument
@@ -71,8 +71,8 @@ class Grammar:
             'N', # number
             'M', # memory access type
         ]
-        start_symbol = self.nonterminals[0]
-        self.transitions = {
+        self.START_SYMBOL = self.NONTERMINALS[0]
+        self.TRANSITIONS = {
             'S': [
                 ('I','S'),
                 ('I',)
@@ -134,3 +134,5 @@ class Grammar:
                 ('qwd',),
             ],
         }
+        self.COMMENT_START = '#'
+        self.COMMENT_END = ';'
