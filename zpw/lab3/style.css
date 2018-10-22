@@ -1,0 +1,27 @@
+.zad3 {
+}
+
+#zad3-blue {
+	width: 300px;
+	height: 300px;
+	position: relative;
+	background-color: blue;
+}
+
+#zad3-red {
+	width: 200px;
+	height: 200px;
+	position: absolute;
+	left: 50px;
+	top: 50px;
+	background-color: red;
+}
+
+#zad3-yellow {
+	position: absolute;
+	left: 75px;
+	top: 75px;
+	width: 100px;
+	height: 100px;
+	background-color: yellow;
+}
