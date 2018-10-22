@@ -37,7 +37,7 @@ opis instrukcji
 	out - wypisywanie danych na output
 	cal - wołanie instrukcji z danego adresu
 	ret - ret powrót
-	reg - zarejestrowanie danych do późniejszego wykonania
+	rgd - zarejestrowanie danych do późniejszego wykonania
 	exe - wykonanie zarejestrowanych wcześniej danych
 
 argumenty instrukcji - isstnieją 3 typy argumentów
@@ -67,7 +67,7 @@ specyfikacja instrukcji
 	out([reg/con/mem] data) - writes data to standard output
 	cal([reg/con/mem] addr) - push next function address to the stack and jump to addr
 	ret() - pop return address from the stack and jump there
-	reg([reg/con/mem] data) - stores data in memory buffer for further execute
+	rgd([reg/con/mem] data) - stores data in memory buffer for further execute
 	exe([reg/con] result) - executes data from buffer as system command, stores result code in result
 
 syntax:

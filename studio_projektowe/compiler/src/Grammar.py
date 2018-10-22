@@ -32,7 +32,7 @@ class Grammar:
                 ('out', TokenType.INSTRUCTION_LABEL),
                 ('cal', TokenType.INSTRUCTION_LABEL),
                 ('ret', TokenType.INSTRUCTION_LABEL),
-                ('reg', TokenType.INSTRUCTION_LABEL),
+                ('rgd', TokenType.INSTRUCTION_LABEL),
                 ('exe', TokenType.INSTRUCTION_LABEL),
                 ('byt', TokenType.ACCESS_TYPE),
                 ('wrd', TokenType.ACCESS_TYPE),

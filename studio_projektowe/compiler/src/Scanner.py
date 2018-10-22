@@ -19,6 +19,7 @@ class Scanner:
         self.grammar = Grammar()
         self.code = code
         self.code_clean = False
+        self.tokens = []
 
     def scan(self):
         self.clear_code()
@@ -41,13 +42,11 @@ class Scanner:
                 comment_end_index += 1
             self.code = self.code[0:comment_start_index] + self.code[comment_end_index:len(self.code)]
         self.code_clean = True
-        return self.code
 
     def generate_tokens(self):
         if not self.code_clean:
             raise ScannerException('cannot generate tokens without clean code')
         pos = 0
-        tokens = []
         while pos < len(self.code):
             current_terminal = None
             token_start_pos = pos
@@ -55,5 +54,12 @@ class Scanner:
             token_candidate = self.code[token_start_pos:token_end_pos]
             token_found = self.grammar.find_token(token_candidate, pos)
             if token_found is None:
+                self.tokens.clear()
                 raise ScannerException('failed to fetch token: ' + str(token_candidate))
-            tokens.append(token_found)
+            pos += token_found.length
+            # concatenate numbers with multiple digits
+            if token_found.type == TokenType.NUMBER:
+                if self.tokens[-1].type == TokenType.NUMBER:
+                    self.tokens[-1].value += token_found.value
+                    continue
+            self.tokens.append(token_found)
