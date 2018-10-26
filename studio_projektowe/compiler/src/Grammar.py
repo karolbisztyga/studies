@@ -83,7 +83,7 @@ class Grammar:
         self.TRANSITIONS = {
             'S': [
                 ('I','S'),
-                ('I',)
+                (None,)
             ],
             'I': [
                 ('cpy','(','A',';','A',')',';'),
@@ -145,18 +145,3 @@ class Grammar:
         self.COMMENT_START = '#'
         self.COMMENT_END = ';'
         self.MAX_TERMINAL_LENGTH = 3
-
-    # passed value must be as long as MAX_TERMINAL_LENGTH
-    def find_token(self, value, position):
-        try:
-            if len(value) > self.MAX_TERMINAL_LENGTH:
-                raise GrammarException('find token: value of length 3 expected, got ' + str(value) + ' of length ' + str(len(value)))
-            for terminal_length in range(self.MAX_TERMINAL_LENGTH):
-                terminal_length += 1
-                value_edited = value[0:terminal_length]
-                for terminal, type in self.TERMINALS[terminal_length]:
-                    if terminal[0:terminal_length] == value_edited:
-                        return Token(terminal, type, terminal_length, position)
-        except:
-            return None
-        return None

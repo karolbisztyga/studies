@@ -52,7 +52,7 @@ class Scanner:
             token_start_pos = pos
             token_end_pos = min(pos+self.grammar.MAX_TERMINAL_LENGTH, len(self.code))
             token_candidate = self.code[token_start_pos:token_end_pos]
-            token_found = self.grammar.find_token(token_candidate, pos)
+            token_found = self.__find_token(token_candidate, pos)
             if token_found is None:
                 self.tokens.clear()
                 raise ScannerException('failed to fetch token: ' + str(token_candidate))
@@ -63,3 +63,20 @@ class Scanner:
                     self.tokens[-1].value += token_found.value
                     continue
             self.tokens.append(token_found)
+
+
+
+    # passed value must be as long as MAX_TERMINAL_LENGTH
+    def __find_token(self, value, position):
+        try:
+            if len(value) > self.grammar.MAX_TERMINAL_LENGTH:
+                raise GrammarException('find token: value of length 3 expected, got ' + str(value) + ' of length ' + str(len(value)))
+            for terminal_length in range(self.grammar.MAX_TERMINAL_LENGTH):
+                terminal_length += 1
+                value_edited = value[0:terminal_length]
+                for terminal, type in self.grammar.TERMINALS[terminal_length]:
+                    if terminal[0:terminal_length] == value_edited:
+                        return Token(terminal, type, terminal_length, position)
+        except:
+            return None
+        return None
