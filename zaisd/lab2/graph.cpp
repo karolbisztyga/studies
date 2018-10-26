@@ -17,88 +17,25 @@ struct Edge
 	int weight;
 };
 
-struct NodeRes
-{
-	size_t id;
-	size_t prev;
-	int value;
-};
-
-void printNodes(map<size_t, NodeRes>& nodes)
+void printNodes(map<size_t, int>& nodes)
 {
 	cout << "Nodes: " << endl;
 	for(auto it = nodes.begin(); it != nodes.end(); ++it)
 	{
-		cout << "[id: " << it->first << ", total weight: " << it->second.value << ", previous: " << it->second.prev << "]" << endl;
+		cout << "[id: " << it->first << ", total weight: " << it->second << "]" << endl;
 	}
 	cout << endl;
 }
 
 // find shortest path using matrix of neighbours
-bool shortestPathMatrix(vector<vector<int>>& neighbours, map<size_t, NodeRes>& nodes)
+bool maxFlowMatrix(vector<vector<int>>& neighbours, map<size_t, int>& nodes)
 {
-	bool changed = false;
-	size_t counter = 0;
-	do
-	{
-		changed = false;
-		for (size_t i = 0; i < neighbours.size() ; ++i)
-		{
-			for (size_t j = 0; j < neighbours[i].size() ; ++j)
-			{
-				const size_t from = i;
-				const size_t to = j;
-				const int weight = neighbours[i][j];
-				if (weight == 0 || nodes[from].value == INFINITY)
-				{
-					continue;
-				}
-				if (nodes[to].value > nodes[from].value + weight)
-				{
-					nodes[to].value = nodes[from].value + weight;
-					nodes[to].prev = nodes[from].id;
-					changed = true;
-					++counter;
-				}
-			}
-		}
-	} while (changed && counter < nodes.size());
-	return true;
+	return false;
 }
 
-bool shortestPathList(vector<Edge>& edges, map<size_t, NodeRes>& nodes)
+bool maxFlowList(vector<Edge>& edges, map<size_t, int>& nodes)
 {
-	bool changed = false;
-	bool found = false;
-	size_t counter = 0;
-	do
-	{
-		changed = false;
-		for (auto it = nodes.begin(); it != nodes.end(); ++it)
-		{
-			found = false;
-			for (Edge e : edges)
-			{
-				if (e.from != it->first || nodes[e.from].value == INFINITY)
-				{
-					if (found)
-					{
-						break;
-					}
-					continue;
-				}
-				found = true;
-				if (nodes[e.to].value > nodes[e.from].value + e.weight)
-				{
-					nodes[e.to].value = nodes[e.from].value + e.weight;
-					nodes[e.to].prev = e.from;
-					changed = true;
-					++counter;
-				}
-			}
-		}
-	} while (changed && counter < nodes.size());
-	return true;
+	return false;
 }
 
 int main(int argc, char **argv)
@@ -124,7 +61,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	bool result = false;
-	map<size_t, NodeRes> nodes;
+	map<size_t, int> nodes;
 	if (algorithm == 'm')
 	{
 		vector<vector<int>> weights;
@@ -156,10 +93,10 @@ int main(int argc, char **argv)
 		// perform algorithm
 		for (size_t i = 0; i < size ; ++i)
 		{
-			nodes[i] = {i, 0, INFINITY};
+			nodes[i] = INFINITY;
 		}
-		nodes[0] = {0, 0, 0};
-		result = shortestPathMatrix(weights, nodes);
+		nodes[0] = 0;
+		result = maxFlowMatrix(weights, nodes);
 	}
 	else
 	{
@@ -181,11 +118,11 @@ int main(int argc, char **argv)
 		}
 		for(size_t i = 0; i < edges.size(); ++i)
 		{
-			nodes[edges[i].from] = { i, 0, INFINITY };
-			nodes[edges[i].to] = { i, 0, INFINITY };
+			nodes[edges[i].from] = INFINITY;
+			nodes[edges[i].to] = INFINITY;
 		}
-		nodes[0] = { 0, 0, 0 };
-		result = shortestPathList(edges, nodes);
+		nodes[0] = 0;
+		result = maxFlowList(edges, nodes);
 	}
 	if (!result)
 	{
