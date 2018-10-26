@@ -27,9 +27,58 @@ void printNodes(map<size_t, int>& nodes)
 	cout << endl;
 }
 
-// find shortest path using matrix of neighbours
+/**
+	algorithm:
+	1. find an increasing path
+	2. find the value of the smallest capacity in this path
+	3. increase each path and total flow
+	repeat those steps until increasing path cannot be found
+	* backward flow - if there is enough points on the edge we can go backwards and substract from it
+*/
+
 bool maxFlowMatrix(vector<vector<int>>& neighbours, map<size_t, int>& nodes)
 {
+	bool increasingPathFound = false;
+	int totalFlow = 0;
+	do {
+		increasingPathFound = false;
+		// 1. find an increasing path
+		cout << "checking for increasing path" << endl;
+		size_t currNode = 0;
+		set<size_t> path = { 0 };
+		while (currNode != neighbours.size() - 1)
+		{
+			cout << "current node: " << currNode << endl;
+			bool nextNodeFound = false;
+			for(size_t i=0;i<neighbours[currNode].size();++i)
+			{
+				cout << neighbours[currNode][i] << " " ;
+				if (neighbours[currNode][i] != 0) 
+				{
+					// found next node
+					currNode = i;
+					path.insert(currNode);
+					nextNodeFound = true;
+					break;
+				}
+				// handle backward flow
+				//if (neighbours[i][currNode] != 0 && ...[enough points ...])
+			}
+			cout << endl;
+			if (!nextNodeFound)
+			{
+				// if no next node was found, there is no increasing path
+				increasingPathFound = false;
+				break;
+			}
+		}
+		// increasing path found if we end up searching for it in the final node
+		if (currNode == neighbours.size() - 1)
+		{
+			increasingPathFound = true;
+			// 2. find the value of the smallest capacity in this path
+		}
+	} while(increasingPathFound);
 	return false;
 }
 
