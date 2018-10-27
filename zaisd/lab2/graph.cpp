@@ -10,13 +10,6 @@ using namespace std;
 
 const int INFINITY = static_cast<unsigned int>(-1)/2;
 
-struct Edge
-{
-	size_t from;
-	size_t to;
-	int weight;
-};
-
 void printNodes(map<size_t, int>& nodes)
 {
 	cout << "Nodes: " << endl;
@@ -165,11 +158,155 @@ bool maxFlowMatrix(vector<vector<NeighbourFlow>>& neighbours)
 	return true;
 }
 
-bool maxFlowList(vector<Edge>& edges)
+
+
+
+// for list
+struct Edge
 {
-	
-	return false;
+	size_t from;
+	size_t to;
+	size_t currentFlow;
+	size_t maxFlow;
+};
+
+bool maxFlowList(vector<Edge>& edges, const size_t start, const size_t end)
+{
+	cout << "enter algorithm with start node=" << start << ", end node=" << end << endl;
+	bool increasingPathFound = false;
+	int totalFlow = 0;
+	do {
+		increasingPathFound = false;
+		// 1. find an increasing path
+//cout << "checking for increasing path" << endl;
+		size_t currNode = start;
+		vector<PathElement> path;
+		// go until final node is reached
+		while (currNode != end)
+		{
+//cout << "current node: " << currNode << endl;
+			bool nextNodeFound = false;
+			// handle forward flow
+			for (auto it = edges.begin(); it != edges.end(); ++it)
+			{
+//cout << it->from << "->" << it->to << " | " ;
+				if (it->from == currNode && it->currentFlow < it->maxFlow)
+				{
+					if (!pathContainsNode(path, it->to))
+					{
+//cout << " passed forward";
+						path.push_back({ it->from, it->to, it->maxFlow - it->currentFlow, 1 });
+						currNode = it->to;
+						nextNodeFound = true;
+						break;
+					}
+				}
+			}
+//cout << endl;
+			// handle backward flow
+			if (nextNodeFound)
+			{
+				continue;
+			}
+			for (auto it = edges.begin(); it != edges.end(); ++it)
+			{
+//cout << it->from << "->" << it->to << " | " ;
+				if (it->to == currNode)
+				{
+					if (it->currentFlow > 0)
+					{
+						if (!pathContainsNode(path, it->from))
+						{
+//cout << " passed backward "<<it->currentFlow << "/" << it->maxFlow ;
+							path.push_back({ it->to, it->from, it->currentFlow, -1 });
+							currNode = it->from;
+							nextNodeFound = true;
+							break;
+						}
+					}
+				}
+			}
+//cout << endl;
+			if (!nextNodeFound)
+			{
+				// if no next node was found, there is no increasing path
+				increasingPathFound = false;
+				break;
+			}
+		}
+		// increasing path found if we end up searching for it in the final node
+		if (currNode == end)
+		{
+			increasingPathFound = true;
+			// 2. find the value of the smallest capacity in this path
+//cout << "found increasing path, calculating smallest capacity" << endl;
+			size_t smallestCapacity = INFINITY;
+			for(auto it = path.begin(); it != path.end(); ++it)
+			{
+//cout << "  " << it->nodeFrom << " -> " << it->nodeTo << " [" << it->modifier << "] {"<< it->forward <<"}" << endl;
+				smallestCapacity = min(smallestCapacity, it->modifier);
+			}
+			if (smallestCapacity == INFINITY)
+			{
+//cout << "error: smallest capacity not found!" << endl;
+				return false;
+			}
+//cout << "calculated smallest capacity: " << smallestCapacity << endl;
+			// 3. increase/decrease each path element and total flow
+			Edge *edge = nullptr;
+			for(auto it = path.begin(); it != path.end(); ++it)
+			{
+				if (it->forward == 1)
+				{
+					for(size_t i = 0; i < edges.size(); ++i)
+					{
+						if(edges.at(i).from == it->nodeFrom && edges.at(i).to == it->nodeTo)
+						{
+							edge = &edges.at(i);
+						}
+					}
+					if (edge == nullptr)
+					{
+						cout << "error could not find edge from " << it->nodeFrom << " to " << it->nodeTo << endl;
+						return false;
+					}
+//cout << "    update " << it->nodeFrom << " -> " << it->nodeTo << "(" << edge->currentFlow << ")" << " by " << (static_cast<int>(smallestCapacity) * it->forward) << " => ";
+					//neighbours[it->nodeFrom][it->nodeTo].currentFlow += (static_cast<int>(smallestCapacity) * it->forward);
+					edge->currentFlow += (static_cast<int>(smallestCapacity) * it->forward);
+				}
+				else
+				{
+					
+					for(size_t i = 0; i < edges.size(); ++i)
+					{
+						if(edges.at(i).to == it->nodeFrom && edges.at(i).from == it->nodeTo)
+						{
+							edge = &edges.at(i);
+						}
+					}
+					if (edge == nullptr)
+					{
+						cout << "error could not find edge from " << it->nodeFrom << " to " << it->nodeTo << endl;
+						return false;
+					}
+//cout << "    update " << it->nodeFrom << " -> " << it->nodeTo << "(" << edge->currentFlow << ")" << " by " << (static_cast<int>(smallestCapacity) * it->forward) << " => ";
+					//neighbours[it->nodeFrom][it->nodeTo].currentFlow += (static_cast<int>(smallestCapacity) * it->forward);
+					edge->currentFlow += (static_cast<int>(smallestCapacity) * it->forward);
+				}
+//cout  << edge->currentFlow << endl;
+			}
+			totalFlow += smallestCapacity;
+//cout << "total flow updated to: " << totalFlow << endl;
+		}
+	} while(increasingPathFound);
+	cout << "total flow is: " << totalFlow << endl;
+	return true;
 }
+
+
+
+
+
 
 int main(int argc, char **argv)
 {
@@ -225,7 +362,7 @@ int main(int argc, char **argv)
 		}
 		result = maxFlowMatrix(weights);
 	}
-	else
+	else if (algorithm == 'l')
 	{
 		vector<Edge> edges;
 		// parsing file
@@ -233,17 +370,31 @@ int main(int argc, char **argv)
 		{
 			Edge edge;
 			edges.push_back(edge);
-		} while(infile >> edges.back().from && infile >> edges.back().to && infile >> edges.back().weight);
+		} while(infile >> edges.back().from && infile >> edges.back().to && infile >> edges.back().maxFlow);
 		edges.pop_back();
 		sort(edges.begin(), edges.end(), [](const Edge &e1, const Edge &e2) {
 			return e1.from < e2.from;
 		});
 		cout << "edges:" << endl;
+		size_t start = INFINITY;
+		size_t end = INFINITY;
 		for (size_t i = 0; i < edges.size(); ++i)
 		{
-			cout << edges.at(i).from << " " << edges.at(i).to << " " << edges.at(i).weight << endl;
+			edges.at(i).currentFlow = 0;
+			cout << edges.at(i).from << " " << edges.at(i).to << " " << edges.at(i).currentFlow << "/" << edges.at(i).maxFlow << endl;
+			start = min(start, edges.at(i).from);
+			start = min(start, edges.at(i).to);
+			if (end == INFINITY)
+			{
+				end = edges.at(i).from;
+			}
+			end = max(end, edges.at(i).from);
+			end = max(end, edges.at(i).to);
 		}
-		result = maxFlowList(edges);
+		if(start != INFINITY || end != INFINITY)
+		{
+			result = maxFlowList(edges, start, end);
+		}
 	}
 	if (!result)
 	{
