@@ -31,12 +31,39 @@ void printNodes(map<size_t, int>& nodes)
 	algorithm:
 	1. find an increasing path
 	2. find the value of the smallest capacity in this path
-	3. increase each path and total flow
+	3. increase/decrease each path element and total flow
 	repeat those steps until increasing path cannot be found
 	* backward flow - if there is enough points on the edge we can go backwards and substract from it
 */
 
-bool maxFlowMatrix(vector<vector<int>>& neighbours, map<size_t, int>& nodes)
+struct NeighbourFlow
+{
+	size_t currentFlow;
+	size_t maxFlow;
+};
+
+struct PathElement
+{
+	size_t nodeFrom;
+	size_t nodeTo;
+	size_t modifier;
+	// can be 1 or forward and -1 for backward
+	int forward;
+};
+
+bool pathContainsNode(vector<PathElement> &path, size_t node)
+{
+	for(auto it = path.begin(); it != path.end(); ++it)
+	{
+		if (it->nodeFrom == node || it->nodeTo == node)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool maxFlowMatrix(vector<vector<NeighbourFlow>>& neighbours)
 {
 	bool increasingPathFound = false;
 	int totalFlow = 0;
@@ -45,24 +72,54 @@ bool maxFlowMatrix(vector<vector<int>>& neighbours, map<size_t, int>& nodes)
 		// 1. find an increasing path
 		cout << "checking for increasing path" << endl;
 		size_t currNode = 0;
-		set<size_t> path = { 0 };
+		vector<PathElement> path;
 		while (currNode != neighbours.size() - 1)
 		{
 			cout << "current node: " << currNode << endl;
 			bool nextNodeFound = false;
 			for(size_t i=0;i<neighbours[currNode].size();++i)
 			{
-				cout << neighbours[currNode][i] << " " ;
-				if (neighbours[currNode][i] != 0) 
+				NeighbourFlow *forwardDirection = &neighbours[currNode][i];
+				cout << forwardDirection->currentFlow << "/" << forwardDirection->maxFlow << " " ;
+				if (forwardDirection->maxFlow != 0 && forwardDirection->currentFlow < forwardDirection->maxFlow) 
 				{
-					// found next node
-					currNode = i;
-					path.insert(currNode);
-					nextNodeFound = true;
-					break;
+					cout <<"[forward passed]";
+					if (!pathContainsNode(path, i))
+					{
+						// found next node
+						path.push_back({ currNode, i, forwardDirection->maxFlow - forwardDirection->currentFlow, 1 });
+						currNode = i;
+						nextNodeFound = true;
+						break;
+					}
 				}
-				// handle backward flow
-				//if (neighbours[i][currNode] != 0 && ...[enough points ...])
+				//if (!nextNodeFound)
+				//{
+					// handle backward flow
+					
+				//}
+			}
+			// handle backward flow
+			if (nextNodeFound)
+			{
+				continue;
+			}
+			for(size_t i=0;i<neighbours.size();++i)
+			{
+				NeighbourFlow *backwardDirection = &neighbours[i][currNode];
+				//cout << "----check for " <<  << endl;
+				if (backwardDirection->maxFlow != 0 && backwardDirection->currentFlow > 0)
+				{
+					cout <<"[backward passed]";
+					if (!pathContainsNode(path, i))
+					{
+						// found next node
+						path.push_back({ currNode, i, backwardDirection->currentFlow, -1 });
+						currNode = i;
+						nextNodeFound = true;
+						break;
+					}
+				}
 			}
 			cout << endl;
 			if (!nextNodeFound)
@@ -77,9 +134,40 @@ bool maxFlowMatrix(vector<vector<int>>& neighbours, map<size_t, int>& nodes)
 		{
 			increasingPathFound = true;
 			// 2. find the value of the smallest capacity in this path
+			cout << "found increasing path, calculating smallest capacity" << endl;
+			size_t smallestCapacity = INFINITY;
+			for(auto it = path.begin(); it != path.end(); ++it)
+			{
+				cout << "  " << it->nodeFrom << " -> " << it->nodeTo << " [" << (static_cast<int>(it->modifier)*it->forward) << "]" << endl;
+				smallestCapacity = min(smallestCapacity, it->modifier);
+			}
+			if (smallestCapacity == INFINITY)
+			{
+				cout << "error: smallest capacity not found!" << endl;
+				return false;
+			}
+			cout << "calculated smallest capacity: " << smallestCapacity << endl;
+			// 3. increase/decrease each path element and total flow
+			for(auto it = path.begin(); it != path.end(); ++it)
+			{
+				cout << "    update " << it->nodeFrom << " -> " << it->nodeTo << "(" << neighbours[it->nodeFrom][it->nodeTo].currentFlow << ")" << " by " << (static_cast<int>(smallestCapacity) * it->forward) << " => ";
+				if (it->forward == 1)
+				{
+					neighbours[it->nodeFrom][it->nodeTo].currentFlow += (static_cast<int>(smallestCapacity) * it->forward);
+				}
+				else
+				{
+					neighbours[it->nodeTo][it->nodeFrom].currentFlow += (static_cast<int>(smallestCapacity) * it->forward);
+				}
+				cout  << neighbours[it->nodeFrom][it->nodeTo].currentFlow << endl;
+			}
+			totalFlow += smallestCapacity;
+			cout << "total flow updated to: " << totalFlow << endl;
+			char c;cin>>c;
 		}
 	} while(increasingPathFound);
-	return false;
+	cout << "total flow is: " << totalFlow << endl;
+	return true;
 }
 
 bool maxFlowList(vector<Edge>& edges, map<size_t, int>& nodes)
@@ -110,10 +198,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	bool result = false;
-	map<size_t, int> nodes;
 	if (algorithm == 'm')
 	{
-		vector<vector<int>> weights;
+		vector<vector<NeighbourFlow>> weights;
 		size_t size = 0;
 		infile >> size;
 		cout << "read matrix of size " << size << endl;
@@ -127,7 +214,8 @@ int main(int argc, char **argv)
 		{
 			for (size_t j = 0; j < size; ++j)
 			{
-				infile >> weights[i][j];
+				infile >> weights[i][j].maxFlow;
+				weights[i][j].currentFlow = 0;
 			}
 		}
 		// print matrix
@@ -135,20 +223,15 @@ int main(int argc, char **argv)
 		{
 			for (size_t j = 0; j < size; ++j)
 			{
-				cout << weights[i][j] << " ";
+				cout << weights[i][j].currentFlow << "/" << weights[i][j].maxFlow << " ";
 			}
 			cout << endl;
 		}
-		// perform algorithm
-		for (size_t i = 0; i < size ; ++i)
-		{
-			nodes[i] = INFINITY;
-		}
-		nodes[0] = 0;
-		result = maxFlowMatrix(weights, nodes);
+		result = maxFlowMatrix(weights);
 	}
 	else
 	{
+		map<size_t, int> nodes;
 		vector<Edge> edges;
 		// parsing file
 		do
@@ -172,13 +255,13 @@ int main(int argc, char **argv)
 		}
 		nodes[0] = 0;
 		result = maxFlowList(edges, nodes);
+		cout << "shortest paths: " << endl;
+		printNodes(nodes);
 	}
 	if (!result)
 	{
 		cout << "error, algorithm failed\n";
         return 1;
 	}
-	cout << "shortest paths: " << endl;
-	printNodes(nodes);
 	return 0;
 }
