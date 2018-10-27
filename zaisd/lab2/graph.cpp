@@ -70,20 +70,22 @@ bool maxFlowMatrix(vector<vector<NeighbourFlow>>& neighbours)
 	do {
 		increasingPathFound = false;
 		// 1. find an increasing path
-		cout << "checking for increasing path" << endl;
+//cout << "checking for increasing path" << endl;
 		size_t currNode = 0;
 		vector<PathElement> path;
+		// go until final node is reached
 		while (currNode != neighbours.size() - 1)
 		{
-			cout << "current node: " << currNode << endl;
+//cout << "current node: " << currNode << endl;
 			bool nextNodeFound = false;
+			// handle forward flow
 			for(size_t i=0;i<neighbours[currNode].size();++i)
 			{
 				NeighbourFlow *forwardDirection = &neighbours[currNode][i];
-				cout << forwardDirection->currentFlow << "/" << forwardDirection->maxFlow << " " ;
+//cout << forwardDirection->currentFlow << "/" << forwardDirection->maxFlow << " " ;
 				if (forwardDirection->maxFlow != 0 && forwardDirection->currentFlow < forwardDirection->maxFlow) 
 				{
-					cout <<"[forward passed]";
+//cout <<"[forward passed]";
 					if (!pathContainsNode(path, i))
 					{
 						// found next node
@@ -93,11 +95,6 @@ bool maxFlowMatrix(vector<vector<NeighbourFlow>>& neighbours)
 						break;
 					}
 				}
-				//if (!nextNodeFound)
-				//{
-					// handle backward flow
-					
-				//}
 			}
 			// handle backward flow
 			if (nextNodeFound)
@@ -107,10 +104,9 @@ bool maxFlowMatrix(vector<vector<NeighbourFlow>>& neighbours)
 			for(size_t i=0;i<neighbours.size();++i)
 			{
 				NeighbourFlow *backwardDirection = &neighbours[i][currNode];
-				//cout << "----check for " <<  << endl;
 				if (backwardDirection->maxFlow != 0 && backwardDirection->currentFlow > 0)
 				{
-					cout <<"[backward passed]";
+//cout <<"[backward passed]";
 					if (!pathContainsNode(path, i))
 					{
 						// found next node
@@ -121,7 +117,7 @@ bool maxFlowMatrix(vector<vector<NeighbourFlow>>& neighbours)
 					}
 				}
 			}
-			cout << endl;
+//cout << endl;
 			if (!nextNodeFound)
 			{
 				// if no next node was found, there is no increasing path
@@ -134,23 +130,23 @@ bool maxFlowMatrix(vector<vector<NeighbourFlow>>& neighbours)
 		{
 			increasingPathFound = true;
 			// 2. find the value of the smallest capacity in this path
-			cout << "found increasing path, calculating smallest capacity" << endl;
+//cout << "found increasing path, calculating smallest capacity" << endl;
 			size_t smallestCapacity = INFINITY;
 			for(auto it = path.begin(); it != path.end(); ++it)
 			{
-				cout << "  " << it->nodeFrom << " -> " << it->nodeTo << " [" << (static_cast<int>(it->modifier)*it->forward) << "]" << endl;
+//cout << "  " << it->nodeFrom << " -> " << it->nodeTo << " [" << (static_cast<int>(it->modifier)*it->forward) << "]" << endl;
 				smallestCapacity = min(smallestCapacity, it->modifier);
 			}
 			if (smallestCapacity == INFINITY)
 			{
-				cout << "error: smallest capacity not found!" << endl;
+//cout << "error: smallest capacity not found!" << endl;
 				return false;
 			}
-			cout << "calculated smallest capacity: " << smallestCapacity << endl;
+//cout << "calculated smallest capacity: " << smallestCapacity << endl;
 			// 3. increase/decrease each path element and total flow
 			for(auto it = path.begin(); it != path.end(); ++it)
 			{
-				cout << "    update " << it->nodeFrom << " -> " << it->nodeTo << "(" << neighbours[it->nodeFrom][it->nodeTo].currentFlow << ")" << " by " << (static_cast<int>(smallestCapacity) * it->forward) << " => ";
+//cout << "    update " << it->nodeFrom << " -> " << it->nodeTo << "(" << neighbours[it->nodeFrom][it->nodeTo].currentFlow << ")" << " by " << (static_cast<int>(smallestCapacity) * it->forward) << " => ";
 				if (it->forward == 1)
 				{
 					neighbours[it->nodeFrom][it->nodeTo].currentFlow += (static_cast<int>(smallestCapacity) * it->forward);
@@ -159,19 +155,19 @@ bool maxFlowMatrix(vector<vector<NeighbourFlow>>& neighbours)
 				{
 					neighbours[it->nodeTo][it->nodeFrom].currentFlow += (static_cast<int>(smallestCapacity) * it->forward);
 				}
-				cout  << neighbours[it->nodeFrom][it->nodeTo].currentFlow << endl;
+//cout  << neighbours[it->nodeFrom][it->nodeTo].currentFlow << endl;
 			}
 			totalFlow += smallestCapacity;
-			cout << "total flow updated to: " << totalFlow << endl;
-			char c;cin>>c;
+//cout << "total flow updated to: " << totalFlow << endl;
 		}
 	} while(increasingPathFound);
 	cout << "total flow is: " << totalFlow << endl;
 	return true;
 }
 
-bool maxFlowList(vector<Edge>& edges, map<size_t, int>& nodes)
+bool maxFlowList(vector<Edge>& edges)
 {
+	
 	return false;
 }
 
@@ -231,7 +227,6 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		map<size_t, int> nodes;
 		vector<Edge> edges;
 		// parsing file
 		do
@@ -248,15 +243,7 @@ int main(int argc, char **argv)
 		{
 			cout << edges.at(i).from << " " << edges.at(i).to << " " << edges.at(i).weight << endl;
 		}
-		for(size_t i = 0; i < edges.size(); ++i)
-		{
-			nodes[edges[i].from] = INFINITY;
-			nodes[edges[i].to] = INFINITY;
-		}
-		nodes[0] = 0;
-		result = maxFlowList(edges, nodes);
-		cout << "shortest paths: " << endl;
-		printNodes(nodes);
+		result = maxFlowList(edges);
 	}
 	if (!result)
 	{
