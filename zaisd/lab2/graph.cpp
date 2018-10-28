@@ -372,9 +372,6 @@ int main(int argc, char **argv)
 			edges.push_back(edge);
 		} while(infile >> edges.back().from && infile >> edges.back().to && infile >> edges.back().maxFlow);
 		edges.pop_back();
-		sort(edges.begin(), edges.end(), [](const Edge &e1, const Edge &e2) {
-			return e1.from < e2.from;
-		});
 		cout << "edges:" << endl;
 		size_t start = INFINITY;
 		size_t end = INFINITY;
@@ -391,6 +388,15 @@ int main(int argc, char **argv)
 			end = max(end, edges.at(i).from);
 			end = max(end, edges.at(i).to);
 		}
+		
+		sort(edges.begin(), edges.end(), [](const Edge &e1, const Edge &e2) {
+	    	if (e1.from != e2.from)
+	    	{
+	        	return (e1.from < e2.from);
+	    	}
+	    	return (e1.to < e2.to);
+		});
+		cout << endl;
 		if(start != INFINITY || end != INFINITY)
 		{
 			result = maxFlowList(edges, start, end);
