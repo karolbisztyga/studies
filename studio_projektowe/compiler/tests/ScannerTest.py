@@ -12,7 +12,6 @@ from studio_projektowe.compiler.src.Scanner import Scanner
 from studio_projektowe.compiler.src.Exceptions import *
 import unittest
 
-
 class ScannerTest(unittest.TestCase):
     def test_clear_code(self):
         # data to be tested
@@ -65,14 +64,14 @@ class ScannerTest(unittest.TestCase):
     def test_scan(self):
         # data to be tested
         test_data = [
-            'add([reg]r0;[con]1;[reg]r1);sub([con]400;[reg]r1;[reg]r0);cmp([reg]r0;[con]123;[reg]r7)',
+            'add([reg]r0;[con]1;[reg]r1);sub([con]400;[reg]r1;[reg]r0);cmp([reg]r0;[con]123;[reg]r7);',
             '# i wanna copy memory value into register;  cpy([mem]14234; [reg]r7); # and then add it to current value;  add([reg]r0;[reg] r7; [reg ]r0) ;',
             'not([reg]r5; [reg]r1); pop # test endless comment', # this contains syntax error but it is not checked in scanner
             'jeq([con]14324112; [reg] r4; [reg] r2); copy([reg]r2;reg[r6]);', # 'copy' should fire an exception
         ]
         # expected data - number of tokens
         expected_data = [
-            53,
+            58,
             31,
             14,
             0,

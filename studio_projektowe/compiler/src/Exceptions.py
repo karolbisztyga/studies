@@ -6,3 +6,6 @@ class ScannerException(Exception):
 
 class GrammarException(Exception):
     pass
+
+class ParserException(Exception):
+    pass

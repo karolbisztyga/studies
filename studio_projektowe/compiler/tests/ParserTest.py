@@ -9,8 +9,12 @@
 '''
 
 from studio_projektowe.compiler.src.Parser import Parser
+from studio_projektowe.compiler.src.Scanner import Scanner
 import unittest
 
 
 class ParserTest(unittest.TestCase):
-    pass
+    def test_parse(self):
+        scanner = Scanner('add([con]20;[reg]r3;[reg]r1);')
+        scanner.scan()
+        self.assertTrue(Parser().parse(scanner.tokens))
