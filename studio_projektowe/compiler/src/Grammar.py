@@ -83,7 +83,7 @@ class Grammar:
         self.TRANSITIONS = {
             'S': [
                 ('I','S'),
-                ('I',),
+                (None,),
             ],
             'I': [
                 ('cpy','(','A',';','A',')',';'),

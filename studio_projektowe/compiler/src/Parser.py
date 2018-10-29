@@ -36,6 +36,11 @@ class Parser:
             if token_index != token_index_cache:
                 token_index = token_index_cache
             for transition_element in transition:
+                # check if there are any tokens let, if so go on, otherwise continue loop
+                if token_index >= len(self.tokens) - 1:
+                    if transition_element == None:
+                        return (True, token_index)
+                    continue
                 # if token is nonterminal - go deeper into recursion
                 if transition_element in self.grammar.NONTERMINALS:
                     parse_result = self.__parse(transition_element, token_index)
