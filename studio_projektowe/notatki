@@ -1,0 +1,19 @@
+use case'y
+	minifikowanie kodu - scanner
+	sprawdzanie na biezaco poprawnosci kodu - parser
+	kompilacja - scanner + parser + generator
+
+na nast raz
+	diagram gantta projektu z datami
+	modelowanie analityczne
+
+diagram
+	usecase
+	przebiegu
+	wspolpracy
+	aktywnosci
+	stanow
+	komunikacji
+	czasowy
+
+	albo uml albo yourdom
