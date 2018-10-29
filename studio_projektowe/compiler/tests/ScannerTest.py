@@ -65,16 +65,22 @@ class ScannerTest(unittest.TestCase):
         # data to be tested
         test_data = [
             'add([reg]r0;[con]1;[reg]r1);sub([con]400;[reg]r1;[reg]r0);cmp([reg]r0;[con]123;[reg]r7);',
-            '# i wanna copy memory value into register;  cpy([mem]14234; [reg]r7); # and then add it to current value;  add([reg]r0;[reg] r7; [reg ]r0) ;',
+            '# i wanna copy memory value into register;  cpy([mem]dwd, 14234; [reg]r7); # and then add it to current value;  add([reg]r0;[reg] r7; [reg ]r0) ;',
             'not([reg]r5; [reg]r1); pop # test endless comment', # this contains syntax error but it is not checked in scanner
             'jeq([con]14324112; [reg] r4; [reg] r2); copy([reg]r2;reg[r6]);', # 'copy' should fire an exception
+            '''
+            psh([mem] dwd, 34634);
+            pop([reg] r3);
+            cmp([mem] byt, 456452; [reg] r7; [reg] r0);
+            ''',
         ]
         # expected data - number of tokens
         expected_data = [
             58,
-            31,
+            37,
             14,
             0,
+            47,
         ]
         # perform tests
         results = []
@@ -88,5 +94,5 @@ class ScannerTest(unittest.TestCase):
         # compare results
         self.assertEqual(len(results), len(test_data))
         self.assertEqual(len(expected_data), len(test_data))
-        for i in range(0, len(results)):
+        for i in range(len(results)):
             self.assertEqual(results[i], expected_data[i])

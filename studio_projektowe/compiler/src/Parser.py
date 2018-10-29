@@ -18,16 +18,13 @@ class Parser:
     def __init__(self):
         self.grammar = Grammar()
 
-    '''
-        powinno sciagac kazdy resullt z kazdej galezi drzewa skladniowego(to co wylazi z rekurencji)
-        i jezeli jest jakis pozytywny wynik to znacy, ze skladnia jest poprawna a jak nie to nie
-        jeszcze nie ma waruunku stopu algorytmu
-    '''
     def parse(self, tokens):
         self.tokens = tokens
-        return self.__parse(self.grammar.START_SYMBOL, 0)
+        result = self.__parse(self.grammar.START_SYMBOL, 0)
+        if result[0]:
+            return (True, result[1] + 1)
+        return (False, 0)
 
-    # zacina sie na numerach... jakos zle wraca
     def __parse(self, expression, token_index):
         result = False
         token_index_cache = token_index
@@ -44,10 +41,12 @@ class Parser:
                 # if token is nonterminal - go deeper into recursion
                 if transition_element in self.grammar.NONTERMINALS:
                     parse_result = self.__parse(transition_element, token_index)
-                    result = result or parse_result[0]
+                    result = parse_result[0]
                     if result:
                         token_index = parse_result[1]
                         transition_completed = True
+                    else:
+                        return (False, 0)
                 # if token is a terminal, check if it occurs in self.tokens where self.tokens_index points
                 # if so, then increase self.tokens_index and proceed, otherwise there's a parsing exception
                 elif transition_element != None:
@@ -66,19 +65,3 @@ class Parser:
                 break
         return (result, token_index)
 
-'''
-            
-           
-            else:
-                for terminal in
-                    pass
-            for token in transition:
-                # if token is non terminal - go deeper into recursion
-                if token.value in self.grammar.NONTERMINALS:
-                    result = self.find_productions()
-                # if token is terminal, check if it can be popped from self.tokens
-                # if so, then pop it, otherwise there's a parsing exception
-                else:
-                    
-            if self.tokens[self.tokens_index] != token:
-                raise ParserException('')'''
