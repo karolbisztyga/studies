@@ -146,3 +146,9 @@ class Grammar:
         self.COMMENT_START = '#'
         self.COMMENT_END = ';'
         self.MAX_TERMINAL_LENGTH = 3
+
+    def get_number_of_terminals(self):
+        result = 0
+        for k, v in self.TERMINALS.items():
+            result += len(v)
+        return result

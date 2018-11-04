@@ -9,3 +9,9 @@ class GrammarException(Exception):
 
 class ParserException(Exception):
     pass
+
+class GeneratorException(Exception):
+    pass
+
+class CompilerException(Exception):
+    pass

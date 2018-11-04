@@ -1,5 +1,14 @@
 kompilator asemblera w pythonie generujący kod binarny do uruchomienia na maszynie wirtualnej
 
+sekcje
+	Wyróżnia się następujące sekcje:
+		- dane - pamięć zarezerwowana dla danego programu, jest adresowana od 0, jej rozmiar musi być wielokrotnością BYTE(8bit), little endian bitwise. W programie pisanym do kompilacji jest to po prostu zestaw znaków ASCII, które mogą być wykorzystane później w programie.
+		- kod programu - zestaw opcodów odpowiadających elementom gramatyki języka. W programie do kompilacji jest to kod zgodny z gramatyką opisaną poniżej.
+	- Na początku umieszczana jest sekcja danych, później sekcja kodu.
+	- Każda sekcja, nawet pusta, musi zaczynać się i kończyć następującą skewencją znaków: [sec]
+	- Prawidłowy plik zawiera więc dokładnie 3 miejsca, w których występuje [sec] oraz musi sié zaczyna© oraz koñczy© na tym znaczniku. Przykład:
+		[sec]sf3nroehey!1234567890very important stuff:)[sec]add([reg] r1; [mem] byt, 2; [reg] r0); out([reg] r0); out([mem] qwd, 7);[sec]
+
 dane
 	rodzaje dostępu do danych
 		istnieją 4 rodzaje dostępu do danych:
@@ -8,9 +17,6 @@ dane
 			dwd - DWORD(32bit)
 			qwd - QWORD(64bit)
 	wszystkie dane są signed
-
-pamięć
-	pamięć jest adresowana od 0, jej rozmiar musi być wielokrotnością BYTE(8bit), little endian bitwise
 
 rejestry
 	istnieje 8 rejestrów ogólnego przeznaczenia: r0, r1, r2, r3, r4, r5, r6, r7. Każdy z nich ma rozmiar QWORD
@@ -127,3 +133,16 @@ A -> [reg] R | [con] N | [mem] M, N
 R -> r0 | r1 | r2 | r3 | r4 | r5 | r6 | r7
 N -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | NN
 M -> byt | wrd | dwd | qwd
+
+pliki KBVM - pliki binarne, które są outputem kompilatora przeznaczone do uruchomienia na odpowiedniej maszynie wirtualnej.
+	- struktura:
+		- header - zawiera podstawowe informacje o pliku
+			- magic[8 bajtów] - w_char[4] ma wartoć KBVM zapisaną za pomocą wide char, czyli K 0 B 0 V 0 M 0
+			- data_size[8 bajtów] - uint64_t - unsigned wartość określająca rozmiar sekcji danych w bajtach
+			- code_size[8 bajtów] - uint64_t - unsigned wartość określająca rozmiar sekcji kodu w bajtach
+		- data - dane, które mogą być używane podczas działania programu([mem] byt, 14 odczyta jeden bajt na pozycji 14 z tej sekcji)
+		- code - ciąg instrukcji, które zostaną wykonane po uruchomieniu pliku w maszynie wirtualnej
+	- prawidłowo skonstruowany plik spełnia następujące założenia:
+		- łączna ilość bitów jest wielokrotnością 8(pełne bajty)
+		- magic = K 0 B 0 V 0 M 0
+		- rozmiar całego pliku = rozmiar headera(8+8+8=24B) + header.data_size + header.code_size
