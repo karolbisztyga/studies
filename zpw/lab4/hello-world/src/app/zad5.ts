@@ -1,7 +1,7 @@
-let arr1 = ["Ala", "ma", "kota"]
-let arr2 = [1, 2, 3, 4]
+//let arr1 = ["Ala", "ma", "kota"]
+//let arr2 = [1, 2, 3, 4]
 
-function tabliczka(arr1, arr2) {
+export function tabliczka(arr1, arr2) {
     let res = []
     for(let i = 0 ; i<Math.min(arr1.length,arr2.length) ; ++i)
     {
@@ -10,7 +10,7 @@ function tabliczka(arr1, arr2) {
     return res;
 }
 
-function tabliczka2(arr1, arr2) {
+export function tabliczka2(arr1, arr2) {
     let res = []
     let len = Math.min(arr1.length,arr2.length)
     let counter = 0
@@ -27,8 +27,9 @@ function tabliczka2(arr1, arr2) {
     }
     return res;
 }
-
+/*
 let arr = tabliczka2(arr1, arr2)
 for(let item of arr) {
     console.log(item);
 }
+*/

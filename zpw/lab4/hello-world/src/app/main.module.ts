@@ -1,16 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { HelloComponent } from './hello.component';
+import { ProductComponent } from './product/product.component';
 
 @NgModule({
   declarations: [
-    HelloComponent
+    ProductComponent
   ],
   imports: [
     BrowserModule
   ],
   providers: [],
-  bootstrap: [HelloComponent]
+  bootstrap: [ProductComponent]
 })
 export class MainModule {}

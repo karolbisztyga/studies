@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { tabliczka, tabliczka2 } from "./zad5";
 
 @Component({
   selector: 'hello-app',
@@ -14,5 +15,9 @@ export class HelloComponent {
   }
   a = 2+3;
   url = window.location.href;
+
+
+  tab1:String[] = tabliczka(["Ala", "ma", "kota"], [1, 2, 3, 4]);
+  tab2:String[] = tabliczka2(["Ala", "ma", "kota"], [1, 2, 3, 4]);
 
 }
