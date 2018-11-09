@@ -19,19 +19,17 @@ export class ProductServiceService {
   }
 
   addProduct(product: Product) {
-    this.products.push(product)
+    let newp = new Product()
+    newp.name = product.name
+    newp.description = product.description
+    newp.img_url = product.img_url
+    newp.price_for_one = product.price_for_one
+    newp.quantity = product.quantity
+    newp.id = this.products[this.products.length-1].id + 1
+    this.products.push(newp)
   }
 
   deleteProduct(id: number) {
-    /*for (let p of this.products) {
-      if (id == p.id) {
-        console.log('deleting ' + p.name)
-        const index:number = this.products.indexOf(p)
-        if (index > -1) {
-          this.products.splice(index, 1)
-        }
-      }
-    }*/
     for (let i=0 ; i<this.products.length ; ++i) {
       if (this.products[i].id == id) {
         this.products.splice(i, 1)

@@ -12,16 +12,21 @@ export class ProductsComponent implements OnInit {
 
   public products: Product[] 
   constructor(private productService:ProductServiceService) {
-    this.products = productService.getProducts()
   }
 
   ngOnInit() {
-
+    this.products = this.productService.getProducts()
   }
 
   deleteEvent(id: number) {
     console.log('parent deletes product ' + id)
     this.productService.deleteProduct(id)
+  }
+
+  addEvent(product: Product) {
+    console.log('parent adds product')
+    console.log(product)
+    this.productService.addProduct(product)
   }
 
 }

@@ -10,11 +10,11 @@ interface ProductInterface {
 */
 export class Product {
     constructor(
-        public id: number,
-        public name: string,
-        public quantity: number,
-        public price_for_one: number,
-        public description: string,
-        public img_url: string) {
+        public id: number = 0,
+        public name: string = "",
+        public quantity: number = 0,
+        public price_for_one: number = 0,
+        public description: string = "",
+        public img_url: string = "") {
         }
 }

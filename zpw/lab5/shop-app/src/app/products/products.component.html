@@ -9,5 +9,8 @@
           *ngFor="let p of products">
         </app-single-product>
     </div>
+    <app-new-product
+    class="row"
+    (add)="addEvent($event)"></app-new-product>
   </div>
 </div>
