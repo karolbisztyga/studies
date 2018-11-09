@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core'
 import { Product } from '../objects/product'
-import { products } from '../objects/fake_products'
+import { ProductServiceService } from '../product-service.service'
 
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
-  styleUrls: ['./products.component.scss']
+  styleUrls: ['./products.component.scss'],
+  providers: [ProductServiceService]
 })
 export class ProductsComponent implements OnInit {
 
-  public products: Product[] = products
-  constructor() {
-
+  public products: Product[] 
+  constructor(private productService:ProductServiceService) {
+    this.products = productService.getProducts()
   }
 
   ngOnInit() {
@@ -20,15 +21,7 @@ export class ProductsComponent implements OnInit {
 
   deleteEvent(id: number) {
     console.log('parent deletes product ' + id)
-    for (let p of products) {
-      if (id == p.id) {
-        console.log('deleting ' + p.name)
-        const index:number = products.indexOf(p)
-        if (index > -1) {
-          products.splice(index, 1)
-        }
-      }
-    }
+    this.productService.deleteProduct(id)
   }
 
 }
