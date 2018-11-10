@@ -57,13 +57,6 @@ class Scanner:
                 self.tokens.clear()
                 raise ScannerException('failed to fetch token: ' + str(token_candidate))
             pos += token_found.length
-            # concatenate numbers with multiple digits
-            '''
-            if token_found.type == TokenType.NUMBER:
-                if self.tokens[-1].type == TokenType.NUMBER:
-                    self.tokens[-1].value += token_found.value
-                    continue
-            '''
             self.tokens.append(token_found)
 
 

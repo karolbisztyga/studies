@@ -16,7 +16,7 @@ class DataHandler:
         pass
 
     def validate_data(self, input_data):
-        pass
+        return False
 
     def generate_binary(self, input_data):
-        pass
+        return None

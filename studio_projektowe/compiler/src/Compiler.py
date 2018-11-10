@@ -17,16 +17,21 @@
 from studio_projektowe.compiler.src.Scanner import Scanner
 from studio_projektowe.compiler.src.Parser import Parser
 from studio_projektowe.compiler.src.Generator import Generator
+from studio_projektowe.compiler.src.DataHandler import DataHandler
+from studio_projektowe.compiler.src.BinaryTools import BinaryTools
 from studio_projektowe.compiler.src.Exceptions import *
+import os
 
 class Compiler:
 
     def __init__(self):
         self.SECTION_DELIMITER = '[sec]'
         self.NUMBER_OF_SECTIONS = 2
+        self.endianess = Endianess.LITTLE
 
     # input is just an asm code or path to file
-    def compile(self, input_method, input_data):
+    # output should be file name or if it is None then it will be written to std out
+    def compile(self, input_method, input_data, output_path = None):
         if input_method not in IOMethod.IO_METHODS:
             raise Exception('invalid IO method')
         contents = ''
@@ -43,13 +48,63 @@ class Compiler:
         contents = contents.split(self.SECTION_DELIMITER)
         data = contents[1]
         code = contents[2]
-        # call parser, scanner and generator on given code
-        #self.__scanner = Scanner()
-        #self.__parser = Parser()
-        #self.__generator = Generator()
-        # TODO call scanner parser and generator
-        # TODO handle data and code separately, the best option is to validate them both
-        # TODO and after validation save them to a file, fisrt saving a properly preparated header
+        # initialize necessary objects
+        self.scanner = Scanner(code)
+        self.parser = Parser()
+        self.generator = Generator()
+        self.data_handler = DataHandler()
+
+        #validating data
+        if not self.data_handler.validate_data(data):
+            raise CompilerException('data validation failed')
+        #validating code
+        if not self.validate_code(code):
+            raise CompilerException('code validation failed')
+
+        # prepare output if necessary
+        output = None
+        if output_path is not None:
+            try:
+                with open(output_path, 'wb') as file:
+                    pass
+                if not os.path.isfile(output_path):
+                    raise CompilerException('could not create such file: ' + str(output_path))
+            except:
+                raise CompilerException('error while handling given path: ' + str(output_path))
+            output = open(output_path, 'wb')
+
+        # writing to output
+        self.write_header(output)
+        self.write_data(output, data)
+        self.write_code(output, code)
+
+    def validate_code(self, code):
+        try:
+            self.scanner.scan()
+            if not self.parser.parse(self.scanner.tokens)[0]:
+                return False
+        except:
+            return False
+        return True
+
+    def write_header(self, output, data, code):
+        header = b''
+        MAGIC = 'K0B0V0M0'
+        #data_size = BinaryTools.fill_with_zeros(bin(len(data)))
+        #code_size = len(code)
+        # TODO finish
+        if output is None:
+            print(header)
+        else:
+            output.write(header)
+
+    def write_data(self, output, data):
+        # TODO
+        pass
+
+    def write_code(self, output, code):
+        # TODO
+        pass
 
     def check_sections(self, input_data):
         if input_data[0:len(self.SECTION_DELIMITER)] != self.SECTION_DELIMITER:
@@ -64,3 +119,7 @@ class IOMethod:
     STRING = 'string'
     FILE = 'file'
     IO_METHODS = [STRING, FILE]
+
+class Endianess:
+    LITTLE = 'little_endian'
+    BIG = 'big_endian'
