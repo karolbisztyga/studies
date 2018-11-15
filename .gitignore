@@ -5,3 +5,5 @@
 **/*.mp4
 **/*.idea/*
 **/__pycache__
+**/node_modules*
+**/.vscode
