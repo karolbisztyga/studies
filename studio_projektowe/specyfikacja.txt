@@ -6,7 +6,7 @@ sekcje
 		- kod programu - zestaw opcodów odpowiadających elementom gramatyki języka. W programie do kompilacji jest to kod zgodny z gramatyką opisaną poniżej.
 	- Na początku umieszczana jest sekcja danych, później sekcja kodu.
 	- Każda sekcja, nawet pusta, musi zaczynać się i kończyć następującą skewencją znaków: [sec]
-	- Prawidłowy plik zawiera więc dokładnie 3 miejsca, w których występuje [sec] oraz musi sié zaczyna© oraz koñczy© na tym znaczniku. Przykład:
+	- Prawidłowy plik zawiera więc dokładnie 3 miejsca, w których występuje [sec] oraz musi sié zaczynać oraz kończyć na tym znaczniku. Przykład
 		[sec]sf3nroehey!1234567890very important stuff:)[sec]add([reg] r1; [mem] byt, 2; [reg] r0); out([reg] r0); out([mem] qwd, 7);[sec]
 
 dane
@@ -46,10 +46,10 @@ opis instrukcji
 	rgd - zarejestrowanie danych do późniejszego wykonania
 	exe - wykonanie zarejestrowanych wcześniej danych
 
-argumenty instrukcji - isstnieją 3 typy argumentów
+argumenty instrukcji - istnieją 3 typy argumentów
 	-[reg] wartość rejestru - musi być podana labelka rejestru(a-h)
 	-[con] stała - wymagana wartość, zawsze 64bit
-	-[mem] dane z pamięci - muszą być podane rodzaj dostępu oraz adres
+	-[mem] dane z pamięci - muszą być podane rodzaj dostępu oraz adres(number 64bit)
 
 zapis argumentów - argumenty są zapisywane jako "TYP:wartość1;wartość2", gdzie typ to reg(rejestr), con(stała) lub mem(dane z pamięci). Są oddzielone średnikami. Przykład:
 	cpy([mem] dwd, 234; [reg]: r0)

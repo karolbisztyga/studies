@@ -12,11 +12,13 @@
 from studio_projektowe.compiler.src.Exceptions import *
 
 class DataHandler:
-    def __init__(self):
-        pass
 
     def validate_data(self, input_data):
-        return False
+        try:
+            input_data.encode('ascii')
+        except UnicodeDecodeError:
+            return False
+        return True
 
     def generate_binary(self, input_data):
-        return None
+        return input_data.encode()

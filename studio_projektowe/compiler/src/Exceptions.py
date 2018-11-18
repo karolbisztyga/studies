@@ -15,3 +15,6 @@ class GeneratorException(Exception):
 
 class CompilerException(Exception):
     pass
+
+class BinaryToolsException(Exception):
+    pass

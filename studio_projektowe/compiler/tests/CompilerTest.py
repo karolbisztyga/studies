@@ -8,7 +8,7 @@
         unit tests for Compiler
 '''
 
-from studio_projektowe.compiler.src.Compiler import Compiler
+from studio_projektowe.compiler.src.Compiler import Compiler, IOMethod
 import unittest
 
 
@@ -47,3 +47,27 @@ class CompilerTest(unittest.TestCase):
         self.assertEqual(len(expected_results), len(results))
         for i in range(len(results)):
             self.assertEqual(results[i], expected_results[i])
+
+    def test_compile(self):
+        compiler = Compiler()
+        # data to be tested
+        code_samples = [
+            '[sec]hello123[sec]add([con]20;[reg]r3;[reg]r1);[sec]',
+            #'[sec]abcdefghijklmnoprstuwvxyz1234567890[sec][sec]',
+        ]
+        # expected data
+        expected_results = [
+            #b'K\x00B\x00V\x00M\x00\x08\x00\x00\x00\x00\x00\x00\x00\x1d\x00\x00\x00\x00\x00\x00\x00',
+            #b'K\x00B\x00V\x00M\x00\x23\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
+        ]
+        # perform tests
+        results = []
+        for sample in code_samples:
+            results.append(compiler.compile(IOMethod.STRING, sample))
+        # compare results
+        self.assertEqual(len(results), len(code_samples))
+        self.assertEqual(len(expected_results), len(results))
+        for i in range(len(results)):
+            self.assertEqual(results[i], expected_results[i])
+
+        # TODO this test

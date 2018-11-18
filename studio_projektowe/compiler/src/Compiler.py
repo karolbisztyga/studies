@@ -18,20 +18,22 @@ from studio_projektowe.compiler.src.Scanner import Scanner
 from studio_projektowe.compiler.src.Parser import Parser
 from studio_projektowe.compiler.src.Generator import Generator
 from studio_projektowe.compiler.src.DataHandler import DataHandler
-from studio_projektowe.compiler.src.BinaryTools import BinaryTools
+from studio_projektowe.compiler.src.BinaryTools import BinaryTools, Endianess
 from studio_projektowe.compiler.src.Exceptions import *
+from binascii import unhexlify
 import os
 
 class Compiler:
 
-    def __init__(self):
+    def __init__(self, endianess = None):
         self.SECTION_DELIMITER = '[sec]'
         self.NUMBER_OF_SECTIONS = 2
         self.endianess = Endianess.LITTLE
+        if endianess in [Endianess.LITTLE, Endianess.BIG]:
+            self.endianess = endianess
 
     # input is just an asm code or path to file
-    # output should be file name or if it is None then it will be written to std out
-    def compile(self, input_method, input_data, output_path = None):
+    def compile(self, input_method, input_data):
         if input_method not in IOMethod.IO_METHODS:
             raise Exception('invalid IO method')
         contents = ''
@@ -61,22 +63,17 @@ class Compiler:
         if not self.validate_code(code):
             raise CompilerException('code validation failed')
 
-        # prepare output if necessary
-        output = None
-        if output_path is not None:
-            try:
-                with open(output_path, 'wb') as file:
-                    pass
-                if not os.path.isfile(output_path):
-                    raise CompilerException('could not create such file: ' + str(output_path))
-            except:
-                raise CompilerException('error while handling given path: ' + str(output_path))
-            output = open(output_path, 'wb')
-
         # writing to output
-        self.write_header(output)
-        self.write_data(output, data)
-        self.write_code(output, code)
+        result = b''
+        result += self.generate_header(data, code)
+
+        result += self.generator.generate(self.scanner.tokens)
+
+        # this code will be moved to another handler
+        with open('out.bin', 'wb') as file:
+            file.write(result)
+
+        return result
 
     def validate_code(self, code):
         try:
@@ -87,24 +84,14 @@ class Compiler:
             return False
         return True
 
-    def write_header(self, output, data, code):
+    def generate_header(self, data, code):
         header = b''
-        MAGIC = 'K0B0V0M0'
-        #data_size = BinaryTools.fill_with_zeros(bin(len(data)))
-        #code_size = len(code)
-        # TODO finish
-        if output is None:
-            print(header)
-        else:
-            output.write(header)
-
-    def write_data(self, output, data):
-        # TODO
-        pass
-
-    def write_code(self, output, code):
-        # TODO
-        pass
+        # K0B0V0M0
+        MAGIC = 'K\x00B\x00V\x00M\x00'
+        header += str.encode(MAGIC)
+        header += BinaryTools.number_to_hex(len(data), self.endianess, 8)
+        header += BinaryTools.number_to_hex(len(code), self.endianess, 8)
+        return header
 
     def check_sections(self, input_data):
         if input_data[0:len(self.SECTION_DELIMITER)] != self.SECTION_DELIMITER:
@@ -119,7 +106,3 @@ class IOMethod:
     STRING = 'string'
     FILE = 'file'
     IO_METHODS = [STRING, FILE]
-
-class Endianess:
-    LITTLE = 'little_endian'
-    BIG = 'big_endian'
