@@ -35,7 +35,7 @@ class Compiler:
     # input is just an asm code or path to file
     def compile(self, input_method, input_data):
         if input_method not in IOMethod.IO_METHODS:
-            raise Exception('invalid IO method')
+            raise CompilerException('invalid IO method')
         contents = ''
         if input_method == IOMethod.STRING:
             contents = input_data
@@ -45,7 +45,7 @@ class Compiler:
                     contents += str(line)
         if not self.check_sections(contents):
             raise CompilerException('invalid sections, the file has to have ' + self.SECTION_DELIMITER +
-                                    ' on the beginning and on the end and has no contain ' +
+                                    ' on the beginning and on the end and has to contain ' +
                                     str(self.NUMBER_OF_SECTIONS) + ' sections')
         contents = contents.split(self.SECTION_DELIMITER)
         data = contents[1]
@@ -63,15 +63,14 @@ class Compiler:
         if not self.validate_code(code):
             raise CompilerException('code validation failed')
 
+        # generating hex codes
+        code = self.generator.generate(self.scanner.tokens)
+        data = self.data_handler.generate_binary(data)
         # writing to output
         result = b''
         result += self.generate_header(data, code)
-
-        result += self.generator.generate(self.scanner.tokens)
-
-        # this code will be moved to another handler
-        with open('out.bin', 'wb') as file:
-            file.write(result)
+        result += data
+        result += code
 
         return result
 

@@ -39,6 +39,7 @@ class ParserTest(unittest.TestCase):
             'exe([reg] r3);',
             'exe([con] 567567);',
             'exe([mem] dwd, 567567);',
+            'exe([con] 567567)',
         ]
 
         for i in ['add', 'sub', 'mul', 'div', 'and', 'lor', 'xor', 'cmp']:
@@ -72,6 +73,7 @@ class ParserTest(unittest.TestCase):
             (False, 0),
             (True, 8),
             (True, 13),
+            (False, 0),
             (False, 0),
         ]
 

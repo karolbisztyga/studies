@@ -21,8 +21,10 @@ class Parser:
     def parse(self, tokens):
         self.tokens = tokens
         result = self.__parse(self.grammar.START_SYMBOL, 0)
+        if result[1] != len(self.tokens):
+            return (False, 0)
         if result[0]:
-            return (True, result[1] + 1)
+            return (True, result[1])
         return (False, 0)
 
     def __parse(self, expression, token_index):
@@ -34,10 +36,9 @@ class Parser:
                 token_index = token_index_cache
             for transition_element in transition:
                 # check if there are any tokens let, if so go on, otherwise continue loop
-                if token_index >= len(self.tokens) - 1:
+                if token_index >= len(self.tokens):
                     if transition_element == None:
                         return (True, token_index)
-                    continue
                 # if token is nonterminal - go deeper into recursion
                 if transition_element in self.grammar.NONTERMINALS:
                     parse_result = self.__parse(transition_element, token_index)
@@ -46,18 +47,26 @@ class Parser:
                         token_index = parse_result[1]
                         transition_completed = True
                     else:
-                        return (False, 0)
+                        result = False
+                        break
                 # if token is a terminal, check if it occurs in self.tokens where self.tokens_index points
                 # if so, then increase self.tokens_index and proceed, otherwise there's a parsing exception
                 elif transition_element != None:
+                    try:
+                        self.tokens[token_index]
+                    except IndexError:
+                        return (False, 0)
                     if self.tokens[token_index].value == transition_element:
                         token_index += 1
                         if transition_element == transition[-1]:
                             transition_completed = True
                             result = True
+                        else:
+                            result = False
                     else:
+                        result = False
                         break
-                    if token_index >= len(self.tokens) - 1:
+                    if token_index > len(self.tokens):
                         return (True, token_index)
                 else:
                     return (True, token_index)
