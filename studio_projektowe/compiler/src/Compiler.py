@@ -20,8 +20,6 @@ from studio_projektowe.compiler.src.Generator import Generator
 from studio_projektowe.compiler.src.DataHandler import DataHandler
 from studio_projektowe.compiler.src.BinaryTools import BinaryTools, Endianess
 from studio_projektowe.compiler.src.Exceptions import *
-from binascii import unhexlify
-import os
 
 class Compiler:
 
@@ -61,7 +59,9 @@ class Compiler:
             raise CompilerException('data validation failed')
         #validating code
         if not self.validate_code(code):
-            raise CompilerException('code validation failed')
+            msg = 'code validation failed\n'
+            msg += 'near token ' + str(self.scanner.tokens[self.parser.furthest_token].value)
+            raise CompilerException(msg)
 
         # generating hex codes
         code = self.generator.generate(self.scanner.tokens)
@@ -77,9 +77,9 @@ class Compiler:
     def validate_code(self, code):
         try:
             self.scanner.scan()
-            if not self.parser.parse(self.scanner.tokens)[0]:
-                return False
-        except:
+        except ScannerException as e:
+            raise CompilerException(str(e))
+        if not self.parser.parse(self.scanner.tokens)[0]:
             return False
         return True
 

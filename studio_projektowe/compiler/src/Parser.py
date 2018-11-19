@@ -17,6 +17,7 @@ from studio_projektowe.compiler.src.Exceptions import *
 class Parser:
     def __init__(self):
         self.grammar = Grammar()
+        self.furthest_token = 0
 
     def parse(self, tokens):
         self.tokens = tokens
@@ -38,6 +39,7 @@ class Parser:
                 # check if there are any tokens let, if so go on, otherwise continue loop
                 if token_index >= len(self.tokens):
                     if transition_element == None:
+                        self.furthest_token = max(self.furthest_token, token_index)
                         return (True, token_index)
                 # if token is nonterminal - go deeper into recursion
                 if transition_element in self.grammar.NONTERMINALS:
@@ -55,6 +57,7 @@ class Parser:
                     try:
                         self.tokens[token_index]
                     except IndexError:
+                        self.furthest_token = max(self.furthest_token, token_index)
                         return (False, 0)
                     if self.tokens[token_index].value == transition_element:
                         token_index += 1
@@ -67,10 +70,13 @@ class Parser:
                         result = False
                         break
                     if token_index > len(self.tokens):
+                        self.furthest_token = max(self.furthest_token, token_index)
                         return (True, token_index)
                 else:
+                    self.furthest_token = max(self.furthest_token, token_index)
                     return (True, token_index)
             if transition_completed:
                 break
+        self.furthest_token = max(self.furthest_token, token_index)
         return (result, token_index)
 

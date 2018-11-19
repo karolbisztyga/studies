@@ -18,3 +18,6 @@ class CompilerException(Exception):
 
 class BinaryToolsException(Exception):
     pass
+
+class AppException(Exception):
+    pass
