@@ -8,7 +8,7 @@ import { Product } from '../objects/product'
 })
 export class NewProductComponent implements OnInit {
 
-  public product:Product = new Product()
+  //public product:Product = new Product()
   @Output('add') addEvent = new EventEmitter<Product>()
 
   constructor() { }
@@ -17,7 +17,7 @@ export class NewProductComponent implements OnInit {
   }
   
   updateInfo(key, value) {
-    switch(key) {
+    /*switch(key) {
       case 'name': {
         this.product.name = value
         break
@@ -38,11 +38,11 @@ export class NewProductComponent implements OnInit {
         this.product.img_url = value
         break
       }
-    }
+    }*/
   }
 
   add(event) {
-    this.addEvent.emit(this.product)
+    //this.addEvent.emit(this.product)
   }
 
 }

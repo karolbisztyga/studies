@@ -1,13 +1,5 @@
-/*
-interface ProductInterface {
-    id: number;
-    name: string;
-    quantity: number;
-    price_for_one: number;
-    description: string;
-    img_url: string;
-}
-*/
+import { ProductCategory } from "./product_category";
+
 export class Product {
     constructor(
         public id: number = 0,
@@ -15,6 +7,7 @@ export class Product {
         public quantity: number = 0,
         public price_for_one: number = 0,
         public description: string = "",
-        public img_url: string = "") {
+        public img_url: string = "",
+        public categories: ProductCategory[] = []) {
         }
 }

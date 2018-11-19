@@ -6,18 +6,21 @@ import { AppComponent } from './app.component';
 import { ProductsComponent } from './products/products.component';
 import { SingleProductComponent } from './single-product/single-product.component';
 import { NewProductComponent } from './new-product/new-product.component';
+import { BasketComponent } from './basket/basket.component';
 
 @NgModule({
   declarations: [
+    AppComponent,
     ProductsComponent,
     SingleProductComponent,
-    NewProductComponent
+    NewProductComponent,
+    BasketComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule
   ],
   providers: [],
-  bootstrap: [ProductsComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

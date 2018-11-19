@@ -1,10 +1,18 @@
 <div>
-  <h2>{{ product.name }}</h2>
-  <p>currently in store: <strong>{{ product.quantity }}</strong></p>
-  <p>price: <strong>{{ product.price_for_one }}</strong></p>
-  <div>about: <i>{{ product.description }}</i></div>
-  <img class="product-image" src="{{ product.img_url }}" />
-  <p>
-    <input type="button" value="delete" (click)="delete_current($event)" />
-  </p>
+  <div class="row">
+    <div class="col-8">
+      <div class="row">
+        <div class="col-12">
+          <h3>{{ product.name }}</h3>
+        </div>
+        <div class="col-12">
+          <i>{{ product.description }}</i>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+        <div class="price">{{ product.price_for_one }} PLN</div>
+        <input class="price" type="button" value="add to basket" (click)="add_current($event)" />
+    </div>
+  </div>
 </div>

@@ -1,16 +1,43 @@
 <div class="card" >
   <div class="card-body">
-    <h4 class="card-title">Products</h4>
     <div class="row">
-        <app-single-product 
-          (delete)="deleteEvent($event)"
-          class="col-md-3 product-item" 
-          [product]="p" 
-          *ngFor="let p of products">
-        </app-single-product>
+      <div class="col-9">
+          <h4 class="card-title">Grocery store</h4>
+      </div>
+      <div class="col-3">
+        {{ basketTotalPrice }}
+        <a routerLink="/basket" routerLinkActive="active">
+          <input type="button" value="basket" />
+        </a>
+      </div>
     </div>
-    <app-new-product
-    class="row"
-    (add)="addEvent($event)"></app-new-product>
+    <div class="row">
+      <div class="col-4">
+        <div class="row">
+          <div class="col-12" *ngFor="let pc of categories">
+              {{ pc }}
+          </div>
+        </div>
+        <ul>
+        </ul>
+      </div>
+      <div class="col-7">
+          <!--<app-single-product 
+            (delete)="deleteEvent($event)"
+            class="col-md-3 product-item" 
+            [product]="p" 
+            *ngFor="let p of products">
+          </app-single-product>-->
+          <div class="row">
+            <app-single-product 
+              (add)="addEvent($event)"
+              class="col-12 product-item" 
+              [product]="p" 
+              *ngFor="let p of products">
+            </app-single-product>
+          </div>
+      </div>
+
+      <div class="col-1"></div>
   </div>
 </div>

@@ -9,7 +9,7 @@ import { Product } from '../objects/product'
 export class SingleProductComponent implements OnInit {
 
   @Input() product:Product;
-  @Output('delete') deleteEvent = new EventEmitter<number>()
+  @Output('add') addEvent = new EventEmitter<number>()
 
   constructor() {
   }
@@ -17,7 +17,7 @@ export class SingleProductComponent implements OnInit {
   ngOnInit() {
   }
   
-  delete_current(event) {
-    this.deleteEvent.emit(this.product.id)
+  add_current(event) {
+    this.addEvent.emit(this.product.id)
   }
 }
