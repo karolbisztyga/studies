@@ -7,3 +7,4 @@
 **/__pycache__
 upx/
 android/
+**/node_modules*

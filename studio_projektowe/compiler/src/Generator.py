@@ -29,7 +29,6 @@ class Generator:
         for token in tokens:
             if token.value not in self.opcodes:
                 raise GeneratorException('unrecognized token in generator: '+  str(token))
-            # todo case of token type == NUMBER
             if token.type == TokenType.NUMBER:
                 if curr_num is None:
                     curr_num = token.value
