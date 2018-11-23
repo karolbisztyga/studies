@@ -4,3 +4,7 @@
 **/*.png
 **/*.mp4
 **/upx
+**/node_modules*
+**/*.idea/*
+**/__pycache__
+android/
