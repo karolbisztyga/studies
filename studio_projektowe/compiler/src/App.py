@@ -26,7 +26,9 @@ class App:
         print('      compile - default')
         print('    [path_to_output_file(optional)]')
 
-
+    # returns tuple (bool, bool)
+    #  first - if the run method exited successfuly
+    #  second - if the requested operation was executed properly
     def run(self, args):
         show_help_on_exception = True
         try:
@@ -54,7 +56,6 @@ class App:
             # perform desired action
             show_help_on_exception = False
             if action == Actions.CHECK:
-                compiler = Compiler()
                 valid = False
                 try:
                     valid = self.check(input_file_data)
@@ -62,8 +63,10 @@ class App:
                     raise AppException(str(e))
                 if valid:
                     print('1 the code is valid')
+                    return (True, True)
                 else:
                     print('0 the code is not valid')
+                    return (True, False)
             else:
                 # the output file is needed so check for existence
                 if output_file_path == None:
@@ -85,8 +88,8 @@ class App:
             if show_help_on_exception:
                 print('see help')
                 self.help()
-            return False
-        return True
+            return (False, False)
+        return (True, True)
 
     def compile(self, file_data):
         compiled = b''
@@ -99,7 +102,14 @@ class App:
 
     def minify(self, file_data):
         try:
-            scanner = Scanner(file_data)
+            compiler = Compiler()
+            if not compiler.check_sections(file_data):
+                raise CompilerException('invalid sections, the file has to have ' + Compiler.SECTION_DELIMITER +
+                        ' on the beginning and on the end and has to contain ' +
+                        str(Compiler.NUMBER_OF_SECTIONS) + ' sections')
+            file_contents = file_data.split(Compiler.SECTION_DELIMITER)
+            code = file_contents[2]
+            scanner = Scanner(code)
             scanner.scan()
             parser = Parser()
             parse_result = parser.parse(scanner.tokens)
@@ -108,12 +118,14 @@ class App:
                 msg = 'code validation failed\n'
                 msg += 'near token ' + str(scanner.tokens[parser.furthest_token].value)
                 raise ParserException(msg)
-            return scanner.code
+            data = file_contents[1]
+            return Compiler.SECTION_DELIMITER + data + Compiler.SECTION_DELIMITER + scanner.code + Compiler.SECTION_DELIMITER
         except Exception as e:
             raise AppException(str(e))
 
     def check(self, file_data):
-        scanner = Scanner(file_data)
+        code = file_data.split(Compiler.SECTION_DELIMITER)[2]
+        scanner = Scanner(code)
         try:
             scanner.scan()
         except ScannerException as e:

@@ -22,10 +22,10 @@ from studio_projektowe.compiler.src.BinaryTools import BinaryTools, Endianess
 from studio_projektowe.compiler.src.Exceptions import *
 
 class Compiler:
+    SECTION_DELIMITER = '[sec]'
+    NUMBER_OF_SECTIONS = 2
 
     def __init__(self, endianess = None):
-        self.SECTION_DELIMITER = '[sec]'
-        self.NUMBER_OF_SECTIONS = 2
         self.endianess = Endianess.LITTLE
         if endianess in [Endianess.LITTLE, Endianess.BIG]:
             self.endianess = endianess
@@ -42,10 +42,10 @@ class Compiler:
                 for line in input_file.readlines():
                     contents += str(line)
         if not self.check_sections(contents):
-            raise CompilerException('invalid sections, the file has to have ' + self.SECTION_DELIMITER +
+            raise CompilerException('invalid sections, the file has to have ' + Compiler.SECTION_DELIMITER +
                                     ' on the beginning and on the end and has to contain ' +
-                                    str(self.NUMBER_OF_SECTIONS) + ' sections')
-        contents = contents.split(self.SECTION_DELIMITER)
+                                    str(Compiler.NUMBER_OF_SECTIONS) + ' sections')
+        contents = contents.split(Compiler.SECTION_DELIMITER)
         data = contents[1]
         code = contents[2]
         # initialize necessary objects
@@ -93,11 +93,11 @@ class Compiler:
         return header
 
     def check_sections(self, input_data):
-        if input_data[0:len(self.SECTION_DELIMITER)] != self.SECTION_DELIMITER:
+        if input_data[0:len(Compiler.SECTION_DELIMITER)] != Compiler.SECTION_DELIMITER:
             return False
-        if input_data[-len(self.SECTION_DELIMITER):] != self.SECTION_DELIMITER:
+        if input_data[-len(Compiler.SECTION_DELIMITER):] != Compiler.SECTION_DELIMITER:
             return False
-        if len(input_data.split(self.SECTION_DELIMITER)) != self.NUMBER_OF_SECTIONS + 2:
+        if len(input_data.split(Compiler.SECTION_DELIMITER)) != Compiler.NUMBER_OF_SECTIONS + 2:
             return False
         return True
 

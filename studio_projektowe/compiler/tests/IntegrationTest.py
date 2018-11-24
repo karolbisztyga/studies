@@ -1,5 +1,3 @@
-import os, sys
-
 '''
     @file       IntegrationTest.py
     @author     Karol Bisztyga (karolbisztyga@gmail.com)
@@ -9,9 +7,10 @@ import os, sys
     @brief
         integration test which runs App.py with all the possible options
 '''
-import unittest, glob
+import unittest, glob, os, sys
 from studio_projektowe.compiler.src.Exceptions import IntegrationException
 from studio_projektowe.compiler.src.App import App
+from studio_projektowe.compiler.src.Compiler import Compiler
 
 
 class IntegrationTest(unittest.TestCase):
@@ -53,29 +52,48 @@ class IntegrationTest(unittest.TestCase):
             file.write(code)
         return os.path.abspath(current_name)
 
+    def read_sample(self, sample_path):
+        if not os.path.isfile(sample_path):
+            raise IntegrationException('unrecognized sample ' + str(sample_path))
+        with open(sample_path, 'r') as file:
+            return file.read()
+
     def test_ui(self):
         app = App()
         insample = self.prepare_sample('[sec]qwerty1234567[sec]sub([reg] r0; [mem] dwd, 3; [reg] r0);[sec]')
         outsample = self.prepare_sample('')
         # data to be tested
         args_samples = [
-            #'',
-            #insample,
-            #insample + ' minify_code',
-            #insample + ' check_code',
-            #insample + ' compile',
-            #insample + ' minify_code ' + outsample,
+            # nothing
+            '',
+            # too less args
+            insample,
+            insample + ' minify_code',
+            insample + ' check_code',
+            insample + ' compile',
+            # valid number of args
+            insample + ' minify_code ' + outsample,
             insample + ' compile ' + outsample,
+            # too many args but it does not result in error
+            insample + ' check_code ' + outsample,
+            # too many args
+            insample + ' minify_code a b',
+            insample + ' check_code a b',
+            insample + ' compile a b',
         ]
         # expected data
         expected_results = [
-            #False,
-            #False,
-            #False,
-            #True,
-            #False,
-            #True,
+            False,
+            False,
+            False,
             True,
+            False,
+            True,
+            True,
+            True,
+            False,
+            False,
+            False,
         ]
         # perform tests
         results = []
@@ -83,26 +101,161 @@ class IntegrationTest(unittest.TestCase):
             sample = 'studio_projektowe ' + sample
             sample = sample.split(' ')
             result = app.run(sample)
-            results.append(result)
+            results.append(result[0])
         # compare results
         self.assertEqual(len(results), len(args_samples))
         self.assertEqual(len(expected_results), len(results))
         for i in range(len(results)):
             self.assertEqual(results[i], expected_results[i])
-
-
-        result = app.run('')
-        print('--------' + str(result))
         self.clear_tmp()
 
     def test_minify_code(self):
-        # TODO
+        app = App()
+        # data to be tested
+        code_samples = [
+            'sub([reg] r0; [mem] dwd, 3; [reg] r0);',
+            '''
+                # load initial values;
+                cpy([con]120; [reg]r0);
+                cpy([con]11; [reg]r1);
+                # multiply them;
+                mul([reg]r1; [reg]r2; [reg] r3);
+                # write out the output;
+                out([reg] r3) ;
+            ''',
+        ]
+        # expected data
+        expected_results = [
+            'sub([reg]r0;[mem]dwd,3;[reg]r0);',
+            'cpy([con]120;[reg]r0);cpy([con]11;[reg]r1);mul([reg]r1;[reg]r2;[reg]r3);out([reg]r3);'
+        ]
+        # perform tests
+        results = []
+        for sample in code_samples:
+            full_sample = '[sec][sec]' + sample + '[sec]'
+            sample_file_in = self.prepare_sample(full_sample)
+            sample_file_out = self.prepare_sample('')
+            args = 'studio_projektowe ' +  sample_file_in + ' minify_code ' + sample_file_out
+            run_result = app.run(args.split(' '))
+            self.assertTrue(run_result)
+            output_code = self.read_sample(sample_file_out)
+            output_code = output_code.split(Compiler.SECTION_DELIMITER)[2]
+            results.append(output_code)
+        # compare results
+        self.assertEqual(len(results), len(code_samples))
+        self.assertEqual(len(expected_results), len(results))
+        for i in range(len(results)):
+            self.assertEqual(results[i], expected_results[i])
         self.clear_tmp()
 
     def test_check_code(self):
-        # TODO
+        app = App()
+        # data to be tested
+        code_samples = [
+            'sub([reg] r0; [mem] dwd, 3; [reg] r0);',
+            '''
+                # load initial values;
+                cpy([con]120; [reg]r0);
+                cpy([con]11; [reg]r1);
+                # multiply them;
+                mul([reg]r1; [reg]r2; [reg] r3);
+                # write out the output;
+                out([reg] r3) ;
+            ''',
+            'sub([reg] r; [mem] dwd, 3; [reg] r0);',
+            'sub([reg] r5; [mem] dwd, 3 [reg] r0);',
+            '''
+                # load initial values
+                cpy([con]120; [reg]r0);
+            ''',
+            '''
+                # load initial values;
+                cpy([con]120; [con]r0);
+            ''',
+            '''
+                # load initial values;
+                not([con]120; [reg]r0; [reg] r3);
+            ''',
+        ]
+        # expected data
+        expected_results = [
+            True,
+            True,
+            False,
+            False,
+            False,
+            False,
+            False,
+        ]
+        # perform tests
+        results = []
+        for sample in code_samples:
+            full_sample = '[sec][sec]' + sample + '[sec]'
+            sample_file_in = self.prepare_sample(full_sample)
+            args = 'studio_projektowe ' + sample_file_in + ' check_code'
+            result = app.run(args.split(' '))[1]
+            results.append(result)
+        # compare results
+        self.assertEqual(len(results), len(code_samples))
+        self.assertEqual(len(expected_results), len(results))
+        for i in range(len(results)):
+            self.assertEqual(results[i], expected_results[i])
         self.clear_tmp()
 
     def test_compile(self):
-        # TODO
+
+        app = App()
+        # data to be tested
+        code_samples = [
+            'sub([reg] r0; [mem] dwd, 3; [reg] r0);',
+            '''
+                # load initial values;
+                cpy([con]120; [reg]r0);
+                cpy([con]11; [reg]r1);
+                # multiply them;
+                mul([reg]r1; [reg]r2; [reg] r3);
+                # write out the output;
+                out([reg] r3) ;
+            ''',
+            'sub([reg] r; [mem] dwd, 3; [reg] r0);',
+            'sub([reg] r5; [mem] dwd, 3 [reg] r0);',
+            '''
+                # load initial values
+                cpy([con]120; [reg]r0);
+            ''',
+            '''
+                # load initial values;
+                cpy([con]120; [con]r0);
+            ''',
+            '''
+                # load initial values;
+                not([con]120; [reg]r0; [reg] r3);
+            ''',
+        ]
+        # expected data
+        expected_results = [
+            True,
+            True,
+            False,
+            False,
+            False,
+            False,
+            False,
+        ]
+        # perform tests
+        results = []
+        for sample in code_samples:
+            full_sample = '[sec][sec]' + sample + '[sec]'
+            sample_file_in = self.prepare_sample(full_sample)
+            sample_file_out = self.prepare_sample('')
+            args = 'studio_projektowe ' + sample_file_in + ' compile ' + sample_file_out
+            result = app.run(args.split(' '))[1]
+            if result == None:
+                result = False
+            results.append(result)
+        # compare results
+        self.assertEqual(len(results), len(code_samples))
+        self.assertEqual(len(expected_results), len(results))
+        for i in range(len(results)):
+            self.assertEqual(results[i], expected_results[i])
         self.clear_tmp()
