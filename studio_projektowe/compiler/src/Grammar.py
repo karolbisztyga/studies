@@ -7,8 +7,8 @@
     @brief
         stores information about grammar needed to check syntax validity
 '''
-from studio_projektowe.compiler.src.Token import Token, TokenType
-from studio_projektowe.compiler.src.Exceptions import *
+from compiler.src.Token import Token, TokenType
+from compiler.src.Exceptions import *
 
 class Grammar:
     def __init__(self):

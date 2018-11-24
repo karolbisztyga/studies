@@ -8,8 +8,8 @@
         unit tests for Compiler
 '''
 
-from studio_projektowe.compiler.src.Compiler import Compiler, IOMethod
-from studio_projektowe.compiler.src.Exceptions import CompilerException
+from compiler.src.Compiler import Compiler, IOMethod
+from compiler.src.Exceptions import CompilerException
 import unittest
 
 

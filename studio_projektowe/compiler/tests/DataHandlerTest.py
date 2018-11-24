@@ -8,7 +8,7 @@
         unit tests for DataHandler
 '''
 
-from studio_projektowe.compiler.src.DataHandler import DataHandler
+from compiler.src.DataHandler import DataHandler
 import unittest
 
 class DataHandlerTest(unittest.TestCase):

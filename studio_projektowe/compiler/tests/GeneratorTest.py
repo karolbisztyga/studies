@@ -8,9 +8,9 @@
         unit tests for Generator
 '''
 
-from studio_projektowe.compiler.src.Generator import Generator
-from studio_projektowe.compiler.src.Scanner import Scanner
-from studio_projektowe.compiler.src.Parser import Parser
+from compiler.src.Generator import Generator
+from compiler.src.Scanner import Scanner
+from compiler.src.Parser import Parser
 import unittest
 
 

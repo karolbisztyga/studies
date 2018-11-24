@@ -8,8 +8,8 @@
         unit tests for Parser
 '''
 
-from studio_projektowe.compiler.src.Parser import Parser
-from studio_projektowe.compiler.src.Scanner import Scanner
+from compiler.src.Parser import Parser
+from compiler.src.Scanner import Scanner
 import unittest
 
 

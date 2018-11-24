@@ -8,10 +8,10 @@
         here goes the logic of interaction with user
 '''
 import os, glob
-from studio_projektowe.compiler.src.Compiler import Compiler, IOMethod
-from studio_projektowe.compiler.src.Exceptions import AppException, ParserException, ScannerException, CompilerException
-from studio_projektowe.compiler.src.Scanner import Scanner
-from studio_projektowe.compiler.src.Parser import Parser
+from compiler.src.Compiler import Compiler, IOMethod
+from compiler.src.Exceptions import AppException, ParserException, ScannerException, CompilerException
+from compiler.src.Scanner import Scanner
+from compiler.src.Parser import Parser
 
 class App:
 

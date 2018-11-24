@@ -10,7 +10,7 @@
 import sys
 
 try:
-    from studio_projektowe.compiler.src.App import App
+    from compiler.src.App import App
 except ImportError:
     print('if you are using command line try python3 with option -m')
     exit(0)

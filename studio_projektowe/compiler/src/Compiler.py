@@ -14,12 +14,12 @@
         - returns bytecode as string or writes it to file
 '''
 
-from studio_projektowe.compiler.src.Scanner import Scanner
-from studio_projektowe.compiler.src.Parser import Parser
-from studio_projektowe.compiler.src.Generator import Generator
-from studio_projektowe.compiler.src.DataHandler import DataHandler
-from studio_projektowe.compiler.src.BinaryTools import BinaryTools, Endianess
-from studio_projektowe.compiler.src.Exceptions import *
+from compiler.src.Scanner import Scanner
+from compiler.src.Parser import Parser
+from compiler.src.Generator import Generator
+from compiler.src.DataHandler import DataHandler
+from compiler.src.BinaryTools import BinaryTools, Endianess
+from compiler.src.Exceptions import *
 
 class Compiler:
     SECTION_DELIMITER = '[sec]'

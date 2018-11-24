@@ -8,8 +8,8 @@
         unit tests for Scanner
 '''
 
-from studio_projektowe.compiler.src.Scanner import Scanner
-from studio_projektowe.compiler.src.Exceptions import *
+from compiler.src.Scanner import Scanner
+from compiler.src.Exceptions import *
 import unittest
 
 class ScannerTest(unittest.TestCase):

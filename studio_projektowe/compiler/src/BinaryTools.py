@@ -6,7 +6,7 @@
 
     @brief this class provides a set of independent methods which help in binary data handling
 '''
-from studio_projektowe.compiler.src.Exceptions import BinaryToolsException
+from compiler.src.Exceptions import BinaryToolsException
 from binascii import unhexlify
 
 class Endianess:

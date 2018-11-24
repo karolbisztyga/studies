@@ -10,9 +10,9 @@
         performs the syntax validation of given list of Tokens
 '''
 
-from studio_projektowe.compiler.src.Grammar import Grammar
-from studio_projektowe.compiler.src.Token import *
-from studio_projektowe.compiler.src.Exceptions import *
+from compiler.src.Grammar import Grammar
+from compiler.src.Token import *
+from compiler.src.Exceptions import *
 
 class Parser:
     def __init__(self):

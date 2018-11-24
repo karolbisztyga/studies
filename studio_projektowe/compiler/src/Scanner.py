@@ -10,9 +10,9 @@
         removing redundant elements of the code(spaces, comments etc)
         generating a list of tokens from given code
 '''
-from studio_projektowe.compiler.src.Grammar import Grammar
-from studio_projektowe.compiler.src.Token import *
-from studio_projektowe.compiler.src.Exceptions import *
+from compiler.src.Grammar import Grammar
+from compiler.src.Token import *
+from compiler.src.Exceptions import *
 
 class Scanner:
     def __init__(self, code):

@@ -8,9 +8,9 @@
         integration test which runs App.py with all the possible options
 '''
 import unittest, glob, os, sys
-from studio_projektowe.compiler.src.Exceptions import IntegrationException
-from studio_projektowe.compiler.src.App import App
-from studio_projektowe.compiler.src.Compiler import Compiler
+from compiler.src.Exceptions import IntegrationException
+from compiler.src.App import App
+from compiler.src.Compiler import Compiler
 
 
 class IntegrationTest(unittest.TestCase):

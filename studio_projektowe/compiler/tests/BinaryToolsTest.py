@@ -8,8 +8,8 @@
         unit tests for Binary Tools
 '''
 
-from studio_projektowe.compiler.src.BinaryTools import BinaryTools, Endianess
-from studio_projektowe.compiler.src.Exceptions import BinaryToolsException
+from compiler.src.BinaryTools import BinaryTools, Endianess
+from compiler.src.Exceptions import BinaryToolsException
 import unittest
 
 class BinaryToolsTest(unittest.TestCase):

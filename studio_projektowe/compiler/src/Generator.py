@@ -10,10 +10,10 @@
         converts given list of Tokens into binary code
         it assumes that the syntax has already been checked by the Parser and is correct
 '''
-from studio_projektowe.compiler.src.Grammar import Grammar
-from studio_projektowe.compiler.src.BinaryTools import BinaryTools, Endianess
-from studio_projektowe.compiler.src.Token import *
-from studio_projektowe.compiler.src.Exceptions import *
+from compiler.src.Grammar import Grammar
+from compiler.src.BinaryTools import BinaryTools, Endianess
+from compiler.src.Token import *
+from compiler.src.Exceptions import *
 
 class Generator:
     def __init__(self, endianess = None):
