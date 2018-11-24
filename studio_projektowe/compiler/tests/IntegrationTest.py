@@ -48,14 +48,14 @@ class IntegrationTest(unittest.TestCase):
             if not os.path.isfile(current_name):
                 valid_name = True
             n += 1
-        with open(current_name, 'w') as file:
-            file.write(code)
+        with open(current_name, 'wb') as file:
+            file.write(code.encode())
         return os.path.abspath(current_name)
 
     def read_sample(self, sample_path):
         if not os.path.isfile(sample_path):
             raise IntegrationException('unrecognized sample ' + str(sample_path))
-        with open(sample_path, 'r') as file:
+        with open(sample_path, 'rb') as file:
             return file.read()
 
     def test_ui(self):
@@ -138,7 +138,7 @@ class IntegrationTest(unittest.TestCase):
             args = 'studio_projektowe ' +  sample_file_in + ' minify_code ' + sample_file_out
             run_result = app.run(args.split(' '))
             self.assertTrue(run_result)
-            output_code = self.read_sample(sample_file_out)
+            output_code = self.read_sample(sample_file_out).decode()
             output_code = output_code.split(Compiler.SECTION_DELIMITER)[2]
             results.append(output_code)
         # compare results
@@ -194,6 +194,8 @@ class IntegrationTest(unittest.TestCase):
             sample_file_in = self.prepare_sample(full_sample)
             args = 'studio_projektowe ' + sample_file_in + ' check_code'
             result = app.run(args.split(' '))[1]
+            if result is None:
+                result = False
             results.append(result)
         # compare results
         self.assertEqual(len(results), len(code_samples))
@@ -234,13 +236,13 @@ class IntegrationTest(unittest.TestCase):
         ]
         # expected data
         expected_results = [
-            True,
-            True,
-            False,
-            False,
-            False,
-            False,
-            False,
+            b'K\x00B\x00V\x00M\x00\x00\x00\x00\x00\x00\x00\x00\x000\x00\x00\x00\x00\x00\x00\x00\x03\x00&\x00(\x00\x19\x00)\x00\x1c\x00$\x00(\x00\x1b\x00)\x00\x17\x00%\x00-\x00\x03\x00\x00\x00\x00\x00\x00\x00$\x00(\x00\x19\x00)\x00\x1c\x00\x27\x00$\x00',
+            b'K\x00B\x00V\x00M\x00\x00\x00\x00\x00\x00\x00\x00\x00~\x00\x00\x00\x00\x00\x00\x00\x01\x00&\x00(\x00\x1a\x00)\x00+\x00,\x00*\x00x\x00\x00\x00\x00\x00\x00\x00$\x00(\x00\x19\x00)\x00\x1c\x00\x27\x00$\x00\x01\x00&\x00(\x00\x1a\x00)\x00+\x00+\x00\x00\x00\x00\x00\x00\x00\x00\x00$\x00(\x00\x19\x00)\x00\x1d\x00\x27\x00$\x00\x04\x00&\x00(\x00\x19\x00)\x00\x1d\x00$\x00(\x00\x19\x00)\x00\x1e\x00$\x00(\x00\x19\x00)\x00\x1f\x00\x27\x00$\x00\x10\x00&\x00(\x00\x19\x00)\x00\x1f\x00\x27\x00$\x00',
+            b'',
+            b'',
+            b'',
+            b'',
+            b'',
         ]
         # perform tests
         results = []
@@ -249,9 +251,10 @@ class IntegrationTest(unittest.TestCase):
             sample_file_in = self.prepare_sample(full_sample)
             sample_file_out = self.prepare_sample('')
             args = 'studio_projektowe ' + sample_file_in + ' compile ' + sample_file_out
-            result = app.run(args.split(' '))[1]
-            if result == None:
-                result = False
+            run_result = app.run(args.split(' '))[0]
+            result = b''
+            if run_result:
+                result = self.read_sample(sample_file_out)
             results.append(result)
         # compare results
         self.assertEqual(len(results), len(code_samples))

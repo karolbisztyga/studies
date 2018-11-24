@@ -26,9 +26,6 @@ class App:
         print('      compile - default')
         print('    [path_to_output_file(optional)]')
 
-    # returns tuple (bool, bool)
-    #  first - if the run method exited successfuly
-    #  second - if the requested operation was executed properly
     def run(self, args):
         show_help_on_exception = True
         try:
@@ -88,8 +85,8 @@ class App:
             if show_help_on_exception:
                 print('see help')
                 self.help()
-            return (False, False)
-        return (True, True)
+            return (False, None)
+        return (True, None)
 
     def compile(self, file_data):
         compiled = b''
