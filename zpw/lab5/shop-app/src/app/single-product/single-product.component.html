@@ -5,8 +5,18 @@
         <div class="col-12">
           <h3>{{ product.name }}</h3>
         </div>
-        <div class="col-12">
-          <i>{{ product.description }}</i>
+        <div class=" col-12">
+          <input type="button" [value]="detailed ? 'less details' : 'more details'" (click)="change_detailed()" />
+        </div>
+        <div class="col-12" *ngIf="isDetailed()">
+          <div class="row">
+              <div class="col-6">
+                <img [src]="product.img_url" class="product-image" />
+              </div>
+              <div class="col-6">
+                <i>{{ product.description }}</i>
+              </div>
+          </div>
         </div>
       </div>
     </div>

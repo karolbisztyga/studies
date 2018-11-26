@@ -1,0 +1,6 @@
+baza danych:
+    produkty
+    zamowienia
+        zlozone(oczekujace)
+        w trakcie realizacji
+        zrealizowane

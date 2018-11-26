@@ -5,7 +5,7 @@
           <h4 class="card-title">Grocery store</h4>
       </div>
       <div class="col-3">
-        {{ basketTotalPrice }}
+        {{ basketTotalPrice | number : '1.2' }}
         <a routerLink="/basket" routerLinkActive="active">
           <input type="button" value="basket" />
         </a>

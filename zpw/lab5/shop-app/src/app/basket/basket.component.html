@@ -11,8 +11,39 @@
   </div>
   <div class="col-12">
     <div class="row">
+      <div class="col-12" *ngFor="let p of products">
+        <div class="row product-item">
+          <div class="col-10">
+            <div class="row">
+              <div class="col-3">name: {{ p.name }}</div>
+              <div class="col-3">
+                <div class="row">
+                  <div class="col-9">
+                    quantity: {{ p.quantity }}
+                  </div>
+                  <div class="col-3">
+                      <input type="button" value="+" class="incdecbtn" (click)="increaseQuantity($event, p)" />
+                      <input type="button" value="-" class="incdecbtn" (click)="decreaseQuantity($event, p)" />
+                  </div>
+                </div>
+              </div>
+              <div class="col-3">price for one: {{ p.price_for_one }}</div>
+              <div class="col-3">total price: {{ p.total_price | number : '1.2' }}</div>
+            </div>
+          </div>
+          <div class="col-2">
+            <input type="button" value="remove" (click)="remove($event, p)">
+          </div>
+        </div>
+      </div>
+
       <div class="col-6">
-        total price {{ price }}
+        <p>total basket price: <strong>{{ price | number : '1.2' }}</strong></p>
+      </div>
+      <div class="col-6">
+          <a *ngIf="productsNotEmpty()" routerLink="/checkout" routerLinkActive="active">
+            <input type="button" value="checkout" />
+          </a>
       </div>
     </div>
   </div>

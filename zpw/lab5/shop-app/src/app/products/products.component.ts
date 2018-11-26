@@ -8,7 +8,7 @@ import { BasketServiceService } from '../basket-service.service';
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.scss'],
-  providers: [ProductServiceService, BasketServiceService]
+  providers: [ProductServiceService]
 })
 export class ProductsComponent implements OnInit {
 

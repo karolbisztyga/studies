@@ -7,6 +7,8 @@ import { ProductsComponent } from './products/products.component';
 import { SingleProductComponent } from './single-product/single-product.component';
 import { NewProductComponent } from './new-product/new-product.component';
 import { BasketComponent } from './basket/basket.component';
+import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
+import { CheckoutComponent } from './checkout/checkout.component'
 
 @NgModule({
   declarations: [
@@ -14,11 +16,13 @@ import { BasketComponent } from './basket/basket.component';
     ProductsComponent,
     SingleProductComponent,
     NewProductComponent,
-    BasketComponent
+    BasketComponent,
+    CheckoutComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    Angular2FontawesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

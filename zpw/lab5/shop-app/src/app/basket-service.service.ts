@@ -82,7 +82,11 @@ export class BasketServiceService {
     for (let i=0 ; i<this.basketProducts.length ; ++i) {
       if (this.basketProducts[i].id == id) {
         console.log('decreasing qunatity of product of id ' + id)
-        ++this.basketProducts[i].quantity;
+        if(this.basketProducts[i].quantity > 1) {
+          --this.basketProducts[i].quantity;
+        } else {
+          this.deleteProduct(id)
+        }
         this.updatePrice()
       }
     }
@@ -97,6 +101,10 @@ export class BasketServiceService {
       this.totalPrice += product.price_for_one * product.quantity
     }
     console.log('basket service new price ' + this.totalPrice)
+    for (let i = 0; i < this.basketProducts.length; ++i) {
+      let product = this.basketProducts[i];
+      product.total_price = product.price_for_one * product.quantity;
+    }
   }
 
 }
