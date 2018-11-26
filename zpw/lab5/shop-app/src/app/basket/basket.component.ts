@@ -23,16 +23,23 @@ export class BasketComponent implements OnInit {
   remove(event, product) {
     console.log('remove ' + product.id)
     this.basketService.deleteProduct(product.id)
+    this.updatePrice()
   }
 
   increaseQuantity(event, product) {
     console.log('increase quantity of ' + product.id)
     this.basketService.increaseQuantity(product.id)
+    this.updatePrice()
   }
 
   decreaseQuantity(event, product) {
     console.log('decrease quantity of ' + product.id)
     this.basketService.decreaseQuantity(product.id)
+    this.updatePrice()
+  }
+
+  updatePrice() {
+    this.price = this.basketService.getTotalPrice()
   }
 
   productsNotEmpty() {
