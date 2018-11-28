@@ -4,3 +4,18 @@ baza danych:
         zlozone(oczekujace)
         w trakcie realizacji
         zrealizowane
+
+
+<script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyA-C5oRwQv2AP1FGG6RMnAn4xgrjPxryJo",
+    authDomain: "zpwlab.firebaseapp.com",
+    databaseURL: "https://zpwlab.firebaseio.com",
+    projectId: "zpwlab",
+    storageBucket: "zpwlab.appspot.com",
+    messagingSenderId: "1066861812685"
+  };
+  firebase.initializeApp(config);
+</script>
