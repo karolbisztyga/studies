@@ -3,3 +3,24 @@
     background-color: rgba(0, 0, 0, .1);
     border-radius: 10px;
 }
+
+.cat-item {
+    border-radius: 10px;
+    margin: 5px;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color .3s, border .3s;
+}
+
+.cat-item:hover {
+    background-color: rgba(0, 0, 0, .4);
+}
+
+.cat-item-unselected {
+    border: rgba(0, 0, 0, .4) 1px solid;
+}
+
+.cat-item-selected {
+    border: rgba(0, 0, 0, 1) 2px solid;
+}

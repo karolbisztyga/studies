@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { Product } from '../objects/product'
 import { ProductServiceService } from '../product-service.service'
-import { ProductCategory } from '../objects/product_category';
 import { BasketServiceService } from '../basket-service.service';
-import { Observable } from 'rxjs';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 
 @Component({
   selector: 'app-products',
@@ -15,32 +12,18 @@ import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 export class ProductsComponent implements OnInit {
 
   public products: Product[]
-  public categories: ProductCategory[]
+  public categoriesLoaded = false
+  public categories = []
   public basketTotalPrice: number
-
-  public data: AngularFireList<any[]>
 
   constructor(
     private productService:ProductServiceService,
-    private basketService:BasketServiceService,
-    private db: AngularFireDatabase) {
-    this.categories = [
-      ProductCategory.FRUIT,
-      ProductCategory.MEAL,
-      ProductCategory.SWEETS,
-      ProductCategory.VEGETABLE,
-    ]
+    private basketService:BasketServiceService) {
   }
 
   ngOnInit() {
     this.products = this.productService.getProducts()
     this.basketTotalPrice = this.basketService.totalPrice
-    this.data = this.db.list('/product')
-    console.log('data from DATABASE')
-    this.data.valueChanges().subscribe(res => {
-      console.log('+++')
-      console.log(res)
-    })
   }
 
   /*deleteEvent(id: number) {
@@ -49,12 +32,67 @@ export class ProductsComponent implements OnInit {
   }*/
 
   addEvent(productId: number) {
-    console.log('parent adds product')
-    console.log(productId)
     this.basketService.addProduct(productId)
     this.basketTotalPrice = this.basketService.getTotalPrice()
   }
 
+  cat_select(event, cat) {
+    if (this.categoriesLoaded === false) {
+      this.categories = []
+      for (let i in this.productService.categories) {
+        this.categories.push({ name: this.productService.categories[i], filter: false})
+      }
+      this.categoriesLoaded = true
+    }
+    for (let i in this.categories) {
+      if (this.categories[i].name == cat) {
+        this.categories[i].filter = !this.categories[i].filter
+      }
+    }
+    this.updateCatFilters()
+  }
+
+  showFilter(cat) {
+    cat = this.productService.categories[cat]
+    for (let i in this.categories) {
+      if (this.categories[i].name == cat) {
+        return this.categories[i].filter
+      }
+    }
+  }
+
+  updateCatFilters() {
+    console.log('update cat filters')
+    this.products = []
+    let allFiltersDisabled = true
+    for (let i in this.categories) {
+      if (this.categories[i].filter) {
+        allFiltersDisabled = false
+        break
+      }
+    }
+    if (allFiltersDisabled) {
+      for (let i in this.productService.products) {
+        this.products.push(this.productService.products[i])
+      }
+      return
+    }
+    for (let p in this.productService.products) {
+      var prod = this.productService.products[p]
+      for (let c in this.categories) {
+        if (!this.categories[c].filter) {
+          continue
+        }
+        let catname = this.categories[c].name
+        for (let pc in prod.categories) {
+          if (prod.categories.includes(catname)) {
+            this.products.push(prod)
+          }
+        }
+      }
+    }
+  }
+/*
   public getdata(listPath): Observable<any[]> {
     return this.db.list(listPath).valueChanges()
   }

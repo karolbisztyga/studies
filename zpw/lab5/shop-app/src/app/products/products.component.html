@@ -12,15 +12,22 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-4">
+      <div class="col-3">
         <div class="row">
-          <div class="col-12" *ngFor="let pc of categories">
-              {{ pc }}
+          <div class="col-12">
+            <strong>Filter by categories</strong>
+          </div>
+          <div class="col-12 cat-item"
+              [ngClass]="showFilter(pc.key) ? 'cat-item-selected' : 'cat-item-unselected'"
+              *ngFor="let pc of productService.categories | keyvalue" 
+              (click)="cat_select($event, productService.categories[pc.key])">
+            {{ productService.categories[pc.key] }}
           </div>
         </div>
         <ul>
         </ul>
       </div>
+      <div class="col-1"></div>
       <div class="col-7">
           <!--<app-single-product 
             (delete)="deleteEvent($event)"

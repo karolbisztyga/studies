@@ -17,7 +17,7 @@ export class SingleProductComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.product.img_url)
+    //console.log(this.product.img_url)
   }
   
   add_current(event) {
