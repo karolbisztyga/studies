@@ -13,6 +13,9 @@ export class ProductServiceService {
   private currId: number = 0
 
   constructor(private db: AngularFireDatabase) {
+  }
+
+  getProducts(callback) {
     this.data = this.db.list('/product')
     console.log('data from DATABASE')
     this.data.valueChanges().subscribe(res => {
@@ -35,11 +38,9 @@ export class ProductServiceService {
         product.id = ++this.currId
         this.products.push(product)
       }
+      callback()
     })
     console.log(this.products)
-  }
-
-  getProducts() {
     return this.products
   }
 

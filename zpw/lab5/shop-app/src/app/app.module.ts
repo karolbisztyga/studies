@@ -15,6 +15,7 @@ import { environment } from '../environments/environment'
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { LoginComponentComponent } from './login-component/login-component.component';
 import { DashboardComponentComponent } from './dashboard-component/dashboard-component.component';
+import { RegisterComponentComponent } from './register-component/register-component.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { DashboardComponentComponent } from './dashboard-component/dashboard-com
     BasketComponent,
     CheckoutComponent,
     LoginComponentComponent,
-    DashboardComponentComponent
+    DashboardComponentComponent,
+    RegisterComponentComponent
   ],
   imports: [
     BrowserModule,

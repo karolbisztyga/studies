@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core'
 import { Product } from '../objects/product'
 import { ProductServiceService } from '../product-service.service'
 import { BasketServiceService } from '../basket-service.service';
-import { AuthServiceService } from '../auth-service.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-products',
@@ -14,11 +12,17 @@ import { Router } from '@angular/router';
 export class ProductsComponent implements OnInit {
 
   public products: Product[]
+  public showProducts: Product[]
   public categoriesLoaded = false
   public categories = []
   public basketTotalPrice: number
   public username = ''
   public basketMsg = ''
+  public pagination = {
+    productsPerSite: 3,
+    site: 1,
+    numSites: 0
+  }
 
   constructor(
     private productService:ProductServiceService,
@@ -26,19 +30,94 @@ export class ProductsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.products = this.productService.getProducts()
+    let that = this
+    this.products = this.productService.getProducts(function() {
+      that.updateSort()
+      that.upadtePagination()
+    })
     this.basketTotalPrice = this.basketService.totalPrice
     this.basketMsg = this.basketService.msg
-    console.log('basket msg: ' + this.basketMsg)
     if (this.basketMsg.length > 0) {
       this.basketService.msg = ''
     }
+  }
+
+  upadtePagination() {
+    let from = (this.pagination.site - 1) * this.pagination.productsPerSite
+    let to = from + this.pagination.productsPerSite
+    this.pagination.numSites = Math.ceil(this.products.length / this.pagination.productsPerSite)
+    this.showProducts = this.products.slice(from, to)
+    console.log('pagination ' + from + ' ' + to + ' ' + this.pagination.numSites)
+    console.log(this.showProducts)
   }
 
   /*deleteEvent(id: number) {
     console.log('parent deletes product ' + id)
     this.productService.deleteProduct(id)
   }*/
+
+  incPage() {
+    this.pagination.site = Math.min(this.pagination.site + 1, this.pagination.numSites)
+    this.upadtePagination()
+  }
+
+  decPage() {
+    this.pagination.site = Math.max(this.pagination.site - 1, 1)
+    this.upadtePagination()
+  }
+
+  public currSort = {
+    by: 'name',
+    method: 'asc'
+  }
+  changeSort(key, value) {
+    switch(key) {
+      case 'by': {
+        this.currSort.by = value
+        break;
+      }
+      case 'method': {
+        this.currSort.method = value
+        break;
+      }
+    }
+    // update
+    this.updateSort()
+  }
+
+  updateSort() {
+    this.products.sort((p1,p2) => {
+      switch (this.currSort.by) {
+        case 'name': {
+          switch (this.currSort.method) {
+            case 'asc': {
+              return (p1.name <= p2.name) ? -1 : 1
+              break
+            }
+            case 'desc': {
+              return (p1.name > p2.name) ? -1 : 1
+              break
+            }
+          }
+          break
+        }
+        case 'price': {
+          switch (this.currSort.method) {
+            case 'asc': {
+              return (p1.price_for_one <= p2.price_for_one) ? -1 : 1
+              break
+            }
+            case 'desc': {
+              return (p1.price_for_one > p2.price_for_one) ? -1 : 1
+              break
+            }
+          }
+          break
+        }
+      }
+    })
+    this.upadtePagination()
+  }
 
   addEvent(productId: number) {
     this.basketService.addProduct(productId)
@@ -71,6 +150,7 @@ export class ProductsComponent implements OnInit {
   }
 
   updateCatFilters() {
+    this.pagination.site = 1
     console.log('update cat filters')
     this.products = []
     let allFiltersDisabled = true
@@ -80,26 +160,33 @@ export class ProductsComponent implements OnInit {
         break
       }
     }
+    console.log('all filters disabled: ' + allFiltersDisabled)
     if (allFiltersDisabled) {
       for (let i in this.productService.products) {
         this.products.push(this.productService.products[i])
       }
-      return
     }
-    for (let p in this.productService.products) {
-      var prod = this.productService.products[p]
-      for (let c in this.categories) {
-        if (!this.categories[c].filter) {
-          continue
-        }
-        let catname = this.categories[c].name
-        for (let pc in prod.categories) {
-          if (prod.categories.includes(catname)) {
-            this.products.push(prod)
+    else {
+      for (let p in this.productService.products) {
+        var prod = this.productService.products[p]
+        for (let c in this.categories) {
+          if (!this.categories[c].filter) {
+            continue
+          }
+          let catname = this.categories[c].name
+          for (let pc in prod.categories) {
+            if (prod.categories.includes(catname)) {
+              if (!this.products.includes(prod)) {
+                this.products.push(prod)
+              }
+            }
           }
         }
       }
     }
+    console.log('update categories')
+    console.log(this.products)
+    this.upadtePagination()
   }
 /*
   public getdata(listPath): Observable<any[]> {

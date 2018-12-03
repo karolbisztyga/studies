@@ -7,10 +7,12 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { LoginComponentComponent } from './login-component/login-component.component';
 import { AuthGuard } from './auth/auth.guard';
 import { DashboardComponentComponent } from './dashboard-component/dashboard-component.component';
+import { RegisterComponentComponent } from './register-component/register-component.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponentComponent },
+  { path: 'register', component: RegisterComponentComponent },
   {
     path: 'dashboard',
     component: DashboardComponentComponent,
