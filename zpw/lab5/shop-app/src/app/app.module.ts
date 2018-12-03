@@ -13,6 +13,8 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireModule } from 'angularfire2';
 import { environment } from '../environments/environment'
 import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { LoginComponentComponent } from './login-component/login-component.component';
+import { DashboardComponentComponent } from './dashboard-component/dashboard-component.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
     SingleProductComponent,
     NewProductComponent,
     BasketComponent,
-    CheckoutComponent
+    CheckoutComponent,
+    LoginComponentComponent,
+    DashboardComponentComponent
   ],
   imports: [
     BrowserModule,

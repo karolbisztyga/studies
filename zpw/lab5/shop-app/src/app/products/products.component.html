@@ -6,9 +6,14 @@
       </div>
       <div class="col-3">
         {{ basketTotalPrice | number : '1.2' }}
-        <a routerLink="/basket" routerLinkActive="active">
+        <a routerLink="/dashboard/basket" routerLinkActive="active">
           <input type="button" value="basket" />
         </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <strong>{{ basketMsg }}</strong>
       </div>
     </div>
     <div class="row">

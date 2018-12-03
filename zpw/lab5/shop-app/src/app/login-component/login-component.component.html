@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-6">
+    <span class="label">email</span>
+  </div>
+  <div class="col-6">
+    <input #emailfield (keyup)="updateData('email', emailfield.value)" value="karolbisztyga@gmail.com" />
+  </div>
+  
+  <div class="col-6">
+    <span class="label">password</span>
+  </div>
+  <div class="col-6">
+    <input #passwordfield type="password" (keyup)="updateData('password', passwordfield.value)" />
+  </div>
+  
+  <div class="col-6">
+    <span id="alert">
+      {{ msg }}
+    </span>
+  </div>
+  <div class="col-6">
+    <input type="button" value="login!" (click)="login()" />
+  </div>
+</div>

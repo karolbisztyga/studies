@@ -10,6 +10,7 @@ export class BasketServiceService {
 
   public basketProducts: Product[] = []
   public totalPrice = 0
+  public msg = ''
 
   constructor() {
   }
@@ -105,6 +106,13 @@ export class BasketServiceService {
       let product = this.basketProducts[i];
       product.total_price = product.price_for_one * product.quantity;
     }
+  }
+
+  orderMade() {
+    console.log('order made basket ' + this.basketProducts.length)
+    this.msg = 'order made'
+    this.basketProducts = []
+    this.updatePrice()
   }
 
 }

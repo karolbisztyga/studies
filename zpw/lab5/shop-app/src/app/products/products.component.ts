@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core'
 import { Product } from '../objects/product'
 import { ProductServiceService } from '../product-service.service'
 import { BasketServiceService } from '../basket-service.service';
+import { AuthServiceService } from '../auth-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-products',
@@ -15,6 +17,8 @@ export class ProductsComponent implements OnInit {
   public categoriesLoaded = false
   public categories = []
   public basketTotalPrice: number
+  public username = ''
+  public basketMsg = ''
 
   constructor(
     private productService:ProductServiceService,
@@ -24,6 +28,11 @@ export class ProductsComponent implements OnInit {
   ngOnInit() {
     this.products = this.productService.getProducts()
     this.basketTotalPrice = this.basketService.totalPrice
+    this.basketMsg = this.basketService.msg
+    console.log('basket msg: ' + this.basketMsg)
+    if (this.basketMsg.length > 0) {
+      this.basketService.msg = ''
+    }
   }
 
   /*deleteEvent(id: number) {

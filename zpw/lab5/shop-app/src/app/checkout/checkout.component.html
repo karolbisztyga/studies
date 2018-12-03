@@ -50,11 +50,14 @@
   </div>
 
   <div class="col-6">
-      <a routerLink="/basket" routerLinkActive="active">
+      <a routerLink="/dashboard/basket" routerLinkActive="active">
         <input type="button" value="back to basket" />
       </a>
   </div>
   <div class="col-6">
       <input type="button" value="confirm" (click)="confirm()" />
+  </div>
+  <div class="col-6">
+      <span id="alert">{{ msg }}</span>
   </div>
 </div>

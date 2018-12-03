@@ -5,7 +5,7 @@
     </h1>
   </div>
   <div class="col-6">
-      <a routerLink="/products" routerLinkActive="active">
+      <a routerLink="/dashboard" routerLinkActive="active">
         <input type="button" value="back to store" />
       </a>
   </div>
@@ -41,7 +41,7 @@
         <p>total basket price: <strong>{{ price | number : '1.2' }}</strong></p>
       </div>
       <div class="col-6">
-          <a *ngIf="productsNotEmpty()" routerLink="/checkout" routerLinkActive="active">
+          <a *ngIf="productsNotEmpty()" routerLink="/dashboard/checkout" routerLinkActive="active">
             <input type="button" value="checkout" />
           </a>
       </div>

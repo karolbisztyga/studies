@@ -18,8 +18,9 @@ export class AuthServiceService {
   getUser(): User | null {
     return this.fireAuth.auth.currentUser
   }
-  login({email, password}: Credentials) {
-    return this.fireAuth.auth.signInWithEmailAndPassword(email, password);
+
+  login({email, password}: Credentials, callback, errCallback) {
+    return this.fireAuth.auth.signInWithEmailAndPassword(email, password).then(callback).catch(errCallback);
   }
 
   register({email, password}: Credentials) {
@@ -29,6 +30,7 @@ export class AuthServiceService {
   logout() {
     return this.fireAuth.auth.signOut();
   }
+
   readonly authState$: Observable<User | null> = this.fireAuth.authState;
 }
 
