@@ -16,6 +16,11 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { LoginComponentComponent } from './login-component/login-component.component';
 import { DashboardComponentComponent } from './dashboard-component/dashboard-component.component';
 import { RegisterComponentComponent } from './register-component/register-component.component';
+import { AdminComponentComponent } from './admin-component/admin-component.component';
+import { AdminPanelComponentComponent } from './admin-panel-component/admin-panel-component.component';
+import { OrdersManagementComponentComponent } from './orders-management-component/orders-management-component.component';
+import { ProductsManagementComponentComponent } from './products-management-component/products-management-component.component';
+import { DummyManagementComponentComponent } from './dummy-management-component/dummy-management-component.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +32,12 @@ import { RegisterComponentComponent } from './register-component/register-compon
     CheckoutComponent,
     LoginComponentComponent,
     DashboardComponentComponent,
-    RegisterComponentComponent
+    RegisterComponentComponent,
+    AdminComponentComponent,
+    AdminPanelComponentComponent,
+    OrdersManagementComponentComponent,
+    ProductsManagementComponentComponent,
+    DummyManagementComponentComponent
   ],
   imports: [
     BrowserModule,

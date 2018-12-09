@@ -3,11 +3,11 @@ import { AuthServiceService } from '../auth-service.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login-component',
-  templateUrl: './login-component.component.html',
-  styleUrls: ['./login-component.component.scss']
+  selector: 'app-admin-component',
+  templateUrl: './admin-component.component.html',
+  styleUrls: ['./admin-component.component.scss']
 })
-export class LoginComponentComponent implements OnInit {
+export class AdminComponentComponent implements OnInit {
 
   public email = ''
   public password = ''
@@ -37,6 +37,7 @@ export class LoginComponentComponent implements OnInit {
     console.log('logging in as ' + this.email)
     let result = this.authService.login({email: this.email, password: this.password}, (userInfo) => {
       this.msg = ''
+      console.log('loged in as ' + this.email)
       this.router.navigateByUrl('/admin/panel');
     }, (error) => {
       this.msg = 'login failed'

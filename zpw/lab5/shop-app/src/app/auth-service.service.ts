@@ -23,8 +23,8 @@ export class AuthServiceService {
     return this.fireAuth.auth.signInWithEmailAndPassword(email, password).then(callback).catch(errCallback);
   }
 
-  register({email, password}: Credentials) {
-    return this.fireAuth.auth.createUserWithEmailAndPassword(email,password);
+  register({email, password}: Credentials, callback, errCallback) {
+    return this.fireAuth.auth.createUserWithEmailAndPassword(email,password).then(callback).catch(errCallback);
   }
 
   logout() {

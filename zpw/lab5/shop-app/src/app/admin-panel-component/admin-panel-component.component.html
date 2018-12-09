@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-6">
+      logged in as {{ username }}
+  </div>
+  <div class="col-6">
+      <input type="button" value="logout" (click)="logout()" />
+  </div>
+  
+  <div class="col-6">
+    <a routerLink="/admin/panel/orders" routerLinkActive="active">
+      <input type="button" value="orders" />
+    </a>
+  </div>
+  <div class="col-6">
+    <a routerLink="/admin/panel/products" routerLinkActive="active">
+      <input type="button" value="products" />
+    </a>
+  </div>
+</div>
+
+<hr />
+<router-outlet></router-outlet>

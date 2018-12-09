@@ -11,15 +11,19 @@
     email
   </div>
   <div class="col-6">
-    <input />
+    <input #emailfield (keyup)="update('email', emailfield.value)" />
   </div>
   <div class="col-6">
     password
   </div>
   <div class="col-6">
-    <input type="password" />
+    <input #passwordfield type="password" (keyup)="update('password', passwordfield.value)" />
   </div>
   <div class="col-6">
     <input type="button" value="register" (click)="register()" />
   </div>
+  
+  <span id="alert">
+    {{ msg }}
+  </span>
 </div>

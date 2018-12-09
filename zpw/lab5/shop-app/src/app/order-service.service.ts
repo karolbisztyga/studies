@@ -20,7 +20,6 @@ export class OrderServiceService {
 
   addOrder(products, address, callback) {
     this.data.push([{
-      user: this.authService.getUser().email,
       products: products,
       addres: address}]).then(callback)
   }

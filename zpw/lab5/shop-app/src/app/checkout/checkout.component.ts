@@ -52,7 +52,7 @@ export class CheckoutComponent implements OnInit {
     }
     this.orderService.addOrder(this.products, this.address, (info) => {
       this.basketService.orderMade()
-      this.router.navigateByUrl('/dashboard');
+      this.router.navigateByUrl('/dashboard/products');
     })
   }
 

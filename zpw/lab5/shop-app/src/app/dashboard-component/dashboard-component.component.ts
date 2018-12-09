@@ -9,19 +9,10 @@ import { Router } from '@angular/router';
 })
 export class DashboardComponentComponent implements OnInit {
 
-  public username = ''
-
-  constructor(
-    private authService:AuthServiceService,
-    private router: Router) { }
+  constructor() { }
 
   ngOnInit() {
-    this.username = this.authService.getUser().email
-  }
-
-  logout() {
-    this.authService.logout()
-    this.router.navigateByUrl('/login');
+    console.log('here')
   }
 
 }
