@@ -33,8 +33,7 @@ export class ProductsManagementComponentComponent implements OnInit {
     for (let i in this.productsSrvice.products) {
       let p = this.productsSrvice.products[i]
       if (p.id == id) {
-        console.log('saving product ')
-        console.log(p)
+        this.productsSrvice.saveProduct(p.id)
       }
     }
     // save to db

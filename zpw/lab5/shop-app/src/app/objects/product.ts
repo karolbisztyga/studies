@@ -8,7 +8,8 @@ export class Product {
         public img_url: string = "",
         public categories: string[] = [],
         public total_price: number = 0,
-        public price: number = 0) {
+        public price: number = 0,
+        public key: string = '') {
             this.total_price = this.price_for_one
         }
 }

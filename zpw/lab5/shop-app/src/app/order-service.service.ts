@@ -43,15 +43,16 @@ export class OrderServiceService {
     if (this.orders.length > 0) {
       return this.orders
     }
-    this.data = this.db.list('/order')
+    this.data = this.db.list('/')
     //console.log('data from DATABASE')
     //console.log(this.data)
     var id = 1
     this.data.valueChanges().subscribe(res => {
+      let orders = res[res.length-2]
       console.log('result:')
-      console.log(res)
-      for (let i in res) {
-        let item = res[i][0]
+      console.log(orders)
+      for (let i in orders) {
+        let item = orders[i][0]
         //console.log('item')
         //console.log(item)
         let order: Order = new Order()
@@ -59,6 +60,7 @@ export class OrderServiceService {
         order.products = item['products']
         order.totalPrice = item['totalPrice']
         order.id = id++
+        order.key = i
         this.orders.push(order)
       }
       if (callback) {
@@ -68,14 +70,25 @@ export class OrderServiceService {
     return this.orders
   }
 
+  getproductsoforder(id) {
+    for (let i in this.orders) {
+      let o = this.orders[i]
+      if (o.id == id) {
+        // save to database 
+        //this.db.object('/order/' + o.key).update(o)
+        return o.products
+      }
+    }
+  }
+
   finalizeOrder(id) {
     for (let i in this.orders) {
       let o = this.orders[i]
       if (o.id == id) {
         o.status = 'done'
-        console.log('save to db:')
-        // save to database todo 
-        // also update products quantity
+        console.log('save to db')
+        // save to database 
+        this.db.object('/order/' + o.key).update(o)
       }
     }
   }

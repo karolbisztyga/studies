@@ -10,7 +10,6 @@ export class ProductServiceService {
   public data: AngularFireList<any[]>
   public products: Product[] = []
   public categories = []
-  private currId: number = 0
 
   constructor(private db: AngularFireDatabase) {
     this.getProducts()
@@ -20,11 +19,13 @@ export class ProductServiceService {
     if (this.products.length > 0) {
       return this.products
     }
-    this.data = this.db.list('/product')
-    console.log('data from DATABASE')
+    this.data = this.db.list('/')
     this.data.valueChanges().subscribe(res => {
-      for (let i in res) {
-        let item = res[i]
+      let products = res[res.length-1]
+      //console.log('data from DATABASE')
+      //console.log(products)
+      for (let i in products) {
+        let item = products[i]
         if (!item['name'] && item[0].name) {
           item = item[0]
         }
@@ -44,7 +45,8 @@ export class ProductServiceService {
         product.description = item['description']
         product.img_url = item['img_url']
         product.price_for_one = item['price']
-        product.id = ++this.currId
+        product.id = item['id']
+        product.key = i
         this.products.push(product)
       }
       if (callback){
@@ -71,7 +73,7 @@ export class ProductServiceService {
     newp.price = product.price_for_one
     newp.quantity = product.quantity
     newp.categories = product.categories
-    newp.id = this.products[this.products.length-1].id + 1
+    newp.id = this.products.length
     this.data.push([newp])
   }
 
@@ -92,7 +94,47 @@ export class ProductServiceService {
       let p = this.products[i]
       if (p.id == id) {
         p[field] = value
+      }
+    }
+  }
+
+  performOrder(products) {
+    console.log('perform order')
+    let newQ = -1
+    let newQs = []
+    for(let i in products) {
+      let p = products[i]
+      for (let j in this.products) {
+        if (this.products[j].id == p.id) {
+          newQ = this.products[j].quantity - p.quantity
+        }
+      }
+      //this.updateProduct(p.id, 'quantity', newQ)
+      newQs.push({id: p.id, newq: newQ})
+    }
+    // check if all newq are positive
+    for (var i in newQs) {
+      let nq = newQs[i]
+      if (nq['newq'] < 0) {
+        return false
+      }
+    }
+    // all ok
+    for (var i in newQs) {
+      let nq = newQs[i]
+      this.updateProduct(nq['id'], 'quantity', nq['newq'])
+    }
+    return true
+  }
+
+  saveProduct(id) {
+    for (let i in this.products) {
+      let p = this.products[i]
+      if (p.id == id) {
         // save to DB todo
+        console.log('save product')
+        console.log(p)
+        this.db.object('/product/' + p.key).update(p)
       }
     }
   }
