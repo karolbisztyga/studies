@@ -120,7 +120,7 @@ export class ProductsComponent implements OnInit {
   }
 
   addEvent(productId: number) {
-    this.basketService.addProduct(productId)
+    this.basketService.addProduct(this.products, productId)
     this.basketTotalPrice = this.basketService.getTotalPrice()
   }
 

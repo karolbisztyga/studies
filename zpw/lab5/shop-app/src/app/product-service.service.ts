@@ -13,14 +13,23 @@ export class ProductServiceService {
   private currId: number = 0
 
   constructor(private db: AngularFireDatabase) {
+    this.getProducts()
   }
 
-  getProducts(callback) {
+  getProducts(callback=null) {
+    if (this.products.length > 0) {
+      return this.products
+    }
     this.data = this.db.list('/product')
     console.log('data from DATABASE')
     this.data.valueChanges().subscribe(res => {
       for (let i in res) {
         let item = res[i]
+        if (!item['name'] && item[0].name) {
+          item = item[0]
+        }
+        //console.log('item')
+        //console.log(item)
         let product: Product = new Product()
         product.name = item['name']
         product.quantity = item['quantity']
@@ -38,7 +47,9 @@ export class ProductServiceService {
         product.id = ++this.currId
         this.products.push(product)
       }
-      callback()
+      if (callback){
+        callback()
+      }
     })
     console.log(this.products)
     return this.products
@@ -57,16 +68,31 @@ export class ProductServiceService {
     newp.name = product.name
     newp.description = product.description
     newp.img_url = product.img_url
-    newp.price_for_one = product.price_for_one
+    newp.price = product.price_for_one
     newp.quantity = product.quantity
+    newp.categories = product.categories
     newp.id = this.products[this.products.length-1].id + 1
-    this.products.push(newp)
+    this.data.push([newp])
   }
 
   deleteProduct(id: number) {
     for (let i=0 ; i<this.products.length ; ++i) {
       if (this.products[i].id == id) {
         this.products.splice(i, 1)
+      }
+    }
+  }
+
+  updateProduct(id, field, value) {
+    let fields = ['name', 'quantity', 'price_for_one', 'description', 'img_url', 'categories']
+    if (!fields.includes(field)) {
+      return
+    }
+    for (let i in this.products) {
+      let p = this.products[i]
+      if (p.id == id) {
+        p[field] = value
+        // save to DB todo
       }
     }
   }

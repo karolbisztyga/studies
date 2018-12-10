@@ -12,7 +12,9 @@
     </a>
   </div>
   <div class="col-6">
-    <a routerLink="/admin/panel/products" routerLinkActive="active">
+    <a routerLink="/admin/panel/products"
+        [ngClass]="authService.isAdmin(username) ? '' : 'hidden'"
+        routerLinkActive="active">
       <input type="button" value="products" />
     </a>
   </div>

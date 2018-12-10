@@ -1,3 +1,74 @@
-<p>
-  orders-management-component works!
-</p>
+<div class="row">
+  <div class="col-12">
+    <h3>orders</h3>
+  </div>
+  <div class="col-12 cat-item"
+      *ngFor="let pc of orderService.orders | keyvalue"
+      [ngClass]="isFinalized(orderService.orders[pc.key].id) ? 'order-item-done' : 'order-item-waiting'">
+    <hr />
+    <div class="row">
+        <div class="col-6">address:</div>
+        <div class="col-6">
+          <strong>
+            {{ orderService.orders[pc.key].address }}
+          </strong>
+          </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <strong>products:</strong>
+      </div>
+      <div class="col-12">
+        <div class="row" *ngFor="let p of orderService.orders[pc.key].products">
+          <div class="col-1"></div>
+          <div class="col-10 product-item">
+            <div class="row">
+                <div class="col-6">
+                  name:
+                </div>
+                <div class="col-6">
+                  {{ p.name }}
+                </div>
+                <div class="col-6">
+                  quantity:
+                </div>
+                <div class="col-6">
+                  {{ p.quantity }}
+                </div>
+                <div class="col-6">
+                  price for one:
+                </div>
+                <div class="col-6">
+                  {{ p.price_for_one | number : '1.2'  }}
+                </div>
+                <div class="col-6">
+                  total price:
+                </div>
+                <div class="col-6">
+                  {{ p.total_price | number : '1.2'  }}
+                </div>
+            </div>
+          </div>
+          <div class="col-1"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-6">total price:</div>
+        <div class="col-6">{{ orderService.orders[pc.key].totalPrice }}</div>
+    </div>
+    <div class="row">
+        <div class="col-6">status:</div>
+        <div class="col-6">
+          <strong>{{ orderService.orders[pc.key].status }}</strong>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+          <input type="button" value="finalize" 
+              [ngClass]="isFinalized(orderService.orders[pc.key].id) ? 'hidden' : ''"
+              (click)="finalizeOrder(orderService.orders[pc.key].id)" />
+        </div>
+    </div>
+  </div>
+</div>

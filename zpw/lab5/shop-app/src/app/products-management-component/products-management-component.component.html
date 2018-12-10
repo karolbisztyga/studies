@@ -1,3 +1,112 @@
-<p>
-  products-management-component works!
-</p>
+<div class="row">
+  <div class="col-12">
+    <h3>products</h3>
+  </div>
+  <div class="col-12 product-item" *ngFor="let p of productsSrvice.products">
+    <div class="row">
+      <div class="col-6">
+        name
+      </div>
+      <div class="col-6">
+        <input #nameinput value="{{p.name}}" (keyup)="update(p.id, 'name', nameinput.value)" />
+      </div>
+
+      <div class="col-6">
+        price
+      </div>
+      <div class="col-6">
+        <input type="number" min="0" step="0.01" #priceinput value="{{p.price_for_one}}" (keyup)="update(p.id, 'price_for_one', priceinput.value)" (change)="update(p.id, 'price_for_one', priceinput.value)" />
+      </div>
+
+      <div class="col-6">
+        quantity
+      </div>
+      <div class="col-6">
+        <input type="number" min="0" #quantityinput value="{{p.quantity}}" (keyup)="update(p.id, 'quantity', quantityinput.value)" (change)="update(p.id, 'quantity', quantityinput.value)" />
+      </div>
+
+      <div class="col-6">
+        description
+      </div>
+      <div class="col-6">
+        <input #descriptioninput value="{{p.description}}" (keyup)="update(p.id, 'description', descriptioninput.value)" />
+      </div>
+
+      <div class="col-6">
+        image url
+      </div>
+      <div class="col-6">
+        <input #imgurlinput value="{{p.img_url}}" (keyup)="update(p.id, 'imgurl', imgurlinput.value)" />
+      </div>
+
+      <div class="col-6">
+        categories
+      </div>
+      <div class="col-6">
+        <input #categoriesinput value="{{p.categories}}" (keyup)="update(p.id, 'categories', categoriesinput.value)" />
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <input type="button" value="save" (click)="save(p.id)" />
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <h3>add new</h3>
+  </div>
+  <div class="col-12">
+    <div class="row">
+        <div class="col-6">
+            name
+          </div>
+          <div class="col-6">
+            <input #nnameinput value="" (keyup)="nupdate('name', nnameinput.value)" />
+          </div>
+    
+          <div class="col-6">
+            price
+          </div>
+          <div class="col-6">
+            <input type="number" min="0" step="0.01" #npriceinput value="0" (keyup)="nupdate('price', npriceinput.value)" (change)="nupdate('price', npriceinput.value)" />
+          </div>
+    
+          <div class="col-6">
+            quantity
+          </div>
+          <div class="col-6">
+            <input type="number" min="0" #nquantityinput value="0" (keyup)="nupdate('quantity', nquantityinput.value)" (change)="nupdate('quantity', nquantityinput.value)" />
+          </div>
+    
+          <div class="col-6">
+            description
+          </div>
+          <div class="col-6">
+            <input #ndescriptioninput value="" (keyup)="nupdate('description', ndescriptioninput.value)" />
+          </div>
+    
+          <div class="col-6">
+            image url
+          </div>
+          <div class="col-6">
+            <input #nimgurlinput value="" (keyup)="nupdate('imgurl', nimgurlinput.value)" />
+          </div>
+    
+          <div class="col-6">
+            categories
+          </div>
+          <div class="col-6">
+            <input #ncategoriesinput value="" (keyup)="nupdate('categories', ncategoriesinput.value)" />
+          </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+          <input type="button" value="save" (click)="nsave()" />
+        </div>
+      </div>
+  </div>
+</div>

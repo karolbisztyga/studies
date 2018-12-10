@@ -25,4 +25,6 @@ export class AdminPanelComponentComponent implements OnInit {
     this.router.navigateByUrl('/admin');
   }
 
+  
+
 }

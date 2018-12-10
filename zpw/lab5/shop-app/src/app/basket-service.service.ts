@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Product } from './objects/product';
-import { products } from './objects/fake_products';
+import { ProductServiceService } from './product-service.service';
 
 
 @Injectable({
@@ -31,8 +31,9 @@ export class BasketServiceService {
     return false
   }
 
-  addProduct(productId: number) {
-    console.log('basket add product')
+  addProduct(products, productId: number) {
+    console.log('basket add product ' + productId)
+    console.log(products)
     for(let i = 0; i < products.length; ++i) {
       let product = products[i]
       if (product.id == productId) {
