@@ -7,11 +7,13 @@ import { Product } from '../objects/product';
 @Component({
   selector: 'app-products-management-component',
   templateUrl: './products-management-component.component.html',
-  styleUrls: ['./products-management-component.component.scss']
+  styleUrls: ['./products-management-component.component.scss'],
+  providers: [ProductServiceService]
 })
 export class ProductsManagementComponentComponent implements OnInit {
 
   public newProduct = new Product()
+  public products: Product[]
 
   constructor(
     private authService:AuthServiceService,
@@ -22,6 +24,7 @@ export class ProductsManagementComponentComponent implements OnInit {
     if (!this.authService.isAdmin(this.authService.getUser().email)) {
       this.router.navigateByUrl('/admin/panel/dummy')
     }
+    this.products = this.productsSrvice.getProducts()
   }
 
 
@@ -34,6 +37,7 @@ export class ProductsManagementComponentComponent implements OnInit {
       let p = this.productsSrvice.products[i]
       if (p.id == id) {
         this.productsSrvice.saveProduct(p.id)
+        return
       }
     }
     // save to db

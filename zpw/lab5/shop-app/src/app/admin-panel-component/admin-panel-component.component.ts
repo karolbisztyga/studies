@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthServiceService } from '../auth-service.service';
 import { Router } from '@angular/router';
+import { ProductServiceService } from '../product-service.service';
+import { OrderServiceService } from '../order-service.service';
 
 @Component({
   selector: 'app-admin-panel-component',

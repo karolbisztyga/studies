@@ -122,7 +122,10 @@ export class ProductServiceService {
     // all ok
     for (var i in newQs) {
       let nq = newQs[i]
+      console.log('performOrder:update product')
+      console.log(nq)
       this.updateProduct(nq['id'], 'quantity', nq['newq'])
+      this.saveProduct(nq['id'])
     }
     return true
   }
@@ -134,7 +137,14 @@ export class ProductServiceService {
         // save to DB todo
         console.log('save product')
         console.log(p)
-        this.db.object('/product/' + p.key).update(p)
+        this.db.object('/product/' + p.key).update({
+          name: p.name,
+          price: p.price_for_one,
+          quantity: p.quantity,
+          description: p.description,
+          id: p.id,
+          img_url: p.img_url,
+        })
       }
     }
   }

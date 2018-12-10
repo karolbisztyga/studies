@@ -30,7 +30,8 @@ export class OrderServiceService {
       totalPrice += p.total_price
     }
     let date = new Date().toDateString()
-    this.data.push([{
+    let data = this.db.list('/order')
+    data.push([{
       products: products,
       address: address,
       totalPrice: totalPrice,
@@ -43,6 +44,7 @@ export class OrderServiceService {
     if (this.orders.length > 0) {
       return this.orders
     }
+    this.orders = []
     this.data = this.db.list('/')
     //console.log('data from DATABASE')
     //console.log(this.data)
@@ -52,13 +54,18 @@ export class OrderServiceService {
       console.log('result:')
       console.log(orders)
       for (let i in orders) {
-        let item = orders[i][0]
+        let item = orders[i]
+        if (item['address'] == null) {
+          item = item[0]
+          if (item['address'] == null) continue
+        }
         //console.log('item')
         //console.log(item)
         let order: Order = new Order()
         order.address = item['address']
         order.products = item['products']
         order.totalPrice = item['totalPrice']
+        order.status = item['status']
         order.id = id++
         order.key = i
         this.orders.push(order)
@@ -70,7 +77,7 @@ export class OrderServiceService {
     return this.orders
   }
 
-  getproductsoforder(id) {
+  getProductsOfOrder(id) {
     for (let i in this.orders) {
       let o = this.orders[i]
       if (o.id == id) {
