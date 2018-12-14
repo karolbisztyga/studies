@@ -3,6 +3,7 @@ import { AuthServiceService } from '../auth-service.service';
 import { Router } from '@angular/router';
 import { ProductServiceService } from '../product-service.service';
 import { Product } from '../objects/product';
+import { DbserviceService } from '../dbservice.service';
 
 @Component({
   selector: 'app-products-management-component',
@@ -18,7 +19,8 @@ export class ProductsManagementComponentComponent implements OnInit {
   constructor(
     private authService:AuthServiceService,
     private productsSrvice:ProductServiceService,
-    private router: Router) { }
+    private router: Router,
+    private dbservice: DbserviceService) { }
 
   ngOnInit() {
     if (!this.authService.isAdmin(this.authService.getUser().email)) {
@@ -37,10 +39,10 @@ export class ProductsManagementComponentComponent implements OnInit {
       let p = this.productsSrvice.products[i]
       if (p.id == id) {
         this.productsSrvice.saveProduct(p.id)
+        window.location.reload()
         return
       }
     }
-    // save to db
   }
 
   nupdate(key, val) {
@@ -74,18 +76,41 @@ export class ProductsManagementComponentComponent implements OnInit {
 
   nsave() {
     let p = this.newProduct
-    if (p.name.length == 0 || 
-        p.description.length == 0 || 
-        p.categories.length == 0 || 
-        p.price_for_one == 0 || 
-        p.img_url.length == 0 || 
-        p.quantity == 0) {
-      console.log('invalid values')
+    if (p.name.length == 0) {
+      console.log('invalid name: ' + p.name)
       return
     }
+    if (p.description.length == 0) {
+      console.log('invalid description')
+      return
+    }
+    if (p.categories.length == 0) {
+      console.log('invalid categories')
+      return
+    }
+    if (p.price_for_one == 0) {
+      console.log('invalid price_for_one')
+      return
+    }
+    if (p.img_url.length == 0) {
+      console.log('invalid img_url')
+      return
+    }
+    if (p.quantity == 0) {
+      console.log('invalid quantity')
+      return
+    }
+
     console.log('nsaving product ')
     console.log(this.newProduct)
     this.productsSrvice.addProduct(this.newProduct)
+    window.location.reload()
+  }
+
+  changeDb(db) {
+    if (this.dbservice.changeDatabase(db)) {
+      window.location.reload()
+    }
   }
 
 }

@@ -19,6 +19,7 @@ export class OrdersManagementComponentComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
+    this.productsSrvice.getProducts()
   }
 
   finalizeOrder(orderId) {

@@ -1,22 +1,21 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { AuthServiceService } from './auth-service.service';
 import { BasketServiceService } from './basket-service.service';
 import { Router } from '@angular/router';
 import { Order } from './objects/orders';
+import { DbserviceService } from './dbservice.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderServiceService {
-  public data: AngularFireList<any[]>
   public orders: Order[] = []
 
   constructor(
-    private db: AngularFireDatabase,
     private authService: AuthServiceService,
     private basketService: BasketServiceService,
-    private router: Router) {
+    private router: Router,
+    private dbservice: DbserviceService) {
     this.getOrders(()=>{
       console.log('orders:')
       console.log(this.orders)
@@ -24,60 +23,17 @@ export class OrderServiceService {
   }
 
   addOrder(products, address, callback) {
-    let totalPrice = 0
-    for (let i in products) {
-      let p = products[i]
-      totalPrice += p.total_price
-    }
-    let date = new Date().toDateString()
-    let data = this.db.list('/order')
-    data.push([{
-      products: products,
-      address: address,
-      totalPrice: totalPrice,
-      date: date,
-      status: 'waiting'}]).then(callback)
+    this.dbservice.addOrder(products, address, callback)
   }
 
 
   getOrders(callback=null) {
-    if (this.orders.length > 0) {
-      return this.orders
-    }
-    this.orders = []
-    this.data = this.db.list('/')
-    //console.log('data from DATABASE')
-    //console.log(this.data)
-    var id = 1
-    this.data.valueChanges().subscribe(res => {
-      let orders = res[res.length-2]
-      console.log('result:')
-      console.log(orders)
-      for (let i in orders) {
-        let item = orders[i]
-        if (item['address'] == null) {
-          item = item[0]
-          if (item['address'] == null) continue
-        }
-        //console.log('item')
-        //console.log(item)
-        let order: Order = new Order()
-        order.address = item['address']
-        order.products = item['products']
-        order.totalPrice = item['totalPrice']
-        order.status = item['status']
-        order.id = id++
-        order.key = i
-        this.orders.push(order)
-      }
-      if (callback) {
-        callback()
-      }
-    })
+    this.orders = this.dbservice.getOrders(callback)
     return this.orders
   }
 
   getProductsOfOrder(id) {
+    console.log('getProductsOfOrder')
     for (let i in this.orders) {
       let o = this.orders[i]
       if (o.id == id) {
@@ -89,13 +45,15 @@ export class OrderServiceService {
   }
 
   finalizeOrder(id) {
+    console.log('finalze order')
     for (let i in this.orders) {
       let o = this.orders[i]
       if (o.id == id) {
         o.status = 'done'
         console.log('save to db')
+        console.log(o)
         // save to database 
-        this.db.object('/order/' + o.key).update(o)
+        this.dbservice.finalizeOrder(o)
       }
     }
   }

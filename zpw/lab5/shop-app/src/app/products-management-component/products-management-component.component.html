@@ -1,4 +1,18 @@
 <div class="row">
+  <div class="col-6">
+    database:
+  </div>
+  <div class="col-6">
+    <select>
+      <option 
+          *ngFor="let d of dbservice.databases" 
+          [value]="d" 
+          (click)="changeDb(d)"
+          [attr.selected]="d == dbservice.databaseHandler.name ? true : null">{{ d }}</option>
+    </select>
+  </div>
+</div>
+<div class="row">
   <div class="col-12">
     <h3>products</h3>
   </div>
@@ -36,7 +50,7 @@
         image url
       </div>
       <div class="col-6">
-        <input #imgurlinput value="{{p.img_url}}" (keyup)="update(p.id, 'imgurl', imgurlinput.value)" />
+        <input #imgurlinput value="{{p.img_url}}" (keyup)="update(p.id, 'img_url', imgurlinput.value)" />
       </div>
 
       <div class="col-6">

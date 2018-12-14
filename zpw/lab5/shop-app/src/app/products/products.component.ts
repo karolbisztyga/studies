@@ -29,6 +29,11 @@ export class ProductsComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.basketService.msg == 'order made') {
+      this.basketService.msg = ''
+      window.location.reload()
+      return
+    }
     let that = this
     this.products = this.productService.getProducts(function() {
       that.updateSort()
@@ -36,9 +41,6 @@ export class ProductsComponent implements OnInit {
     })
     this.basketTotalPrice = this.basketService.totalPrice
     this.basketMsg = this.basketService.msg
-    if (this.basketMsg.length > 0) {
-      this.basketService.msg = ''
-    }
   }
 
   upadtePagination() {
@@ -49,11 +51,6 @@ export class ProductsComponent implements OnInit {
     console.log('pagination ' + from + ' ' + to + ' ' + this.pagination.numSites)
     console.log(this.showProducts)
   }
-
-  /*deleteEvent(id: number) {
-    console.log('parent deletes product ' + id)
-    this.productService.deleteProduct(id)
-  }*/
 
   incPage() {
     this.pagination.site = Math.min(this.pagination.site + 1, this.pagination.numSites)
@@ -115,6 +112,7 @@ export class ProductsComponent implements OnInit {
         }
       }
     })
+    console.log('here')
     this.upadtePagination()
   }
 

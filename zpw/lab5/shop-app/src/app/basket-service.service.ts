@@ -12,7 +12,8 @@ export class BasketServiceService {
   public totalPrice = 0
   public msg = ''
 
-  constructor() {
+  constructor(
+    private productsSrvice:ProductServiceService) {
   }
 
   getTotalPrice() {
