@@ -6,12 +6,12 @@ import { Order } from "../objects/orders";
 export interface DatabaseHandler {
 
     name:string
-    getProducts(db, callback)
-    getCategories(db, callback)
-    addProduct(db, product: Product)
-    saveProduct(db, product: Product)
-    getOrders(db, callback)
-    finalizeOrder(db, order: Order)
-    addOrder(db, products, address, callback)
+    getProducts(tool, callback)
+    getCategories(tool, callback)
+    addProduct(tool, product: Product)
+    saveProduct(tool, product: Product)
+    getOrders(tool, callback)
+    finalizeOrder(tool, order: Order)
+    addOrder(tool, products, address, callback)
 
 }

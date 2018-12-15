@@ -4,13 +4,13 @@ import { MongoHandler } from './database_handlers/mongoHandler';
 import { DatabaseHandler } from './database_handlers/databaseHandler';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Product } from './objects/product';
+import { Http } from '@angular/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DbserviceService {
 
-  private cookieName = 'database'
   private firebase: FirebaseHandler
   private mongo: MongoHandler
 
@@ -21,43 +21,58 @@ export class DbserviceService {
 
   public databaseHandler: DatabaseHandler = null
 
-  constructor(private db: AngularFireDatabase) {
+  constructor(
+      private db: AngularFireDatabase,
+      private http: Http) {
     this.firebase = new FirebaseHandler()
     this.mongo = new MongoHandler()
     this.getDatabase()
   }
 
   getDatabase() {
-    console.log('database get cookie: ')
-    let cookie = this.getCookie(this.cookieName)
-    console.log(cookie)
-    if (!cookie) {
-      cookie = 'firebase'
+    var ls = null
+    if (localStorage.getItem('db') !== null) {
+      ls = localStorage.getItem('db')
     }
-    if (this.databases.includes(cookie)) {
+    console.log('local storage: ' + ls)
+    console.log(ls)
+    if (!ls) {
+      ls = 'firebase'
+    }
+    if (this.databases.includes(ls)) {
       // firebase
-      if (cookie == this.databases[0]) {
+      if (ls == this.databases[0]) {
         this.databaseHandler = this.firebase
       }
       // mongo
-      else if (cookie == this.databases[1]) {
+      else if (ls == this.databases[1]) {
         this.databaseHandler = this.mongo
       }
     }
     return this.databaseHandler
   }
 
+  getTool() {
+    this.getDatabase()
+    if (this.databaseHandler == this.firebase) {
+      return this.db
+    }
+    if (this.databaseHandler == this.mongo) {
+      return this.http
+    }
+  }
+
   changeDatabase(db) {
-    if (this.databaseHandler == db) {
-      return
+    if (this.databaseHandler.name == db) {
+      return false
     }
     if (!this.databases.includes(db)) {
-      return
+      return false
     }
     console.log('change db from '  + this.databaseHandler + ' to ' + db)
     this.databaseHandler = db
-    this.setCookie(this.cookieName, this.databaseHandler, 999)
-    return this.databaseHandler
+    localStorage.setItem('db', db)
+    return true
   }
 
   private getCookie(name) {
@@ -88,53 +103,38 @@ export class DbserviceService {
   */
 
   getProducts(callback=null) {
-    if (!this.databaseHandler) {
-      this.getDatabase()
-    }
-    return this.databaseHandler.getProducts(this.db, callback)
+    let tool = this.getTool()
+    return this.databaseHandler.getProducts(tool, callback)
   }
 
   getCategories(callback=null) {
-    if (!this.databaseHandler) {
-      this.getDatabase()
-    }
-    return this.databaseHandler.getCategories(this.db, callback)
+    let tool = this.getTool()
+    return this.databaseHandler.getCategories(tool, callback)
   }
   
   addProduct(product: Product) {
-    if (!this.databaseHandler) {
-      this.getDatabase()
-    }
-    return this.databaseHandler.addProduct(this.db, product)
+    let tool = this.getTool()
+    return this.databaseHandler.addProduct(tool, product)
   }
   
   saveProduct(product: Product) {
-    if (!this.databaseHandler) {
-      this.getDatabase()
-      return this.databaseHandler.saveProduct(this.db, product)
-    }
-    return this.databaseHandler.saveProduct(this.db, product)
+    let tool = this.getTool()
+    return this.databaseHandler.saveProduct(tool, product)
   }
   
   getOrders(callback) {
-    if (!this.databaseHandler) {
-      this.getDatabase()
-    }
-    return this.databaseHandler.getOrders(this.db, callback)
+    let tool = this.getTool()
+    return this.databaseHandler.getOrders(tool, callback)
   }
   
   finalizeOrder(order) {
-    if (!this.databaseHandler) {
-      this.getDatabase()
-    }
-    return this.databaseHandler.finalizeOrder(this.db, order)
+    let tool = this.getTool()
+    return this.databaseHandler.finalizeOrder(tool, order)
   }
   
   addOrder(products, address, callback) {
-    if (!this.databaseHandler) {
-      this.getDatabase()
-    }
-    return this.databaseHandler.addOrder(this.db, products, address, callback)
+    let tool = this.getTool()
+    return this.databaseHandler.addOrder(tool, products, address, callback)
   }
 
 }

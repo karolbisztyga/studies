@@ -21,6 +21,7 @@ import { AdminPanelComponentComponent } from './admin-panel-component/admin-pane
 import { OrdersManagementComponentComponent } from './orders-management-component/orders-management-component.component';
 import { ProductsManagementComponentComponent } from './products-management-component/products-management-component.component';
 import { DummyManagementComponentComponent } from './dummy-management-component/dummy-management-component.component';
+import { HttpModule } from '@angular/http';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { DummyManagementComponentComponent } from './dummy-management-component/
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,
     AngularFireDatabaseModule,
+    HttpModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

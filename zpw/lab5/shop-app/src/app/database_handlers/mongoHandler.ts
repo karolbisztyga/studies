@@ -1,42 +1,92 @@
 import { DatabaseHandler } from "./databaseHandler";
 import { Product } from "../objects/product";
 import { Order } from "../objects/orders";
+import { RequestOptions, Headers } from '@angular/http';
 
 export class MongoHandler implements DatabaseHandler {
 
     public name = 'mongo'
+    private base_url = 'http://localhost:5000/'
+    private orders: Order[] = []
+    private products: Product[] = []
 
-    getProducts(db, callback=null) {
+    constructor() {}
+
+    getProducts(http, callback=null) {
         console.log('mongo getProducts()')
-        return null
+        let cpHeaders = new Headers({ 'Content-Type': 'application/json' })
+        let options = new RequestOptions({ headers: cpHeaders })
+        let url = 'products'
+        http.get(this.base_url + url, options).subscribe(res => {
+            let productOutput = JSON.parse(res['_body'])
+            for (let i in productOutput) {
+                let item = productOutput[i]
+                if (!item['name'] && item[0].name) {
+                    item = item[0]
+                }
+                //console.log('item')
+                //console.log(item)
+                let product: Product = new Product()
+                product.name = item['name']
+                product.quantity = item['quantity']
+                product.categories = []
+                for (let j in item['categories']) {
+                    let cat = item['categories'][j]
+                    product.categories.push(cat)
+                }
+                product.description = item['description']
+                product.img_url = item['img_url']
+                product.price_for_one = item['price']
+                product.id = item['id']
+                product.key = i
+                this.products.push(product)
+            }
+            console.log('DATA FROM MONGODB')
+            console.log(this.products)
+            if (callback) {
+                callback()
+            }
+        })
+
+        return this.products
     }
 
-    getCategories(db, callback=null) {
+    getCategories(http, callback=null) {
         console.log('mongo getCategories()')
-        return null
+        let categories = []
+        let cpHeaders = new Headers({ 'Content-Type': 'application/json' })
+        let options = new RequestOptions({ headers: cpHeaders })
+        let url = 'categories'
+        http.get(this.base_url + url, options).subscribe(res => {
+            let catOutput = JSON.parse(res['_body'])
+            for (let i in catOutput) {
+                categories.push(catOutput[i])
+            }
+        })
+        return categories
     }
     
-    addProduct(db, product: Product) {
+    addProduct(http, product: Product) {
         console.log('mongo addProduct()')
         return null
     }
     
-    saveProduct(db, product: Product) {
+    saveProduct(http, product: Product) {
         console.log('mongo saveProduct()')
         return null
     }
     
-    getOrders(db, callback=null) {
+    getOrders(http, callback=null) {
         console.log('mongo getOrders()')
         return null
     }
     
-    finalizeOrder(db, order: Order) {
+    finalizeOrder(http, order: Order) {
         console.log('mongo finalizeOrder()')
         return null
     }
 
-    addOrder(db, products, address, callback) {
+    addOrder(http, products, address, callback) {
         console.log('mongo addOrder()')
         return null
     }
