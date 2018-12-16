@@ -8,8 +8,7 @@ import { DbserviceService } from '../dbservice.service';
 @Component({
   selector: 'app-products-management-component',
   templateUrl: './products-management-component.component.html',
-  styleUrls: ['./products-management-component.component.scss'],
-  providers: [ProductServiceService]
+  styleUrls: ['./products-management-component.component.scss']
 })
 export class ProductsManagementComponentComponent implements OnInit {
 
@@ -26,7 +25,7 @@ export class ProductsManagementComponentComponent implements OnInit {
     if (!this.authService.isAdmin(this.authService.getUser().email)) {
       this.router.navigateByUrl('/admin/panel/dummy')
     }
-    this.products = this.productsSrvice.getProducts()
+    this.products = this.productsSrvice.products
   }
 
 

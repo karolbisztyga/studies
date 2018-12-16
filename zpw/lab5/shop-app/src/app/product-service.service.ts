@@ -9,15 +9,32 @@ export class ProductServiceService {
 
   public products: Product[] = []
   public categories = []
+  private getProductsCallabacks = []
 
   constructor(private dbservice: DbserviceService) {
-    //this.getProducts()
+    this.getProducts()
     this.getCategories()
   }
 
   getProducts(callback=null) {
-    this.products = this.dbservice.getProducts(callback)
+    var that = this
+    this.products = this.dbservice.getProducts(function(){
+      if (callback) callback()
+      for (let i in that.getProductsCallabacks) {
+        (that.getProductsCallabacks[i])()
+      }
+    })
     return this.products
+  }
+
+  registerGetProductsCallback(callback) {
+    console.log('check callback')
+    console.log(callback)
+    if (this.products.length) {
+      callback()
+    } else {
+      this.getProductsCallabacks.push(callback)
+    }
   }
 
   getCategories() {

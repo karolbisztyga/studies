@@ -54,8 +54,8 @@ export class MongoHandler implements DatabaseHandler {
     getCategories(http, callback=null) {
         console.log('mongo getCategories()')
         let categories = []
-        let cpHeaders = new Headers({ 'Content-Type': 'application/json' })
-        let options = new RequestOptions({ headers: cpHeaders })
+        let headers = new Headers({ 'Content-Type': 'application/json' })
+        let options = new RequestOptions({ headers: headers })
         let url = 'categories'
         http.get(this.base_url + url, options).subscribe(res => {
             let catOutput = JSON.parse(res['_body'])
@@ -68,7 +68,30 @@ export class MongoHandler implements DatabaseHandler {
     
     addProduct(http, product: Product) {
         console.log('mongo addProduct()')
-        return null
+        
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers })
+        let url = 'product'
+        
+        var id = 1
+        if (this.products.length ==0) {
+            this.getProducts(http)
+        }
+        id = this.products.length + 1
+        let newp = new Product()
+        newp.name = product.name
+        newp.description = product.description
+        newp.img_url = product.img_url
+        newp.price = product.price_for_one
+        newp.quantity = product.quantity
+        newp.categories = product.categories
+        newp.id = id
+        console.log(newp)
+        
+        let result = http.post(this.base_url + url, newp, options).subscribe(res => {
+            console.log('put result')
+            console.log(res)
+        })
     }
     
     saveProduct(http, product: Product) {

@@ -35,7 +35,8 @@ export class ProductsComponent implements OnInit {
       return
     }
     let that = this
-    this.products = this.productService.getProducts(function() {
+    this.products = this.productService.products
+    this.productService.registerGetProductsCallback(function() {
       that.updateSort()
       that.upadtePagination()
     })

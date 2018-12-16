@@ -81,7 +81,6 @@ export class FirebaseHandler implements DatabaseHandler {
   
   addProduct(db, product: Product) {
     let data = db.list('/product')
-    let nitems: number
     var id = 1
     if (this.products.length ==0) {
         this.getProducts(db)

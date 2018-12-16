@@ -26,29 +26,27 @@ var log = function(info, type='msg')
 }
  
 var express = require('express');
+var bodyParser = require('body-parser')
 var app = express();
 const mongodb = require('mongodb').MongoClient
 var db = null
 
 // Add headers
 app.use(function (req, res, next) {
-
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
     // Request headers you wish to allow
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
     res.setHeader('Access-Control-Allow-Credentials', true);
-
     // Pass to next layer of middleware
     next();
 });
+
+app.use(bodyParser.json())
 
 mongodb.connect('mongodb://travis:asd123@ds231460.mlab.com:31460/zpwlab', (err, database) => {
     log('mongo connect')
@@ -59,7 +57,7 @@ mongodb.connect('mongodb://travis:asd123@ds231460.mlab.com:31460/zpwlab', (err, 
     }
     log('mongo connect success', 'succ')
     db = database.db('zpwlab')
-    log(db, raw)
+    //log(db, raw)
     var server = app.listen(5000, function () {
         var host = server.address().address
         var port = server.address().port
@@ -120,12 +118,25 @@ app.get('/categories', function (req, res) {
 })
 
 // add product
-app.put('/product', function (req, res) {
+app.post('/product', function (req, res) {
     log('adding product')
+    log(req.body, raw)
+    // adding to database
+    db.collection("products").insertOne(req.body, function(err, res2) {
+        if (err) {
+            log('error inserting object', 'err')
+            log(err, raw)
+            res.send(JSON.stringify('object not inserted, error occured'))
+            return
+        }
+        log('object inserted', 'succ')
+        res.send(JSON.stringify('object inserted'))
+    });
+
 })
 
 // update product
-app.post('/product', function (req, res) {
+app.put('/product', function (req, res) {
     log('updating product')
 })
 
@@ -135,12 +146,12 @@ app.get('/orders', function (req, res) {
 })
 
 // finalize orders
-app.post('/order', function (req, res) {
+app.put('/order', function (req, res) {
     log('finalizing order')
 })
 
 // add order
-app.put('/order', function (req, res) {
+app.post('/order', function (req, res) {
     log('adding order')
 })
 
