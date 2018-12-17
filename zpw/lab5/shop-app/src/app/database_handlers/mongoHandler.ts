@@ -6,7 +6,8 @@ import { RequestOptions, Headers } from '@angular/http';
 export class MongoHandler implements DatabaseHandler {
 
     public name = 'mongo'
-    private base_url = 'http://localhost:5000/'
+    //private base_url = 'http://localhost:5000/'
+    private base_url = 'https://zpwlab.herokuapp.com/'
     private orders: Order[] = []
     private products: Product[] = []
 

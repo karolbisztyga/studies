@@ -24,7 +24,7 @@ export class ProductsComponent implements OnInit {
   }
 
   constructor(
-    private productService:ProductServiceService,
+    public productService:ProductServiceService,
     private basketService:BasketServiceService) {
   }
 

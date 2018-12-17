@@ -14,7 +14,7 @@ export class AdminPanelComponentComponent implements OnInit {
   public username = ''
 
   constructor(
-    private authService:AuthServiceService,
+    public authService:AuthServiceService,
     private router: Router) { }
 
   ngOnInit() {

@@ -17,9 +17,9 @@ export class ProductsManagementComponentComponent implements OnInit {
 
   constructor(
     private authService:AuthServiceService,
-    private productsSrvice:ProductServiceService,
+    public productsSrvice:ProductServiceService,
     private router: Router,
-    private dbservice: DbserviceService) { }
+    public dbservice: DbserviceService) { }
 
   ngOnInit() {
     if (!this.authService.isAdmin(this.authService.getUser().email)) {
