@@ -8,10 +8,10 @@ export interface DatabaseHandler {
     name:string
     getProducts(tool, callback)
     getCategories(tool, callback)
-    addProduct(tool, product: Product)
-    saveProduct(tool, product: Product)
+    addProduct(tool, product: Product, callback)
+    saveProduct(tool, product: Product, callback)
     getOrders(tool, callback)
-    finalizeOrder(tool, order: Order)
+    finalizeOrder(tool, order: Order, callback)
     addOrder(tool, products, address, callback)
 
 }

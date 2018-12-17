@@ -44,7 +44,7 @@ export class OrderServiceService {
     }
   }
 
-  finalizeOrder(id) {
+  finalizeOrder(id, callback=null) {
     console.log('finalze order')
     for (let i in this.orders) {
       let o = this.orders[i]
@@ -53,7 +53,7 @@ export class OrderServiceService {
         console.log('save to db')
         console.log(o)
         // save to database 
-        this.dbservice.finalizeOrder(o)
+        this.dbservice.finalizeOrder(o, callback)
       }
     }
   }

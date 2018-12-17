@@ -38,10 +38,10 @@ export class MongoHandler implements DatabaseHandler {
                 product.img_url = item['img_url']
                 product.price_for_one = item['price']
                 product.id = item['id']
-                product.key = i
+                product.key = item['_id']
                 this.products.push(product)
             }
-            console.log('DATA FROM MONGODB')
+            console.log('DATA FROM MONGODB products')
             console.log(this.products)
             if (callback) {
                 callback()
@@ -66,7 +66,7 @@ export class MongoHandler implements DatabaseHandler {
         return categories
     }
     
-    addProduct(http, product: Product) {
+    addProduct(http, product: Product, callback=null) {
         console.log('mongo addProduct()')
         
         let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -91,27 +91,126 @@ export class MongoHandler implements DatabaseHandler {
         let result = http.post(this.base_url + url, newp, options).subscribe(res => {
             console.log('put result')
             console.log(res)
+            if (callback) callback()
         })
     }
     
-    saveProduct(http, product: Product) {
+    saveProduct(http, product: Product, callback=null) {
         console.log('mongo saveProduct()')
-        return null
+        console.log(product)
+        
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers })
+        let newp = {
+            name: product.name,
+            price: product.price_for_one,
+            quantity: product.quantity,
+            description: product.description,
+            id: product.id,
+            img_url: product.img_url,
+            categories: product.categories
+        }
+        let url = 'product/' + product.key
+        let result = http.put(this.base_url + url, newp, options).subscribe(res => {
+            console.log('put result')
+            console.log(res)
+            if(callback) callback()
+        })
     }
     
     getOrders(http, callback=null) {
         console.log('mongo getOrders()')
-        return null
+        let cpHeaders = new Headers({ 'Content-Type': 'application/json' })
+        let options = new RequestOptions({ headers: cpHeaders })
+        let url = 'orders'
+        http.get(this.base_url + url, options).subscribe(res => {
+            let orders = JSON.parse(res['_body'])
+            console.log('result:')
+            console.log(orders)
+            for (let i in orders) {
+                let item = orders[i]
+                if (item['address'] == null) {
+                item = item[0]
+                if (item['address'] == null) continue
+                }
+                console.log('item')
+                console.log(item)
+                let order: Order = new Order()
+                order.address = item['address']
+                order.products = item['products']
+                order.totalPrice = item['totalPrice']
+                order.status = item['status']
+                order.id = item['id']
+                order.key = item['_id']
+                this.orders.push(order)
+            }
+            console.log('DATA FROM MONGODB orders')
+            console.log(this.orders)
+            if (callback) {
+                callback()
+            }
+        })
+        return this.orders
     }
     
-    finalizeOrder(http, order: Order) {
+    finalizeOrder(http, order: Order, callback=null) {
         console.log('mongo finalizeOrder()')
+        console.log(order)
+
+        let headers = new Headers({ 'Content-Type': 'application/json' })
+        let options = new RequestOptions({ headers: headers })
+        let url = 'order/' + order.key
+        let newo = {
+            status: 'done'
+        }
+        console.log('url:' + url)
+        let result = http.put(this.base_url + url, newo, options).subscribe(res => {
+            console.log('put result')
+            console.log(res)
+            if (callback) callback()
+        })
+
         return null
     }
 
     addOrder(http, products, address, callback) {
         console.log('mongo addOrder()')
-        return null
+        var id = 1
+        var that = this
+        let add = function() {
+            id = that.orders.length + 1
+            
+            let totalPrice = 0
+            for (let i in products) {
+                let p = products[i]
+                totalPrice += p.total_price
+            }
+    
+            let date = new Date().toDateString()
+            let newo = {
+                products: products,
+                address: address,
+                totalPrice: totalPrice,
+                date: date,
+                id: id,
+                status: 'waiting'
+            }
+    
+            let headers = new Headers({ 'Content-Type': 'application/json' })
+            let options = new RequestOptions({ headers: headers })
+            let url = 'order'
+            let result = http.post(that.base_url + url, newo, options).subscribe(res => {
+                console.log('post result')
+                console.log(res)
+                callback()
+            })
+        }
+
+        if (this.orders.length == 0) {
+            this.getOrders(http, add)
+        } else {
+            add()
+        }
     }
 
 }

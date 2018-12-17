@@ -25,9 +25,10 @@ export class OrdersManagementComponentComponent implements OnInit {
     let products = this.orderService.getProductsOfOrder(orderId)
     let ok = this.productsSrvice.performOrder(products)
     if (ok) {
-      this.orderService.finalizeOrder(orderId)
+      this.orderService.finalizeOrder(orderId, function(){
+        window.location.reload()
+      })
     }
-    window.location.reload();
   }
 
   isFinalized(orderId) {

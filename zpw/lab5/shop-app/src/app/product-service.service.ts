@@ -44,8 +44,8 @@ export class ProductServiceService {
     return this.categories
   }
 
-  addProduct(product: Product) {
-    this.dbservice.addProduct(product)
+  addProduct(product: Product, callback=null) {
+    this.dbservice.addProduct(product, callback)
   }
 
   updateProduct(id, field, value) {
@@ -107,11 +107,11 @@ export class ProductServiceService {
     return true
   }
 
-  saveProduct(id) {
+  saveProduct(id, callback=null) {
     for (let i in this.products) {
       let p = this.products[i]
       if (p.id == id) {
-        this.dbservice.saveProduct(p)
+        this.dbservice.saveProduct(p, callback)
       }
     }
   }

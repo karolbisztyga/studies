@@ -37,8 +37,9 @@ export class ProductsManagementComponentComponent implements OnInit {
     for (let i in this.productsSrvice.products) {
       let p = this.productsSrvice.products[i]
       if (p.id == id) {
-        this.productsSrvice.saveProduct(p.id)
-        window.location.reload()
+        this.productsSrvice.saveProduct(p.id, function() {
+          window.location.reload()
+        })
         return
       }
     }
@@ -102,8 +103,9 @@ export class ProductsManagementComponentComponent implements OnInit {
 
     console.log('nsaving product ')
     console.log(this.newProduct)
-    this.productsSrvice.addProduct(this.newProduct)
-    window.location.reload()
+    this.productsSrvice.addProduct(this.newProduct, function() {
+      window.location.reload()
+    })
   }
 
   changeDb(db) {

@@ -79,7 +79,7 @@ export class FirebaseHandler implements DatabaseHandler {
     return categories
   }
   
-  addProduct(db, product: Product) {
+  addProduct(db, product: Product, callback=null) {
     let data = db.list('/product')
     var id = 1
     if (this.products.length ==0) {
@@ -94,10 +94,12 @@ export class FirebaseHandler implements DatabaseHandler {
     newp.quantity = product.quantity
     newp.categories = product.categories
     newp.id = id
-    data.push([newp])
+    data.push([newp]).then(function(){
+      if (callback) callback()
+    })
   }
   
-  saveProduct(db, product: Product) {
+  saveProduct(db, product: Product, callback=null) {
     console.log('save product')
     console.log(product)
     let pathSuffix = ''
@@ -112,6 +114,8 @@ export class FirebaseHandler implements DatabaseHandler {
       id: product.id,
       img_url: product.img_url,
       categories: product.categories
+    }).then(function(){
+      if(callback) callback()
     })
   }
   
@@ -152,10 +156,12 @@ export class FirebaseHandler implements DatabaseHandler {
     return this.orders
   }
   
-  finalizeOrder(db, order: Order) {
+  finalizeOrder(db, order: Order, callback=null) {
     console.log('db handler finalize order ')
     console.log(order)
-    db.object('/order/' + order.key).update(order)
+    db.object('/order/' + order.key).update(order).then(function(){
+      if(callback) callback()
+    })
   }
 
   addOrder(db, products, address, callback) {

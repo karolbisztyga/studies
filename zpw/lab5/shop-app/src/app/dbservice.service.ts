@@ -112,14 +112,14 @@ export class DbserviceService {
     return this.databaseHandler.getCategories(tool, callback)
   }
   
-  addProduct(product: Product) {
+  addProduct(product: Product, callback=null) {
     let tool = this.getTool()
-    return this.databaseHandler.addProduct(tool, product)
+    return this.databaseHandler.addProduct(tool, product, callback)
   }
   
-  saveProduct(product: Product) {
+  saveProduct(product: Product, callback=null) {
     let tool = this.getTool()
-    return this.databaseHandler.saveProduct(tool, product)
+    return this.databaseHandler.saveProduct(tool, product, callback)
   }
   
   getOrders(callback) {
@@ -127,9 +127,9 @@ export class DbserviceService {
     return this.databaseHandler.getOrders(tool, callback)
   }
   
-  finalizeOrder(order) {
+  finalizeOrder(order, callback=null) {
     let tool = this.getTool()
-    return this.databaseHandler.finalizeOrder(tool, order)
+    return this.databaseHandler.finalizeOrder(tool, order, callback)
   }
   
   addOrder(products, address, callback) {

@@ -30,6 +30,7 @@ var bodyParser = require('body-parser')
 var app = express();
 const mongodb = require('mongodb').MongoClient
 var db = null
+var ObjectID = require('mongodb').ObjectID;
 
 // Add headers
 app.use(function (req, res, next) {
@@ -136,41 +137,79 @@ app.post('/product', function (req, res) {
 })
 
 // update product
-app.put('/product', function (req, res) {
+app.put('/product/:id', function (req, res) {
     log('updating product')
+    let id = req.params['id']
+    log('product id ' + id)
+    let query = { _id: ObjectID(id) }
+    let newValues = {$set: req.body}
+    log(query, raw)
+    log(newValues, raw)
+    db.collection("products").updateOne(query, newValues, function(err, res2) {
+        if (err) {
+            log('error updating object', 'err')
+            log(err, raw)
+            res.send(JSON.stringify('object not updated, error occured'))
+            return
+        }
+        log('object updated', 'succ')
+        res.send(JSON.stringify('object updated'))
+    });
 })
 
 // get orders
 app.get('/orders', function (req, res) {
     log('obtaining orders')
+    if (!db) {
+        log('database undefined', 'err')
+        return
+    }
+    let cursor = db.collection('orders').find()
+    cursor.toArray(function(err, results) {
+        if (err) {
+            log(err, 'err')
+            return
+        }
+        res.send(JSON.stringify(results))
+        return
+    })
 })
 
 // finalize orders
-app.put('/order', function (req, res) {
+app.put('/order/:id', function (req, res) {
     log('finalizing order')
+    let id = req.params['id']
+    log('order id '+ id)
+    let query = { _id: ObjectID(id) }
+    let newValues = {$set: req.body}
+    log(query, raw)
+    log(newValues, raw)
+    db.collection("orders").updateOne(query, newValues, function(err, res2) {
+        if (err) {
+            log('error updating object', 'err')
+            log(err, raw)
+            res.send(JSON.stringify('object not updated, error occured'))
+            return
+        }
+        log('object updated', 'succ')
+        res.send(JSON.stringify('object updated'))
+    });
 })
 
 // add order
 app.post('/order', function (req, res) {
-    log('adding order')
-})
+    log('adding product')
+    log(req.body, raw)
+    // adding to database
+    db.collection("orders").insertOne(req.body, function(err, res2) {
+        if (err) {
+            log('error inserting object', 'err')
+            log(err, raw)
+            res.send(JSON.stringify('object not inserted, error occured'))
+            return
+        }
+        log('object inserted', 'succ')
+        res.send(JSON.stringify('object inserted'))
+    });
 
-
-/*
-app.post('/', function (req, res) {
-    console.log("Otrzymano żądanie POST dla strony głównej");
-    res.send('Hello POST');
 })
-app.delete('/usun', function (req, res) {
-    console.log("Otrzymano żądanie DELETE dla strony /usun");
-    res.send('Hello DELETE');
-})
-app.put('/user_list', function (req, res) {
-    console.log("Otrzymano żądanie PUTdla strony /user_list");
-    res.send('Lista użytkowników');
-})
-app.get('/ab*cd', function(req, res) { // wzorzec strony: abcd, abxcd, ab123cd, ...
-    console.log("Otrzymano żądanie GET dla strony /ab*cd");
-    res.send('Wzorzec strony dopasowany');
-})
-*/
