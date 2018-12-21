@@ -1,4 +1,4 @@
-/zaisd/build
+/zaisd/**/build
 **/*.jpg
 **/*.jpeg
 **/*.png
