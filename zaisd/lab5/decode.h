@@ -21,6 +21,12 @@ void decode(char *binfile_path, ifstream *infile_table) {
 		cout << "error, file " << binfile_path << " not found\n";
 		return;
 	}
+	unsigned int numChars;
+	if (!infile.read((char*)&numChars, sizeof(numChars))) {
+		cout << "error reading number of chars" << endl;
+		return;
+	}
+	cout << "number of chars " << numChars << endl;
 	unsigned short data;
 	string decodedText = "";
 	string buffer = "";
@@ -31,22 +37,25 @@ void decode(char *binfile_path, ifstream *infile_table) {
 		// decoding meanwhile
 		bool signDecoded = false;
 		buffer += str;
-		/*do {
+		do {
+			if (decodedText.size() >= numChars) {
+				break;
+			}
 			signDecoded = false;
 			// try to decode single sign
 			for(size_t i = 1; i < buffer.size(); ++i) {
-				cout << "trying to find in coding table: " << buffer.substr(0, i) << endl;
+				//cout << "trying to find in coding table: " << buffer.substr(0, i) << endl;
 				if (codingTable.find(buffer.substr(0, i)) != codingTable.end()) {
-					cout << "found" << buffer.substr(0, i) << endl;
+					//cout << "found" << buffer.substr(0, i) << endl;
 					char decodedChar = codingTable[buffer.substr(0, i)];
-					cout << "decoded: " << buffer.substr(0, i) << " -> " << decodedChar << endl;
+					//cout << "decoded: " << buffer.substr(0, i) << " -> " << decodedChar << endl;
 					decodedText.push_back(decodedChar);
 					buffer = buffer.substr(i);
 					signDecoded = true;
 					break;
 				}
 			}
-		} while(signDecoded);*/
+		} while(signDecoded);
 	}
 	cout << "decoded text: " << decodedText << endl;
 }

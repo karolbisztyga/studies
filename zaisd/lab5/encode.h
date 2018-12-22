@@ -16,9 +16,18 @@ struct CompareSign {
 	}
 };
 
-void writeToBinary(string filename, string code) {
+void writeToBinary(string filename, string code, bool stub=false) {
+	if (stub) {
+		for (size_t i = code.size(); i < CHUNK_SIZE; ++i) {
+			code.push_back('0');
+		}
+		while(code[0] == '0') {
+			code = code.substr(1) + '0';
+		}
+	}
 	bitset<CHUNK_SIZE> bits(code);
 	unsigned short val = static_cast<unsigned short>(bits.to_ulong());
+	//cout << "writeToBinary " << code << " | " << val << endl;
 	ofstream codedFile(filename, ios::app | ios::binary);
 	codedFile.write((const char*)&val, sizeof(unsigned short));
 }
@@ -90,9 +99,8 @@ void encode(ifstream *infile) {
 	}
 	// writing the stub to bin
 	if (code.size() > 0) {
-		cout << "here in the stub the bytes should be handled the way that the preceding zeroes should be removed if necessary!";
 		cout << code << endl;
-		writeToBinary(outputFileName, code);
+		writeToBinary(outputFileName, code, true);
 	}
 	const string tableFileName = "build/coding_table.txt";
 	cout << "[*] write coding table" << endl;
