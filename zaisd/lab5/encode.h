@@ -4,8 +4,6 @@
 #define MAX_BYTES 0x400
 using namespace std;
 
-const size_t chunkSize = 16;
-
 struct Sign {
 	BYTE sign;
 	size_t occurenecs;
@@ -19,7 +17,7 @@ struct CompareSign {
 };
 
 void writeToBinary(string filename, string code) {
-	bitset<chunkSize> bits(code);
+	bitset<CHUNK_SIZE> bits(code);
 	unsigned short val = static_cast<unsigned short>(bits.to_ulong());
 	ofstream codedFile(filename, ios::app | ios::binary);
 	codedFile.write((const char*)&val, sizeof(unsigned short));
@@ -43,13 +41,12 @@ void encode(ifstream *infile) {
 			bytesOccurences.push_back({ bytes[len], 1 });
 		}
 		if (len > MAX_BYTES) {
-			cout << "error, files over 1KB cannot be handled";
+			cout << "[!] error, files over 1KB cannot be handled";
 			return;
 		}
 		++len;
 	}
-	cout << "file read, size in bytes: " << len << endl;
-	for(size_t i = 0;i<len;++i) cout << bytes[i] << " ";cout << endl;
+	cout << "[+] file read, size in bytes: " << len << endl;
 	// sort by occurences
 	sort(bytesOccurences.begin(), bytesOccurences.end(), CompareSign());
 	// build code table
@@ -58,28 +55,34 @@ void encode(ifstream *infile) {
 		it->code = currentCode;
 		currentCode = "1" + currentCode;
 	}
-
+/*
 	for (auto it = bytesOccurences.begin(); it != bytesOccurences.end(); ++it) {
 		cout << it->sign << " -> " << it->occurenecs << ", code: " << it->code << endl;
 	}
-
+*/
+	cout << "[*] writing encoded bytes" << endl;
 	// clearing output file
 	const string outputFileName = "build/encoded.bin";
 	{
 		ofstream codedFile(outputFileName, ios::trunc);
 	}
 	string code = "";
+	// writing number of signs that are inserted into file
+	{
+		unsigned int signCount = static_cast<unsigned int>(len);
+		ofstream codedFile(outputFileName, ios::app | ios::binary);
+		codedFile.write((const char*)&signCount, sizeof(unsigned int));
+	}
 	for (size_t i = 0; i < len; ++i) {
 		// find code in code table
 		for (auto it = bytesOccurences.begin(); it != bytesOccurences.end(); ++it) {
 			if (it->sign == bytes[i]) {
 				code += it->code;
-				while (code.size() > chunkSize) {
-					string codePart = code.substr(0, chunkSize);
-					cout << "writing: " << codePart << endl;
+				while (code.size() > CHUNK_SIZE) {
+					string codePart = code.substr(0, CHUNK_SIZE);
 					// writing to bin
 					writeToBinary(outputFileName, codePart);
-					code = code.substr(chunkSize);
+					code = code.substr(CHUNK_SIZE);
 				}
 				break;
 			}
@@ -87,10 +90,12 @@ void encode(ifstream *infile) {
 	}
 	// writing the stub to bin
 	if (code.size() > 0) {
-		cout << "*writing " << code << endl;
+		cout << "here in the stub the bytes should be handled the way that the preceding zeroes should be removed if necessary!";
+		cout << code << endl;
 		writeToBinary(outputFileName, code);
 	}
 	const string tableFileName = "build/coding_table.txt";
+	cout << "[*] write coding table" << endl;
 	// writing code table to file
 	{
 		ofstream file(tableFileName, ios::trunc);
@@ -100,12 +105,12 @@ void encode(ifstream *infile) {
 		//cout << sign->sign << " " << sign->code << endl;
 		string str(1, sign->sign);
 		str += sign->code;
-		cout << "write: " << str << endl;
+		cout << str << endl;
 		ofstream file(tableFileName, ios::app);
 		file << str << endl;
 	}
 
-	cout << "encoding done" << endl;
+	cout << "[*] encoding done" << endl;
 }
 
 #endif
