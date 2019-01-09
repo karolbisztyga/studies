@@ -1,0 +1,148 @@
+kompilator asemblera w pythonie generujący kod binarny do uruchomienia na maszynie wirtualnej
+
+sekcje
+	Wyróżnia się następujące sekcje:
+		- dane - pamięć zarezerwowana dla danego programu, jest adresowana od 0, jej rozmiar musi być wielokrotnością BYTE(8bit), little endian bitwise. W programie pisanym do kompilacji jest to po prostu zestaw znaków ASCII, które mogą być wykorzystane później w programie.
+		- kod programu - zestaw opcodów odpowiadających elementom gramatyki języka. W programie do kompilacji jest to kod zgodny z gramatyką opisaną poniżej.
+	- Na początku umieszczana jest sekcja danych, później sekcja kodu.
+	- Każda sekcja, nawet pusta, musi zaczynać się i kończyć następującą skewencją znaków: [sec]
+	- Prawidłowy plik zawiera więc dokładnie 3 miejsca, w których występuje [sec] oraz musi sié zaczynać oraz kończyć na tym znaczniku. Przykład
+		[sec]sf3nroehey!1234567890very important stuff:)[sec]add([reg] r1; [mem] byt, 2; [reg] r0); out([reg] r0); out([mem] qwd, 7);[sec]
+
+dane
+	rodzaje dostępu do danych
+		istnieją 4 rodzaje dostępu do danych:
+			byt - BYTE(8bit)
+			wrd - WORD(16bit)
+			dwd - DWORD(32bit)
+			qwd - QWORD(64bit)
+	wszystkie dane są signed
+
+rejestry
+	istnieje 8 rejestrów ogólnego przeznaczenia: r0, r1, r2, r3, r4, r5, r6, r7. Każdy z nich ma rozmiar QWORD
+
+stos
+	przechowuje wartości o rozmiarze DWORD
+
+opis instrukcji
+	cpy - kopiowanie wartości
+	add - dodawanie
+	sub - odejmowanie
+	mul - mnozenie
+	div - dzielenie calkowite
+	and - bramka and na bitach
+	lor - bramka or na bitach
+	not - bramka not na bitach
+	xor - bramka xor na bitach
+	psh - push na stos
+	pop - pop ze stosu
+	cmp - porownanie
+	jmp - skok w określone miejsce
+	jeq - jump equal skok warunkowy
+	jne - jump not equal skok warunkowy
+	out - wypisywanie danych na output
+	cal - wołanie instrukcji z danego adresu
+	ret - ret powrót
+	rgd - zarejestrowanie danych do późniejszego wykonania
+	exe - wykonanie zarejestrowanych wcześniej danych
+
+argumenty instrukcji - istnieją 3 typy argumentów
+	-[reg] wartość rejestru - musi być podana labelka rejestru(a-h)
+	-[con] stała - wymagana wartość, zawsze 64bit
+	-[mem] dane z pamięci - muszą być podane rodzaj dostępu oraz adres(number 64bit)
+
+zapis argumentów - argumenty są zapisywane jako "TYP:wartość1;wartość2", gdzie typ to reg(rejestr), con(stała) lub mem(dane z pamięci). Są oddzielone średnikami. Przykład:
+	cpy([mem] dwd, 234; [reg]: r0)
+
+specyfikacja instrukcji
+	cpy([reg/con/mem] from; [reg] to) - kopiuje wartość z from do to
+	add([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x + y
+	sub([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x - y
+	mul([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x * y
+	div([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x / y
+	and([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x & y
+	lor([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x | y
+	not([reg/con/mem] x; [reg] res) - res = !x
+	xor([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = x ^ y
+	psh([reg/con/mem] x) - push x to the stack
+	pop([reg] x) - pop from stack and insert into x
+	cmp([reg/con/mem] x; [reg/con/mem] y; [reg] res) - res = (x > y) => 1, (x < y) => -1, (x == y) => 0
+	jmp([reg/con/mem] addr) - jump to address from addr
+	jeq([reg/con/mem] x; [reg/con/mem] y; [reg/con/mem] addr) - jump to addr if x == y
+	jne([reg/con/mem] x; [reg/con/mem] y; [reg/con/mem] addr) - jump to addr if x != y
+	out([reg/con/mem] data) - writes data to standard output
+	cal([reg/con/mem] addr) - push next function address to the stack and jump to addr
+	ret() - pop return address from the stack and jump there
+	rgd([reg/con/mem] data) - stores data in memory buffer for further execute
+	exe([reg/con] result) - executes data from buffer as system command, stores result code in result
+
+syntax:
+	- kazda instrukcja ma labelke o dlugosci 3 znaki ASCII
+	- po labelce instrukcji są wczytywane argumenty w nawiasach oddzielone średnikami: typ nawiasu w [] oraz wartość
+	- instrukcje sa oddzielone srednikami ;
+	- komentarze zaczynają się od specjalnego znaku: # oraz kończą się, tak jak instrukcje, średnikiem ;
+	- syntax nie bierze pod uwage spacji, endl, tabow itp
+	przyklad:
+		add([reg]r0;[C]1;[reg]r1); sub([C]400;[reg]r1;[reg]r0);#here is the comment where I say how this works ; cmp([reg] r0; [C] 123; [reg] r1)
+
+-parsowanie kodu asm
+-generowanie bytecodu
+-testy
+
+1. kompilacja
+	- skaner - analiza leksykalna - wyodrębnia tokeny i usuwa niepotrzebne znaki(spacje, komentarze itp)
+	- parser - analiza składniowa - buduje drzewo składniowe
+	- generator - przekład kodu asm na kod binarny według podanych wytycznych
+
+1.1 gramatyka
+
+terminals = 'cpy','add','sub','mul','div','and','lor','not','xor','psh','pop','cmp','jmp','jeq','jne','out','cal','ret','reg','exe',';',',','(',')','[',']','0','1','2','3','4','5','6','7','8','9','r0','r1','r2','r3','r4','r5','r6','r7','byt','wrd','dwd','qwd','reg','con','mem'
+nonterminals = 
+	'S',	start symbol
+	'I',	instruction
+	'A',	argument
+	'R',	register label
+	'N',	number
+	'M',	memory access type
+start_symbol = 'S'
+productions
+
+S -> IS | I
+I ->
+	cpy(A;A); |
+	add(A;A;A); |
+	sub(A;A;A); |
+	mul(A;A;A); |
+	div(A;A;A); |
+	and(A;A;A); |
+	lor(A;A;A); |
+	not(A;A); |
+	xor(A;A;A); |
+	psh(A); |
+	pop(A); |
+	cmp(A;A;A); |
+	jmp(A); |
+	jeq(A;A;A); |
+	jne(A;A;A); |
+	out(A); |
+	cal(A); |
+	ret(); |
+	reg(A); |
+	exe(A);
+A -> [reg] R | [con] N | [mem] M, N
+R -> r0 | r1 | r2 | r3 | r4 | r5 | r6 | r7
+N -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | NN
+M -> byt | wrd | dwd | qwd
+
+pliki KBVM - pliki binarne, które są outputem kompilatora przeznaczone do uruchomienia na odpowiedniej maszynie wirtualnej.
+	- struktura:
+		- header - zawiera podstawowe informacje o pliku
+			- magic[8 bajtów] - w_char[4] ma wartoć KBVM zapisaną za pomocą wide char, czyli K 0 B 0 V 0 M 0
+			- data_size[8 bajtów] - uint64_t - unsigned wartość określająca rozmiar sekcji danych w bajtach
+			- code_size[8 bajtów] - uint64_t - unsigned wartość określająca rozmiar sekcji kodu w bajtach
+		- data - dane, które mogą być używane podczas działania programu([mem] byt, 14 odczyta jeden bajt na pozycji 14 z tej sekcji)
+		- code - ciąg instrukcji, które zostaną wykonane po uruchomieniu pliku w maszynie wirtualnej
+	- prawidłowo skonstruowany plik spełnia następujące założenia:
+		- łączna ilość bitów jest wielokrotnością 8(pełne bajty)
+		- magic = K 0 B 0 V 0 M 0
+		- rozmiar całego pliku = rozmiar headera(8+8+8=24B) + header.data_size + header.code_size
