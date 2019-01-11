@@ -55,5 +55,5 @@ class Generator:
                 index += 1
                 if len(binary) > BinaryTools.OPCODE_BYTE_LENGTH * 8:
                     raise Exception('opcodes have to be longer, otherwise there could occur repetitions')
-                result[terminal[0]] =  binary
+                result[terminal[0]] = binary
         return result

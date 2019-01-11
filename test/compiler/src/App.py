@@ -26,6 +26,9 @@ class App:
         print('      compile - default')
         print('    [path_to_output_file(optional)]')
 
+    # returns tuple of 2 elements:
+    #   result of execution
+    #   result of desired operation
     def run(self, args):
         show_help_on_exception = True
         try:
@@ -86,7 +89,7 @@ class App:
                 print('see help')
                 self.help()
             return (False, None)
-        return (True, None)
+        return (True, True)
 
     def compile(self, file_data):
         compiled = b''

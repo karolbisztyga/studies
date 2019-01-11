@@ -21,6 +21,3 @@ class BinaryToolsException(Exception):
 
 class AppException(Exception):
     pass
-
-class IntegrationException(Exception):
-    pass

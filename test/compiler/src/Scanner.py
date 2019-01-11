@@ -48,7 +48,6 @@ class Scanner:
             raise ScannerException('cannot generate tokens without clean code')
         pos = 0
         while pos < len(self.code):
-            current_terminal = None
             token_start_pos = pos
             token_end_pos = min(pos+self.grammar.MAX_TERMINAL_LENGTH, len(self.code))
             token_candidate = self.code[token_start_pos:token_end_pos]
@@ -65,7 +64,8 @@ class Scanner:
     def __find_token(self, value, position):
         try:
             if len(value) > self.grammar.MAX_TERMINAL_LENGTH:
-                raise GrammarException('find token: value of length 3 expected, got ' + str(value) + ' of length ' + str(len(value)))
+                raise GrammarException('find token: value of max length ' + str(self.grammar.MAX_TERMINAL_LENGTH) +
+                                       ' expected, got ' + str(value) + ' of length ' + str(len(value)))
             for terminal_length in range(self.grammar.MAX_TERMINAL_LENGTH):
                 terminal_length += 1
                 value_edited = value[0:terminal_length]
