@@ -10,13 +10,13 @@
         removing redundant elements of the code(spaces, comments etc)
         generating a list of tokens from given code
 '''
-from compiler.src.Grammar import Grammar
+from compiler.src.language.Grammar import Grammar
 from compiler.src.Token import *
 from compiler.src.Exceptions import *
 
 class Scanner:
-    def __init__(self, code):
-        self.grammar = Grammar()
+    def __init__(self, code, grammar=Grammar()):
+        self.grammar = grammar
         self.code = code
         self.code_clean = False
         self.tokens = []

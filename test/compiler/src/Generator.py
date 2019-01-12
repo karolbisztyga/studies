@@ -10,15 +10,18 @@
         converts given list of Tokens into binary code
         it assumes that the syntax has already been checked by the Parser and is correct
 '''
-from compiler.src.Grammar import Grammar
+from compiler.src.language.Grammar import Grammar
 from compiler.src.BinaryTools import BinaryTools, Endianess
 from compiler.src.Token import *
 from compiler.src.Exceptions import *
+from compiler.src.language.OpcodesGenerator import OpcodesGenerator
+
 
 class Generator:
-    def __init__(self, endianess = None):
-        self.grammar = Grammar()
-        self.opcodes = self.generate_opcodes()
+    def __init__(self, endianess = None, grammar=Grammar(), opcodes_generator=OpcodesGenerator()):
+        self.grammar = grammar
+        self.opcodes_generator = opcodes_generator
+        self.opcodes = self.opcodes_generator.generate()
         self.endianess = Endianess.LITTLE
         if endianess in [Endianess.LITTLE, Endianess.BIG]:
             self.endianess = endianess
@@ -28,7 +31,7 @@ class Generator:
         curr_num = None
         for token in tokens:
             if token.value not in self.opcodes:
-                raise GeneratorException('unrecognized token in generator: '+  str(token))
+                raise GeneratorException('unrecognized token in generator: ' + str(token))
             if token.type == TokenType.NUMBER:
                 if curr_num is None:
                     curr_num = token.value
@@ -46,14 +49,3 @@ class Generator:
             result += he
         return result
 
-    def generate_opcodes(self):
-        result = {}
-        index = 1
-        for terminal_length, terminal_arr in self.grammar.TERMINALS.items():
-            for terminal in terminal_arr:
-                binary = BinaryTools.fill_with_zeros(str.encode(bin(index).replace('0b', '')))
-                index += 1
-                if len(binary) > BinaryTools.OPCODE_BYTE_LENGTH * 8:
-                    raise Exception('opcodes have to be longer, otherwise there could occur repetitions')
-                result[terminal[0]] = binary
-        return result

@@ -9,7 +9,7 @@
     @brief
         handles data section during compilation, responsible for input validation and conversion into binary code
 '''
-from compiler.src.Exceptions import *
+
 
 class DataHandler:
 

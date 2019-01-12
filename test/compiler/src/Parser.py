@@ -10,13 +10,12 @@
         performs the syntax validation of given list of Tokens
 '''
 
-from compiler.src.Grammar import Grammar
-from compiler.src.Token import *
-from compiler.src.Exceptions import *
+from compiler.src.language.Grammar import Grammar
+
 
 class Parser:
-    def __init__(self):
-        self.grammar = Grammar()
+    def __init__(self, grammar=Grammar()):
+        self.grammar = grammar
         self.furthest_token = 0
 
     def parse(self, tokens):

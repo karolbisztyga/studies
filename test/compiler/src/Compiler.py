@@ -17,6 +17,7 @@
 from compiler.src.Scanner import Scanner
 from compiler.src.Parser import Parser
 from compiler.src.Generator import Generator
+from compiler.src.language.Grammar import Grammar
 from compiler.src.DataHandler import DataHandler
 from compiler.src.BinaryTools import BinaryTools, Endianess
 from compiler.src.Exceptions import *
@@ -25,7 +26,10 @@ class Compiler:
     SECTION_DELIMITER = '[sec]'
     NUMBER_OF_SECTIONS = 2
 
-    def __init__(self, endianess = None):
+    def __init__(self, endianess=None, grammar=Grammar()):
+        self.grammar = grammar
+        if self.grammar is None:
+            self.grammar = Grammar()
         self.endianess = Endianess.LITTLE
         if endianess in [Endianess.LITTLE, Endianess.BIG]:
             self.endianess = endianess
@@ -49,9 +53,9 @@ class Compiler:
         data = contents[1]
         code = contents[2]
         # initialize necessary objects
-        self.scanner = Scanner(code)
-        self.parser = Parser()
-        self.generator = Generator()
+        self.scanner = Scanner(code, grammar=self.grammar)
+        self.parser = Parser(grammar=self.grammar)
+        self.generator = Generator(grammar=self.grammar)
         self.data_handler = DataHandler()
 
         #validating data
