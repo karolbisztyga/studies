@@ -1,7 +1,7 @@
 '''
-    @file       OldTest.py
+    @file       SystemTest.py
     @author     Karol Bisztyga (karolbisztyga@gmail.com)
-    @date       2018/11/23
+    @date       2019/01/10
     @version    1.0
 
     @brief
@@ -10,6 +10,7 @@
 import unittest
 import glob
 import os
+import subprocess
 
 
 class IntegrationException(Exception):
@@ -132,8 +133,6 @@ class SystemTest(unittest.TestCase):
             self.assertEqual(results[i], expected_results[i])
         self.clear_tmp()
 
-
-
     def test_minify_code(self):
         # data to be tested
         code_samples = [
@@ -164,10 +163,10 @@ class SystemTest(unittest.TestCase):
         # expected data
         expected_results = [
             0,
-            0, #'sub([reg]r0;[mem]dwd,3;[reg]r0);',
-            0, #'sub([reg]r0;[mem]dwd,3;[reg]r0);out([reg]r3);',
-            0, #'cpy([con]120;[reg]r0);cpy([con]11;[reg]r1);mul([reg]r1;[reg]r2;[reg]r3);out([reg]r3);',
-            0, #'cpy([con]120;[reg]r0);cpy([con]11;[reg]r1);mul([reg]r1;[reg]r2;[reg]r3);out([reg]r3);',
+            0,
+            0,
+            0,
+            0,
         ]
         # perform tests
         results = []
@@ -288,13 +287,13 @@ class SystemTest(unittest.TestCase):
         # expected data
         expected_results = [
             0,
-            0, #b'K\x00B\x00V\x00M\x00\x00\x00\x00\x00\x00\x00\x00\x000\x00\x00\x00\x00\x00\x00\x00\x03\x00&\x00(\x00\x19\x00)\x00\x1c\x00$\x00(\x00\x1b\x00)\x00\x17\x00%\x00-\x00\x03\x00\x00\x00\x00\x00\x00\x00$\x00(\x00\x19\x00)\x00\x1c\x00\x27\x00$\x00',
-            0, #b'K\x00B\x00V\x00M\x00\x00\x00\x00\x00\x00\x00\x00\x00~\x00\x00\x00\x00\x00\x00\x00\x01\x00&\x00(\x00\x1a\x00)\x00+\x00,\x00*\x00x\x00\x00\x00\x00\x00\x00\x00$\x00(\x00\x19\x00)\x00\x1c\x00\x27\x00$\x00\x01\x00&\x00(\x00\x1a\x00)\x00+\x00+\x00\x00\x00\x00\x00\x00\x00\x00\x00$\x00(\x00\x19\x00)\x00\x1d\x00\x27\x00$\x00\x04\x00&\x00(\x00\x19\x00)\x00\x1d\x00$\x00(\x00\x19\x00)\x00\x1e\x00$\x00(\x00\x19\x00)\x00\x1f\x00\x27\x00$\x00\x10\x00&\x00(\x00\x19\x00)\x00\x1f\x00\x27\x00$\x00',
-            1, #b'',
-            1, #b'',
-            1, #b'',
-            1, #b'',
-            1, #b'',
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
         ]
         # perform tests
         results = []
@@ -312,7 +311,127 @@ class SystemTest(unittest.TestCase):
         self.clear_tmp()
 
     def test_std_out(self):
-        pass
+        # data to be tested
+        code_samples = [
+            # user interface invalid args
+            ('ui', 'a minify_code b a'),
+            # minify code
+            ('minify', 'sub([reg] r0; [mem] dwd, 3; [reg] r0);'),
+            # check code - valid
+            ('check', 'sub([reg] r0; [mem] dwd, 3; [reg] r0);'),
+            # check code - invalid
+            ('check', 'sub([reg] r5; [mem] dwd, 3 [reg] r0);'),
+            # compile - valid sample 1
+            ('compile', 'sub([reg] r0; [mem] dwd, 3; [reg] r0);'),
+            # compile - valid sample 2
+            ('compile', '''
+                # load initial values;
+                cpy([con]120; [reg]r0);
+                cpy([con]11; [reg]r1);
+                # multiply them;
+                mul([reg]r1; [reg]r2; [reg] r3);
+                # write out the output;
+                out([reg] r3) ;
+            '''),
+            # compile - syntax error
+            ('compile', '''
+                # load initial values
+                cpy([con]12a0; [reg]r0);
+            '''),
+        ]
+        # expected data
+        expected_results = [
+            ['an error occured', 'HELP', 'invalid arguments'],
+            ['minification successful, output file: '],
+            ['1 the code is valid', ],
+            ['0 the code is not valid', ],
+            ['compilation successful, output file: ', ],
+            ['compilation successful, output file: ', ],
+            ['an error occured'],
+        ]
+        # perform tests
+        results = []
+        for tested_feature, sample in code_samples:
+            full_sample = '[sec][sec]' + sample + '[sec]'
+            sample_file_in = self.prepare_sample(full_sample)
+            sample_file_out = self.prepare_sample('')
+            cmd = SystemTest.PYTHON_PATH + ' ' + SystemTest.APP_PATH + ' '# + sample_file_in + ' compile ' + sample_file_out
+            if tested_feature == 'ui':
+                cmd += sample
+            elif tested_feature == 'minify':
+                cmd += sample_file_in + ' minify_code ' + sample_file_out
+            elif tested_feature == 'check':
+                cmd += sample_file_in + ' check_code'
+            elif tested_feature == 'compile':
+                cmd += sample_file_in + ' compile ' + sample_file_out
+            else:
+                # invalid tested_feature value
+                self.assertTrue(False)
+            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            result = result.stdout
+            results.append(result)
+        # compare results
+        self.assertEqual(len(results), len(code_samples))
+        self.assertEqual(len(expected_results), len(results))
+        for i in range(len(results)):
+            for expected_res in expected_results[i]:
+                self.assertTrue(expected_res in results[i])
+        self.clear_tmp()
 
     def test_files_creation(self):
-        pass
+        # data to be tested
+        code_samples = [
+            # minify code
+            ('minify', '''sub(
+                                [reg] r0; 
+                                [mem] dwd, 3; 
+                                [reg] r0);'''),
+            # compile - valid sample 1
+            ('compile', 'sub([reg] r0; [mem] dwd, 3; [reg] r0);'),
+            # compile - valid sample 2
+            ('compile', '''
+                        # load initial values;
+                        cpy([con]120; [reg]r0);
+                        cpy([con]11; [reg]r1);
+                        # multiply them;
+                        mul([reg]r1; [reg]r2; [reg] r3);
+                        # write out the output;
+                        out([reg] r3) ;
+                    '''),
+            # compile - syntax error
+            ('compile', '''
+                        # load initial values
+                        cpy([con]12a0; [reg]r0);
+                    '''),
+        ]
+        # expected data
+        expected_results = [
+            b'[sec][sec]sub([reg]r0;[mem]dwd,3;[reg]r0);[sec]',
+            b'K\x00B\x00V\x00M\x00\x00\x00\x00\x00\x00\x00\x00\x000\x00\x00\x00\x00\x00\x00\x00\x03\x00&\x00(\x00\x19\x00)\x00\x1c\x00$\x00(\x00\x1b\x00)\x00\x17\x00%\x00-\x00\x03\x00\x00\x00\x00\x00\x00\x00$\x00(\x00\x19\x00)\x00\x1c\x00\x27\x00$\x00',
+            b'K\x00B\x00V\x00M\x00\x00\x00\x00\x00\x00\x00\x00\x00~\x00\x00\x00\x00\x00\x00\x00\x01\x00&\x00(\x00\x1a\x00)\x00+\x00,\x00*\x00x\x00\x00\x00\x00\x00\x00\x00$\x00(\x00\x19\x00)\x00\x1c\x00\x27\x00$\x00\x01\x00&\x00(\x00\x1a\x00)\x00+\x00+\x00\x00\x00\x00\x00\x00\x00\x00\x00$\x00(\x00\x19\x00)\x00\x1d\x00\x27\x00$\x00\x04\x00&\x00(\x00\x19\x00)\x00\x1d\x00$\x00(\x00\x19\x00)\x00\x1e\x00$\x00(\x00\x19\x00)\x00\x1f\x00\x27\x00$\x00\x10\x00&\x00(\x00\x19\x00)\x00\x1f\x00\x27\x00$\x00',
+            b'',
+        ]
+        # perform tests
+        results = []
+        for tested_feature, sample in code_samples:
+            full_sample = '[sec][sec]' + sample + '[sec]'
+            sample_file_in = self.prepare_sample(full_sample)
+            sample_file_out = self.prepare_sample('')
+            cmd = SystemTest.PYTHON_PATH + ' ' + SystemTest.APP_PATH + ' '  # + sample_file_in + ' compile ' + sample_file_out
+            if tested_feature == 'minify':
+                cmd += sample_file_in + ' minify_code ' + sample_file_out
+            elif tested_feature == 'compile':
+                cmd += sample_file_in + ' compile ' + sample_file_out
+            else:
+                # invalid tested_feature value
+                self.assertTrue(False)
+            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            result = result.stdout
+            results.append(sample_file_out)
+        # compare results
+        self.assertEqual(len(results), len(code_samples))
+        self.assertEqual(len(expected_results), len(results))
+        for i in range(len(results)):
+            expected = self.read_sample(results[i])
+            self.assertEqual(expected, expected_results[i])
+        self.clear_tmp()

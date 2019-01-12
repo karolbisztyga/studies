@@ -68,6 +68,7 @@ class App:
                     print('0 the code is not valid')
                     return (True, False)
             else:
+                operation = 'compilation'
                 # the output file is needed so check for existence
                 if output_file_path == None:
                     raise AppException('output file error')
@@ -75,6 +76,7 @@ class App:
                 opening_options = 'w'
                 if action == Actions.MINIFY:
                     result = self.minify(input_file_data)
+                    operation = 'minification'
                 elif action == Actions.COMPILE:
                     opening_options += 'b'
                     result = self.compile(input_file_data)
@@ -82,7 +84,7 @@ class App:
                     raise AppException('broken output')
                 with open(output_file_path, opening_options) as file:
                     file.write(result)
-                print('compilation successful, output file: ' + str(output_file_path))
+                print(operation + ' successful, output file: ' + str(output_file_path))
         except AppException as e:
             print('an error occured: ' + str(e))
             if show_help_on_exception:

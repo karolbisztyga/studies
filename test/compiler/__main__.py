@@ -15,7 +15,11 @@ except ImportError:
     print('if you are using command line try python3 with option -m')
     exit(0)
 
-result = App().run(sys.argv)
-if not result[0] or not result[1]:
+try:
+    result = App().run(sys.argv)
+    if not result[0] or not result[1]:
+        exit(1)
+except Exception as e:
+    print(str(e))
     exit(1)
 exit(0)
