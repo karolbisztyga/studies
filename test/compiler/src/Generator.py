@@ -12,21 +12,23 @@
 '''
 from compiler.src.language.Grammar import Grammar
 from compiler.src.BinaryTools import BinaryTools, Endianess
-from compiler.src.Token import *
+from compiler.src.language.Token import *
 from compiler.src.Exceptions import *
 from compiler.src.language.OpcodesGenerator import OpcodesGenerator
 
 
 class Generator:
-    def __init__(self, endianess = None, grammar=Grammar(), opcodes_generator=OpcodesGenerator()):
+    def __init__(self, endianess=None, grammar=Grammar(), opcodes_generator=OpcodesGenerator()):
         self.grammar = grammar
         self.opcodes_generator = opcodes_generator
         self.opcodes = self.opcodes_generator.generate()
         self.endianess = Endianess.LITTLE
         if endianess in [Endianess.LITTLE, Endianess.BIG]:
             self.endianess = endianess
+        self.tokens = []
 
     def generate(self, tokens):
+        self.tokens = tokens
         result = b''
         curr_num = None
         for token in tokens:

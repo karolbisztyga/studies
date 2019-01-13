@@ -7,7 +7,7 @@
     @brief
         stores information about grammar needed to check syntax validity
 '''
-from compiler.src.Token import Token, TokenType
+from compiler.src.language.Token import TokenType
 
 
 class Grammar:
@@ -72,12 +72,12 @@ class Grammar:
             ],
         }
         self.NONTERMINALS = [
-            'S', # start symbol
-            'I', # instruction
-            'A', # argument
-            'R', # register label
-            'N', # number
-            'M', # memory access type
+            'S',  # start symbol
+            'I',  # instruction
+            'A',  # argument
+            'R',  # register label
+            'N',  # number
+            'M',  # memory access type
         ]
         self.START_SYMBOL = self.NONTERMINALS[0]
         self.TRANSITIONS = {

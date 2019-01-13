@@ -15,6 +15,7 @@ from compiler.src.language.Grammar import Grammar
 
 class Parser:
     def __init__(self, grammar=Grammar()):
+        self.tokens = []
         self.grammar = grammar
         self.furthest_token = 0
 

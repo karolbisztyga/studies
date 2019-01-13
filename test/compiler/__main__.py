@@ -17,7 +17,7 @@ except ImportError:
 
 try:
     result = App().run(sys.argv)
-    if not result[0] or not result[1]:
+    if not result[0]:
         exit(1)
 except Exception as e:
     print(str(e))

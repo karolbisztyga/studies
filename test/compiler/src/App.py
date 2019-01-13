@@ -15,6 +15,11 @@ from compiler.src.Parser import Parser
 
 class App:
 
+    def __init__(self):
+        self.compiler = None
+        self.scanner = None
+        self.parser = None
+
     def help(self):
         print('HELP')
         print('calling the compiler: python3 studio_projektowe [path_to_input_file] [action] [path_to_output_file(optional)]')
@@ -111,29 +116,29 @@ class App:
                         str(Compiler.NUMBER_OF_SECTIONS) + ' sections')
             file_contents = file_data.split(Compiler.SECTION_DELIMITER)
             code = file_contents[2]
-            scanner = Scanner(code)
-            scanner.scan()
-            parser = Parser()
-            parse_result = parser.parse(scanner.tokens)
+            self.scanner = Scanner(code)
+            self.scanner.scan()
+            self.parser = Parser()
+            parse_result = self.parser.parse(self.scanner.tokens)
             # only if the code is valid return the minified code
             if not parse_result[0]:
                 msg = 'code validation failed\n'
-                msg += 'near token ' + str(scanner.tokens[parser.furthest_token].value)
+                msg += 'near token ' + str(self.scanner.tokens[self.parser.furthest_token].value)
                 raise ParserException(msg)
             data = file_contents[1]
-            return Compiler.SECTION_DELIMITER + data + Compiler.SECTION_DELIMITER + scanner.code + Compiler.SECTION_DELIMITER
+            return Compiler.SECTION_DELIMITER + data + Compiler.SECTION_DELIMITER + self.scanner.code + Compiler.SECTION_DELIMITER
         except Exception as e:
             raise AppException(str(e))
 
     def check(self, file_data):
         code = file_data.split(Compiler.SECTION_DELIMITER)[2]
-        scanner = Scanner(code)
+        self.scanner = Scanner(code)
         try:
-            scanner.scan()
+            self.scanner.scan()
         except ScannerException as e:
             raise CompilerException(str(e))
-        parser = Parser()
-        if not parser.parse(scanner.tokens)[0]:
+        self.parser = Parser()
+        if not self.parser.parse(self.scanner.tokens)[0]:
             return False
         return True
 

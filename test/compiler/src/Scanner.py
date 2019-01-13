@@ -11,7 +11,7 @@
         generating a list of tokens from given code
 '''
 from compiler.src.language.Grammar import Grammar
-from compiler.src.Token import *
+from compiler.src.language.Token import *
 from compiler.src.Exceptions import *
 
 class Scanner:
