@@ -8,86 +8,23 @@
         system test which runs App.py with all the possible options
 '''
 import unittest
-import glob
 import os
 import subprocess
+from compiler.tests.TestTools import TestsTools
 
 
-class IntegrationException(Exception):
+class SystemTestException(Exception):
     pass
 
 
 class SystemTest(unittest.TestCase):
-    SECTION_DELIMITER = '[sec]'
-
-    # tmp path which will be used to store files and check for their validity
-    # all the tested files should be removed after each test
-    TMP_PATH = 'D:\\pytmp'
-    # python interpreter path
-    PYTHON_PATH = 'D:\\Programs\\Python3\\python.exe'
-    # path to the App to be tested
-    APP_PATH = 'D:\\Workspace\\studies\\test\\compiler'
-    # used for file naming
-    FILE_PREFIX = 'kbvm_test_'
-
     def __init__(self, *args, **kwargs):
         super(SystemTest, self).__init__(*args, **kwargs)
-        # check for tmp folder existence and access
-        if not os.path.isdir(SystemTest.TMP_PATH):
-            os.mkdir(SystemTest.TMP_PATH)
-        self.clear_tmp()
-
-    # --------------------------------------------------------------------
-    #           HELPER FUNCTIONS
-    # --------------------------------------------------------------------
-
-    # clear the tmp folder considering file naming convention
-    def clear_tmp(self):
-        files = glob.glob(SystemTest.TMP_PATH + '\\*')
-        for file in files:
-            if SystemTest.FILE_PREFIX in file:
-                os.remove(file)
-
-    def prepare_sample(self, code):
-        valid_name = False
-        n = 0
-        current_name = ''
-        while not valid_name:
-            #compose string from number
-            n_str = str(n)
-            for i in range(len(n_str), 3):
-                n_str = '0' + n_str
-            current_name = SystemTest.TMP_PATH + '\\' + SystemTest.FILE_PREFIX + n_str + '.bin'
-            if not os.path.isfile(current_name):
-                valid_name = True
-            n += 1
-        with open(current_name, 'wb') as file:
-            file.write(code.encode())
-        return os.path.abspath(current_name)
-
-    def read_sample(self, sample_name):
-        if SystemTest.TMP_PATH not in sample_name:
-            sample_name = SystemTest.TMP_PATH + '\\' + sample_name
-        if not os.path.isfile(sample_name):
-            raise IntegrationException('unrecognized sample ' + str(sample_name))
-        with open(sample_name, 'rb') as file:
-            return file.read()
-
-    def chech_sample_existence(self, sample_name):
-        try:
-            self.read_sample(sample_name)
-            return True
-        except:
-            return False
-        return False
-
-    # --------------------------------------------------------------------
-    #           TESTS
-    # --------------------------------------------------------------------
+        self.test_tools = TestsTools()
 
     def test_user_interface(self):
-        insample = self.prepare_sample('[sec]qwerty1234567[sec]sub([reg] r0; [mem] dwd, 3; [reg] r0);[sec]')
-        outsample = self.prepare_sample('')
+        insample = self.test_tools.prepare_sample('[sec]qwerty1234567[sec]sub([reg] r0; [mem] dwd, 3; [reg] r0);[sec]')
+        outsample = self.test_tools.prepare_sample('')
         # data to be tested
         args_samples = [
             # nothing
@@ -124,14 +61,14 @@ class SystemTest(unittest.TestCase):
         # perform tests
         results = []
         for sample in args_samples:
-            result = os.system(SystemTest.PYTHON_PATH + ' ' + SystemTest.APP_PATH + ' ' + sample)
+            result = os.system(TestsTools.PYTHON_PATH + ' ' + TestsTools.APP_PATH + ' ' + sample)
             results.append(result)
         # compare results
         self.assertEqual(len(results), len(args_samples))
         self.assertEqual(len(expected_results), len(results))
         for i in range(len(results)):
             self.assertEqual(results[i], expected_results[i])
-        self.clear_tmp()
+        self.test_tools.clear_tmp()
 
     def test_minify_code(self):
         # data to be tested
@@ -172,9 +109,9 @@ class SystemTest(unittest.TestCase):
         results = []
         for sample in code_samples:
             full_sample = '[sec][sec]' + sample + '[sec]'
-            sample_file_in = self.prepare_sample(full_sample)
-            sample_file_out = self.prepare_sample('')
-            result = os.system(SystemTest.PYTHON_PATH + ' ' + SystemTest.APP_PATH + ' ' + sample_file_in + ' minify_code ' + sample_file_out)
+            sample_file_in = self.test_tools.prepare_sample(full_sample)
+            sample_file_out = self.test_tools.prepare_sample('')
+            result = os.system(TestsTools.PYTHON_PATH + ' ' + TestsTools.APP_PATH + ' ' + sample_file_in + ' minify_code ' + sample_file_out)
             # output_code = self.read_sample(sample_file_out).decode()
             # output_code = output_code.split(SystemTest.SECTION_DELIMITER)[2]
             results.append(result)
@@ -183,7 +120,7 @@ class SystemTest(unittest.TestCase):
         self.assertEqual(len(expected_results), len(results))
         for i in range(len(results)):
             self.assertEqual(results[i], expected_results[i])
-        self.clear_tmp()
+        self.test_tools.clear_tmp()
 
     def test_check_code(self):
         # data to be tested
@@ -237,15 +174,15 @@ class SystemTest(unittest.TestCase):
         results = []
         for sample in code_samples:
             full_sample = '[sec][sec]' + sample + '[sec]'
-            sample_file_in = self.prepare_sample(full_sample)
-            result = os.system(SystemTest.PYTHON_PATH + ' ' + SystemTest.APP_PATH + ' ' + sample_file_in + ' check_code')
+            sample_file_in = self.test_tools.prepare_sample(full_sample)
+            result = os.system(TestsTools.PYTHON_PATH + ' ' + TestsTools.APP_PATH + ' ' + sample_file_in + ' check_code')
             results.append(result)
         # compare results
         self.assertEqual(len(results), len(code_samples))
         self.assertEqual(len(expected_results), len(results))
         for i in range(len(results)):
             self.assertEqual(results[i], expected_results[i])
-        self.clear_tmp()
+        self.test_tools.clear_tmp()
 
     def test_compile(self):
         # data to be tested
@@ -299,16 +236,16 @@ class SystemTest(unittest.TestCase):
         results = []
         for sample in code_samples:
             full_sample = '[sec][sec]' + sample + '[sec]'
-            sample_file_in = self.prepare_sample(full_sample)
-            sample_file_out = self.prepare_sample('')
-            result = os.system(SystemTest.PYTHON_PATH + ' ' + SystemTest.APP_PATH + ' ' + sample_file_in + ' compile ' + sample_file_out)
+            sample_file_in = self.test_tools.prepare_sample(full_sample)
+            sample_file_out = self.test_tools.prepare_sample('')
+            result = os.system(TestsTools.PYTHON_PATH + ' ' + TestsTools.APP_PATH + ' ' + sample_file_in + ' compile ' + sample_file_out)
             results.append(result)
         # compare results
         self.assertEqual(len(results), len(code_samples))
         self.assertEqual(len(expected_results), len(results))
         for i in range(len(results)):
             self.assertEqual(results[i], expected_results[i])
-        self.clear_tmp()
+        self.test_tools.clear_tmp()
 
     def test_std_out(self):
         # data to be tested
@@ -353,9 +290,9 @@ class SystemTest(unittest.TestCase):
         results = []
         for tested_feature, sample in code_samples:
             full_sample = '[sec][sec]' + sample + '[sec]'
-            sample_file_in = self.prepare_sample(full_sample)
-            sample_file_out = self.prepare_sample('')
-            cmd = SystemTest.PYTHON_PATH + ' ' + SystemTest.APP_PATH + ' '# + sample_file_in + ' compile ' + sample_file_out
+            sample_file_in = self.test_tools.prepare_sample(full_sample)
+            sample_file_out = self.test_tools.prepare_sample('')
+            cmd = TestsTools.PYTHON_PATH + ' ' + TestsTools.APP_PATH + ' '# + sample_file_in + ' compile ' + sample_file_out
             if tested_feature == 'ui':
                 cmd += sample
             elif tested_feature == 'minify':
@@ -376,7 +313,7 @@ class SystemTest(unittest.TestCase):
         for i in range(len(results)):
             for expected_res in expected_results[i]:
                 self.assertTrue(expected_res in results[i])
-        self.clear_tmp()
+        self.test_tools.clear_tmp()
 
     def test_files_creation(self):
         # data to be tested
@@ -415,9 +352,9 @@ class SystemTest(unittest.TestCase):
         results = []
         for tested_feature, sample in code_samples:
             full_sample = '[sec][sec]' + sample + '[sec]'
-            sample_file_in = self.prepare_sample(full_sample)
-            sample_file_out = self.prepare_sample('')
-            cmd = SystemTest.PYTHON_PATH + ' ' + SystemTest.APP_PATH + ' '  # + sample_file_in + ' compile ' + sample_file_out
+            sample_file_in = self.test_tools.prepare_sample(full_sample)
+            sample_file_out = self.test_tools.prepare_sample('')
+            cmd = TestsTools.PYTHON_PATH + ' ' + TestsTools.APP_PATH + ' '  # + sample_file_in + ' compile ' + sample_file_out
             if tested_feature == 'minify':
                 cmd += sample_file_in + ' minify_code ' + sample_file_out
             elif tested_feature == 'compile':
@@ -432,6 +369,6 @@ class SystemTest(unittest.TestCase):
         self.assertEqual(len(results), len(code_samples))
         self.assertEqual(len(expected_results), len(results))
         for i in range(len(results)):
-            expected = self.read_sample(results[i])
+            expected = self.test_tools.read_sample(results[i])
             self.assertEqual(expected, expected_results[i])
-        self.clear_tmp()
+        self.test_tools.clear_tmp()

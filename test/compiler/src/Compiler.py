@@ -22,6 +22,7 @@ from compiler.src.DataHandler import DataHandler
 from compiler.src.BinaryTools import BinaryTools, Endianess
 from compiler.src.Exceptions import *
 
+
 class Compiler:
     SECTION_DELIMITER = '[sec]'
     NUMBER_OF_SECTIONS = 2
