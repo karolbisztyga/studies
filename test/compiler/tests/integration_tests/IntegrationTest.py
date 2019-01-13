@@ -15,6 +15,8 @@ from compiler.src.Scanner import Scanner
 from compiler.src.Parser import Parser
 from compiler.src.Generator import Generator
 from compiler.src.App import App
+from compiler.src.language.Grammar import Grammar
+from compiler.tests.integration_tests.CustomGrammar import CustomGrammar
 
 
 class IntegrationTestException(Exception):
@@ -32,6 +34,7 @@ class IntegrationTest(unittest.TestCase):
                         '   [reg] r3;'
                         '   [reg] r1);',
                 'valid': True,
+                'grammar': Grammar(),
             },
             {
                 'code': 'add('
@@ -39,6 +42,17 @@ class IntegrationTest(unittest.TestCase):
                         '   [reg] r3;'
                         '   [reg] r1);',
                 'valid': False,
+                'grammar': Grammar(),
+            },
+            {
+                'code': 'aabb',
+                'valid': True,
+                'grammar': CustomGrammar(),
+            },
+            {
+                'code': 'aabbbcc',
+                'valid': False,
+                'grammar': CustomGrammar(),
             },
         ]
 
@@ -48,8 +62,8 @@ class IntegrationTest(unittest.TestCase):
             # prepare variables
             code = data['code']
             valid = data['valid']
-            compiler = Compiler()
-            scanner = Scanner(code)
+            compiler = Compiler(grammar=data['grammar'])
+            scanner = Scanner(code, grammar=data['grammar'])
             # perform actions
             try:
                 compiler.compile(IOMethod.STRING, '[sec][sec]' + code + '[sec]')
@@ -76,9 +90,9 @@ class IntegrationTest(unittest.TestCase):
             # prepare variables
             code = data['code']
             valid = data['valid']
-            compiler = Compiler()
-            scanner = Scanner(code)
-            parser = Parser()
+            compiler = Compiler(grammar=data['grammar'])
+            scanner = Scanner(code, grammar=data['grammar'])
+            parser = Parser(grammar=data['grammar'])
             # perform actions
             try:
                 compiler.compile(IOMethod.STRING, '[sec][sec]' + code + '[sec]')
@@ -106,10 +120,8 @@ class IntegrationTest(unittest.TestCase):
             # prepare variables
             code = data['code']
             valid = data['valid']
-            compiler = Compiler()
-            scanner = Scanner(code)
-            parser = Parser()
-            generator = Generator()
+            compiler = Compiler(grammar=data['grammar'])
+            scanner = Scanner(code, grammar=data['grammar'])
             # perform actions
             try:
                 compiler.compile(IOMethod.STRING, '[sec][sec]' + code + '[sec]')
@@ -137,7 +149,7 @@ class IntegrationTest(unittest.TestCase):
             code = data['code']
             valid = data['valid']
             app = App()
-            scanner = Scanner(code)
+            scanner = Scanner(code, grammar=data['grammar'])
             sample_in = self.test_tools.prepare_sample(code)
             # perform actions
             try:
@@ -168,9 +180,9 @@ class IntegrationTest(unittest.TestCase):
             app = App()
             code = data['code']
             valid = data['valid']
-            compiler = Compiler()
-            scanner = Scanner(code)
-            parser = Parser()
+            compiler = Compiler(grammar=data['grammar'])
+            scanner = Scanner(code, grammar=data['grammar'])
+            parser = Parser(grammar=data['grammar'])
             sample_in = self.test_tools.prepare_sample('[sec][sec]' + code + '[sec]')
             sample_out = self.test_tools.prepare_sample('')
             # perform actions
@@ -202,10 +214,8 @@ class IntegrationTest(unittest.TestCase):
             app = App()
             code = data['code']
             valid = data['valid']
-            compiler = Compiler()
-            scanner = Scanner(code)
-            parser = Parser()
-            generator = Generator()
+            compiler = Compiler(grammar=data['grammar'])
+            scanner = Scanner(code, grammar=data['grammar'])
             sample_in = self.test_tools.prepare_sample('[sec][sec]' + code + '[sec]')
             sample_out = self.test_tools.prepare_sample('')
             # perform actions

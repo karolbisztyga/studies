@@ -22,7 +22,7 @@ class Parser:
     def parse(self, tokens):
         self.tokens = tokens
         result = self.__parse(self.grammar.START_SYMBOL, 0)
-        if result[1] != len(self.tokens):
+        if result[1] != len(self.tokens) and result[1]+1 != len(self.tokens):
             return (False, 0)
         if result[0]:
             return (True, result[1])
