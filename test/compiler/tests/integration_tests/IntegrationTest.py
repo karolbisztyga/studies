@@ -16,7 +16,8 @@ from compiler.src.Parser import Parser
 from compiler.src.Generator import Generator
 from compiler.src.App import App
 from compiler.src.language.Grammar import Grammar
-from compiler.tests.integration_tests.CustomGrammar import CustomGrammar
+from compiler.tests.integration_tests.CustomGrammarA import CustomGrammarA
+from compiler.tests.integration_tests.CustomGrammarB import CustomGrammarB
 
 
 class IntegrationTestException(Exception):
@@ -47,12 +48,22 @@ class IntegrationTest(unittest.TestCase):
             {
                 'code': 'aabb',
                 'valid': True,
-                'grammar': CustomGrammar(),
+                'grammar': CustomGrammarA(),
             },
             {
                 'code': 'aabbbcc',
                 'valid': False,
-                'grammar': CustomGrammar(),
+                'grammar': CustomGrammarA(),
+            },
+            {
+                'code': 'xaaaaaa',
+                'valid': True,
+                'grammar': CustomGrammarA(),
+            },
+            {
+                'code': 'y',
+                'valid': False,
+                'grammar': CustomGrammarA(),
             },
         ]
 

@@ -1,5 +1,5 @@
 '''
-    @file       CustomGrammar.py
+    @file       CustomGrammarA.py
     @author     Karol Bisztyga (karolbisztyga@gmail.com)
     @date       2018/10/21
     @version    1.0
@@ -13,7 +13,7 @@ class TokenType:
     LABEL = 'LABEL'
 
 
-class CustomGrammar:
+class CustomGrammarA:
     def __init__(self):
         self.TERMINALS = {
             1: [
