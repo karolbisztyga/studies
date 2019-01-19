@@ -11,12 +11,15 @@ import UIKit
 class MainTableViewController: UITableViewController {
     
     var messages: [Message] = []
+    let BASE_URL = "https://home.agh.edu.pl/~ernst/shoutbox.php"
+    let SECRET = "ams2018"
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // load data from server
+    func loadDataFromServer(showAlert: Bool = false) {
         print("[*] reading data from server")
-        var url = "https://home.agh.edu.pl/~ernst/shoutbox.php?secret=ams2018"
+        let oldMessagesCount = self.messages.count
+        self.messages.removeAll()
+        self.tableView.reloadData()
+        let url = self.BASE_URL + "?secret=" + self.SECRET
         // Asynchronous Http call to your api url, using URLSession:
         URLSession.shared.dataTask(with: URL(string: url)!) { (data, response, error) -> Void in
             // Check if data was received successfully
@@ -36,13 +39,25 @@ class MainTableViewController: UITableViewController {
                         let time = dict["timestamp"] as! String
                         let date = dateFormatter.date(from: time)!
                         /*print("-----------")
-                        print(name)
-                        print(message)
-                        print(date)*/
+                         print(name)
+                         print(message)
+                         print(date)*/
                         let msg = Message(_author: name, _time: date, _content: message)
                         self.messages.append(msg)
                     }
                     print("[+] data read properly, records: " + String(self.messages.count))
+                    // show alert
+                    if (showAlert) {
+                        DispatchQueue.main.async {
+                            let newMessagesCount = self.messages.count - oldMessagesCount
+                            let alertText = (newMessagesCount != 0) ? String(newMessagesCount) + " new messages" : "No new messages"
+                            let alert = UIAlertController(title: "Fetched messages", message: alertText, preferredStyle: UIAlertController.Style.alert)
+                            alert.addAction(UIAlertAction(title: "Click", style: UIAlertAction.Style.default, handler: nil))
+                            self.present(alert, animated: true, completion: nil)
+                        }
+                    }
+                    // sorting records by date
+                    self.messages = self.messages.sorted(by: { $0.time > $1.time })
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                     }
@@ -54,9 +69,15 @@ class MainTableViewController: UITableViewController {
             }.resume()
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // load data from server
+        self.loadDataFromServer()
+    }
+    
     @IBAction func refreshData(_ sender: Any) {
         // TODO: reload data from server
-        self.tableView.reloadData()
+        self.loadDataFromServer(showAlert: true)
     }
     
     @IBAction func addMessage(_ sender: Any) {
@@ -68,14 +89,47 @@ class MainTableViewController: UITableViewController {
             textField.placeholder = "Your message"
         })
         let sendAction = UIAlertAction(title: "Send", style: .default, handler: { action in
-            let name = alertController.textFields?[0].text
-            let message = alertController.textFields?[1].text
-            // TODO: submit data to server
+            let name = alertController.textFields?[0].text!
+            let message = alertController.textFields?[1].text!
+            // sending data to the server
+            let msg = Message(_author: name!, _time: Date(), _content: message!)
+            self.sendMessage(message: msg)
         })
         alertController.addAction(sendAction)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in })
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true)
+    }
+    
+    private func sendMessage(message: Message) {
+        print("[*] sending data to server: '" + message.content + "', by: " + message.author)
+        var request = URLRequest(url: URL(string: self.BASE_URL)!)
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        var postString = "name=" + message.author
+        postString += "&message=" + message.content
+        postString += "&secret=" + self.SECRET
+        request.httpBody = postString.data(using: .utf8)
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {                                                 // check for fundamental networking error
+                print("[!] error=\(error)")
+                return
+            }
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {           // check for http errors
+                print("[-] statusCode should be 200, but is \(httpStatus.statusCode)")
+                print("[-] response = \(response)")
+            } else {
+                print("[+] status code 200 - OK!")
+                DispatchQueue.main.async {
+                    self.loadDataFromServer()
+                }
+            }
+            
+            let responseString = String(data: data, encoding: .utf8)
+            print("[*] responseString = \(responseString)")
+        }
+        task.resume()
     }
     
     // MARK: - Table view data source

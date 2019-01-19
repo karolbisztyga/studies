@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PGC-9U-Kk9">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PGC-9U-Kk9">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--John Doe's Shoutbox-->
+        <!--Karol Bisztyga's ShoutBox-->
         <scene sceneID="c5A-Kh-lew">
             <objects>
                 <tableViewController id="UJI-Ha-XXS" customClass="MainTableViewController" customModule="Lab2_TemplateApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -47,7 +47,7 @@
                             <outlet property="delegate" destination="UJI-Ha-XXS" id="bV4-4B-jXs"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="John Doe's Shoutbox" id="3Ig-ww-UHQ">
+                    <navigationItem key="navigationItem" title="Karol Bisztyga's ShoutBox" id="3Ig-ww-UHQ">
                         <barButtonItem key="leftBarButtonItem" systemItem="add" id="VEo-Nj-NV1">
                             <connections>
                                 <action selector="addMessage:" destination="UJI-Ha-XXS" id="B5b-rn-IdH"/>
