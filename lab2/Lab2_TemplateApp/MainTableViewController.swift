@@ -101,13 +101,34 @@ class MainTableViewController: UITableViewController {
     
     private func sendMessage(message: Message) {
         print("[*] sending data to server: '" + message.content + "', by: " + message.author)
-        var request = URLRequest(url: URL(string: self.BASE_URL)!)
+        /*var request = URLRequest(url: URL(string: self.BASE_URL)!)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
+        request.httpMethod = "POST"*/
         var postString = "name=" + message.author
         postString += "&message=" + message.content
         postString += "&secret=" + self.SECRET
-        request.httpBody = postString.data(using: .utf8)
+        var params = [
+            "name": message.author,
+            "message": message.content,
+            "secret": self.SECRET
+        ] as [String: Any]
+        
+        AF.request(self.BASE_URL + "?secret=" + self.SECRET,
+            method: .post as HTTPMethod,
+            parameters: params).validate().responseJSON { response -> Void in
+            switch response.result {
+            case .success:
+                print("[+] data sent, response: ")
+                print(response.result.value!)
+                DispatchQueue.main.async {
+                    self.loadDataFromServer()
+                }
+            case .failure(let err):
+                print("[-] data send failure, error:")
+                print(err)
+            }
+        }
+        /*request.httpBody = postString.data(using: .utf8)
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {                                                 // check for fundamental networking error
                 print("[!] error=\(error)")
@@ -127,7 +148,7 @@ class MainTableViewController: UITableViewController {
             let responseString = String(data: data, encoding: .utf8)
             print("[*] responseString = \(responseString)")
         }
-        task.resume()
+        task.resume()*/
     }
     
     // MARK: - Table view data source
