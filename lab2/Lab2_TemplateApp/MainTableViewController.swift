@@ -8,6 +8,7 @@
 
 import UIKit
 import NotificationBannerSwift
+import Alamofire
 
 class MainTableViewController: UITableViewController {
     
@@ -21,51 +22,49 @@ class MainTableViewController: UITableViewController {
         self.messages.removeAll()
         self.tableView.reloadData()
         let url = self.BASE_URL + "?secret=" + self.SECRET
-        // Asynchronous Http call to your api url, using URLSession:
-        URLSession.shared.dataTask(with: URL(string: url)!) { (data, response, error) -> Void in
-            // Check if data was received successfully
-            if error == nil && data != nil {
-                do {
-                    // Convert to dictionary where keys are of type String, and values are of any type
-                    let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! [String: Any]
-                    // Access specific key with value of type String
-                    let arr: NSArray = json["entries"] != nil ? json["entries"] as! NSArray : []
-                    //print(arr)
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    for item in arr {
-                        var dict = item as! NSDictionary
-                        let name = dict["name"] as! String
-                        let message = dict["message"] as! String
-                        let time = dict["timestamp"] as! String
-                        let date = dateFormatter.date(from: time)!
-                        /*print("-----------")
-                         print(name)
-                         print(message)
-                         print(date)*/
-                        let msg = Message(_author: name, _time: date, _content: message)
-                        self.messages.append(msg)
-                    }
-                    print("[+] data read properly, records: " + String(self.messages.count))
-                    // show notification banner
-                    if (showAlert) {
-                        DispatchQueue.main.async {
-                            let newMessagesCount = self.messages.count - oldMessagesCount
-                            let bannerText = (newMessagesCount != 0) ? String(newMessagesCount) + " new messages" : "No new messages"
-                            NotificationBanner(title: "Messages fetched", subtitle: bannerText, style: .success).show()
-                        }
-                    }
-                    // sorting records by date
-                    self.messages = self.messages.sorted(by: { $0.time > $1.time })
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
-                } catch {
-                    print("[-] data could not be read from the address " + url)
-                    // Something went wrong
+        // http get request
+        AF.request(url).validate().responseJSON { response -> Void in
+            
+            switch response.result {
+            case .success:
+                print("[+] data loaded")
+                let json = response.result.value as! NSDictionary
+                let arr: NSArray = json["entries"] != nil ? json["entries"] as! NSArray : []
+                //print(arr)
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                for item in arr {
+                    let dict = item as! NSDictionary
+                    let name = dict["name"] as! String
+                    let message = dict["message"] as! String
+                    let time = dict["timestamp"] as! String
+                    let date = dateFormatter.date(from: time)!
+                    /*print("-----------")
+                     print(name)
+                     print(message)
+                     print(date)*/
+                    let msg = Message(_author: name, _time: date, _content: message)
+                    self.messages.append(msg)
                 }
+                print("[+] data read properly, records: " + String(self.messages.count))
+                // show notification banner
+                if (showAlert) {
+                    DispatchQueue.main.async {
+                        let newMessagesCount = self.messages.count - oldMessagesCount
+                        let bannerText = (newMessagesCount != 0) ? String(newMessagesCount) + " new messages" : "No new messages"
+                        NotificationBanner(title: "Messages fetched", subtitle: bannerText, style: .success).show()
+                    }
+                }
+                // sorting records by date
+                self.messages = self.messages.sorted(by: { $0.time > $1.time })
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            case .failure(let error):
+                print("[-] error: ")
+                print(error)
             }
-            }.resume()
+        }
     }
     
     override func viewDidLoad() {
