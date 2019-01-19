@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import NotificationBannerSwift
 
 class MainTableViewController: UITableViewController {
     
@@ -46,14 +47,12 @@ class MainTableViewController: UITableViewController {
                         self.messages.append(msg)
                     }
                     print("[+] data read properly, records: " + String(self.messages.count))
-                    // show alert
+                    // show notification banner
                     if (showAlert) {
                         DispatchQueue.main.async {
                             let newMessagesCount = self.messages.count - oldMessagesCount
-                            let alertText = (newMessagesCount != 0) ? String(newMessagesCount) + " new messages" : "No new messages"
-                            let alert = UIAlertController(title: "Fetched messages", message: alertText, preferredStyle: UIAlertController.Style.alert)
-                            alert.addAction(UIAlertAction(title: "Click", style: UIAlertAction.Style.default, handler: nil))
-                            self.present(alert, animated: true, completion: nil)
+                            let bannerText = (newMessagesCount != 0) ? String(newMessagesCount) + " new messages" : "No new messages"
+                            NotificationBanner(title: "Messages fetched", subtitle: bannerText, style: .success).show()
                         }
                     }
                     // sorting records by date
