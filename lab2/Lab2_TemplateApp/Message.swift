@@ -24,7 +24,13 @@ class Message {
     }
     
     func getDetails() -> String {
+        let byText = NSLocalizedString("by", comment: "")
+        let hoursText = NSLocalizedString("hours", comment: "")
+        let minutesText = NSLocalizedString("minutes", comment: "")
+        let secondsText = NSLocalizedString("seconds", comment: "")
+        let agoText = NSLocalizedString("ago", comment: "")
+        
         let components = Calendar.current.dateComponents([.hour, .minute, .second], from: self.time, to: Date())
-        return "by \(self.author), \(components.hour!) hour(s), \(components.minute!) minute(s) and \(components.second!) second(s) ago"
+        return byText + " \(self.author), \(components.hour!) \(hoursText), \(components.minute!) \(minutesText) and \(components.second!) \(secondsText) \(agoText)"
     }
 }

@@ -51,8 +51,12 @@ class MainTableViewController: UITableViewController {
                 if (showAlert) {
                     DispatchQueue.main.async {
                         let newMessagesCount = self.messages.count - oldMessagesCount
-                        let bannerText = (newMessagesCount != 0) ? String(newMessagesCount) + " new messages" : "No new messages"
-                        NotificationBanner(title: "Messages fetched", subtitle: bannerText, style: .success).show()
+                        let newMessagesText = NSLocalizedString("new_messages", comment: "")
+                        let noNewMessagesText = NSLocalizedString("no_new_messages", comment: "")
+                        let messagesFetchesText = NSLocalizedString("messages_fetched", comment: "")
+                        
+                        let bannerText = (newMessagesCount != 0) ? String(newMessagesCount) + newMessagesText : noNewMessagesText
+                        NotificationBanner(title: messagesFetchesText, subtitle: bannerText, style: .success).show()
                     }
                 }
                 // sorting records by date
@@ -79,14 +83,21 @@ class MainTableViewController: UITableViewController {
     }
     
     @IBAction func addMessage(_ sender: Any) {
-        let alertController = UIAlertController(title: "New message", message: "Please state your name ad message", preferredStyle: .alert)
+        let newMessageText = NSLocalizedString("new_message_title", comment: "")
+        let newMessageDescriptionText = NSLocalizedString("new_message_description", comment: "")
+        let YourMessageText = NSLocalizedString("your_message", comment: "")
+        let YourNameText = NSLocalizedString("your_name", comment: "")
+        let sendText = NSLocalizedString("send", comment: "")
+        let cancelText = NSLocalizedString("cancel", comment: "")
+        
+        let alertController = UIAlertController(title: newMessageText, message: newMessageDescriptionText, preferredStyle: .alert)
         alertController.addTextField(configurationHandler: { textField in
-            textField.placeholder = "Your name"
+            textField.placeholder = YourNameText
         })
         alertController.addTextField(configurationHandler: { textField in
-            textField.placeholder = "Your message"
+            textField.placeholder = YourMessageText
         })
-        let sendAction = UIAlertAction(title: "Send", style: .default, handler: { action in
+        let sendAction = UIAlertAction(title: sendText, style: .default, handler: { action in
             let name = alertController.textFields?[0].text!
             let message = alertController.textFields?[1].text!
             // sending data to the server
@@ -94,7 +105,7 @@ class MainTableViewController: UITableViewController {
             self.sendMessage(message: msg)
         })
         alertController.addAction(sendAction)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in })
+        let cancelAction = UIAlertAction(title: cancelText, style: .cancel, handler: { _ in })
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true)
     }

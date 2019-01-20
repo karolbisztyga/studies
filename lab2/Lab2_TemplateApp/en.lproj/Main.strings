@@ -1,0 +1,14 @@
+
+/* Class = "UINavigationItem"; title = "Karol Bisztyga's ShoutBox"; ObjectID = "3Ig-ww-UHQ"; */
+"3Ig-ww-UHQ.title" = "Karol Bisztyga's ShoutBox";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "dJf-aw-Xks"; */
+"dJf-aw-Xks.text" = "Detail";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "gOw-1d-wSX"; */
+"gOw-1d-wSX.text" = "Title";
+
+
+/* localized strings for the code */
+"new_messages" = "new messages";
+"no_new_messages" = "no new messages";

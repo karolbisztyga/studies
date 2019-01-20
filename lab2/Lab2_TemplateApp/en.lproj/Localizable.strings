@@ -1,0 +1,32 @@
+/* 
+  Localizable.strings
+  Lab2_TemplateApp
+
+  Created by k b on 1/19/19.
+  Copyright © 2019 KIS AGH. All rights reserved.
+*/
+
+/* Class = "UINavigationItem"; title = "Karol Bisztyga's ShoutBox"; ObjectID = "3Ig-ww-UHQ"; */
+"3Ig-ww-UHQ.title" = "ShoutBox Karola Bisztygi";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "dJf-aw-Xks"; */
+"dJf-aw-Xks.text" = "Szczegoly";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "gOw-1d-wSX"; */
+"gOw-1d-wSX.text" = "Tytul";
+
+/* localized strings for the code */
+"new_messages" = "new messages";
+"no_new_messages" = "no new messages";
+"messages_fetched" = "Messages fetched";
+"new_message_title" = "New message";
+"new_message_description" = "Please state your name ad message";
+"your_name" = "Your name";
+"your_message" = "Your message";
+"send" = "Send";
+"cancel" = "Cancel";
+"by" = "by";
+"hours" = "hour(s)";
+"minutes" = "minute(s)";
+"seconds" = "second(s)";
+"ago"="ago";
